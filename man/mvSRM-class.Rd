@@ -30,13 +30,15 @@
 
 \item{component}{\code{character} specifying which SRM component to report
 estimated parameters for. Can be \verb{\%in\% c("case", "dyad")}, as well as
-\code{"group"} when group effects are modeled.  Ignored when \code{stat="mean"}.
+\code{"group"} when group effects are modeled.  Ignored when \code{stat="mean"}
+because means are only a group-level statistic.
 Multiple options can be passed to \code{summary()} method, but \code{as.matrix()}
 only uses the first.}
 
 \item{stat}{\code{character} specifying which summary statistic to report for
 \code{component}. Can be \verb{\%in\% c("sd", "cor", "cov")}, as well as \code{"mean"} when
-\code{fixed.groups=FALSE}.}
+\code{fixed.groups=FALSE}. The \code{summary()} method will always return the
+means as a group-level statistic, even for a single round-robin group.}
 
 \item{point}{For \code{as.matrix()}, a length-1 \code{character} or \code{numeric}
 indicating which posterior summary statistic should be returned.  Can be
@@ -49,11 +51,10 @@ be passed via \code{...} (e.g., to overwrite the default \code{credMass=.95}).
 Unlike any other \verb{point=} options for \code{as.matrix()}, \code{"hdi"} returns two
 values per parameter: the lower and upper credible-interval limits.
 This affects how the output is formatted.
-
-For \code{as.matrix()}, \verb{point=} can also be a \code{numeric} value between 0 and 1
-(inclusive), passed to \code{\link[stats:quantile]{stats::quantile()}} as the \verb{probs=} argument;
+\item \code{point=numeric(1)} between 0 and 1 (inclusive) is accepted by
+\code{as.matrix()}, passed to \code{\link[stats:quantile]{stats::quantile()}} as the \verb{probs=} argument;
 other arguments can be passed via \code{...}.
-For the \code{summary()} method, multiple options can be passed, but must be
+\item For the \code{summary()} method, multiple options can be passed, but must be
 \verb{\%in\% c("mean", "median", "mode")} or set to \code{NULL} to avoid returning
 point estimates.
 }}
@@ -78,9 +79,9 @@ includes posterior variability of the mean estimates (only when
 summary for the specified SRM parameter and level of analysis.
 \item \code{summary()} loops over \code{as.matrix()} to return a \code{list()} of potentially
 multiple summaries of potentially multiple SRM parameters and components.
-\item \code{vcov()} provides the posterior covariance matrix of sampled parameters at
-the requested level of analysis.  This is only useful for the 2-stage
-estimation provided using \code{\link[lavaan:lavaan]{lavaan::lavaan()}}.
+\item \code{vcov()} provides the posterior covariance matrix of sampled (co)variance
+parameters at the requested level of analysis.  This is only useful for
+the 2-stage estimation provided using \code{\link[lavaan:lavaan]{lavaan::lavaan()}}.
 }
 }
 \description{
@@ -134,11 +135,6 @@ approach described by Lüdtke et al. (2018).
  See the \code{\link[=mvsrm]{mvsrm()}} function for details.
 }
 
-\examples{
-
-## show how to use summary()
-
-}
 \references{
 Carpenter, B., Gelman, A., Hoffman, M. D., Lee, D., Goodrich, B.,
 Betancourt, M., ... & Riddell, A. (2017).

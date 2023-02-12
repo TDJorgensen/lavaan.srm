@@ -109,32 +109,42 @@ srmOut <- mvsrm(data = data.srm01, rr.vars = paste0("Wert", 1:3),
                 chains = 2, iter = 20, seed = 12345,
                 cores = ifelse(parallel::detectCores() < 3L, 1L, 2L))
 
-## posterior means (default) of round-robin variable means
-as.matrix(srmOut, stat = "mean")
+
+## posterior means (default) and central (default) credible intervals
+## of round-robin variable SDs and correlations (default)
+summary(srmOut)
+
+## round-robin variable means are always a group-level statistic
+summary(srmOut, stat = "mean")
+
 ## other point estimates from posterior
-as.matrix(srmOut, stat = "mean", point = "median")
-## other arguments passed to modeest::mlv()
-as.matrix(srmOut, stat = "mean", point = "mode", method = "shorth")
+summary(srmOut, stat = "mean", point = "median", interval = "hdi")
 
-## level-specific summary statistics
+## for the mode, other arguments passed to modeest::mlv()
+summary(srmOut, stat = "mean", point = "mode", method = "shorth")
 
-as.matrix(srmOut, stat = "sd", component = "group") # SDs of group effects,
-as.matrix(srmOut, stat = "sd", component = "case")  # case (person) effects,
-as.matrix(srmOut, stat = "sd", component = "dyad")  # relationship effects
-
-as.matrix(srmOut, stat = "cor", component = "group") # group effects,
-as.matrix(srmOut, stat = "cor", component = "case")  # case (person) effects
-as.matrix(srmOut, stat = "cor", component = "dyad")  # relationship effects
+## SDs & correlations of group effects
+summary(srmOut, component = "group")
 
 
+## group-mean centered results (no group-level effects)
+gmcOut <- mvsrm(data = data.srm01, rr.vars = paste0("Wert", 1:3),
+                IDout = "egoID", IDin = "alterID", IDgroup = "Group",
+                fixed.groups = TRUE,
+                chains = 2, iter = 20, seed = 12345,
+                cores = ifelse(parallel::detectCores() < 3L, 1L, 2L))
+summary(gmcOut)
 
- ## group-mean centered results (no group-level effects)
- gmcOut <- mvsrm(data = data.srm01, rr.vars = paste0("Wert", 1:3),
-                 IDout = "egoID", IDin = "alterID", IDgroup = "Group",
-                 fixed.groups = TRUE,
-                 chains = 2, iter = 20, seed = 12345,
-                 cores = ifelse(parallel::detectCores() < 3L, 1L, 2L))
- }
+
+## group-mean centered results (no group-level effects)
+g1out <- mvsrm(data = data.srm01[data.srm01$Group == 1,],
+               rr.vars = paste0("Wert", 1:3),      # still an option:
+               IDout = "egoID", IDin = "alterID",  # fixed.groups = TRUE,
+               chains = 2, iter = 20, seed = 12345,
+               cores = ifelse(parallel::detectCores() < 3L, 1L, 2L))
+summary(g1out)
+summary(g1out, stat = "mean") # available unless fixed.groups = TRUE
+}
 
 }
 \references{

@@ -1,5 +1,5 @@
 ### Terrence D. Jorgensen
-### Last updated: 11 February 2023
+### Last updated: 12 February 2023
 ### Class and Methods for mvSRM object
 
 
@@ -53,14 +53,16 @@
 ##' @param ... Additional arguments passed to or from other methods
 ##' @param component `character` specifying which SRM component to report
 ##'   estimated parameters for. Can be `%in% c("case", "dyad")`, as well as
-##'   `"group"` when group effects are modeled.  Ignored when `stat="mean"`.
+##'   `"group"` when group effects are modeled.  Ignored when `stat="mean"`
+##'   because means are only a group-level statistic.
 ##'   Multiple options can be passed to `summary()` method, but `as.matrix()`
 ##'   only uses the first.
 ##' @param stat `character` specifying which summary statistic to report for
 ##'   `component`. Can be `%in% c("sd", "cor", "cov")`, as well as `"mean"` when
-##'   `fixed.groups=FALSE`.
+##'   `fixed.groups=FALSE`. The `summary()` method will always return the
+##'   means as a group-level statistic, even for a single round-robin group.
 ##' @param point For `as.matrix()`, a length-1 `character` or `numeric`
-##' indicating which posterior summary statistic should be returned.  Can be
+##'   indicating which posterior summary statistic should be returned.  Can be
 ##'   `%in% c("mean", "median", "mode", "min", "max", "hdi")`.
 ##'
 ##' * `point="mode"` calls [modeest::mlv()], whose additional arguments can be
@@ -70,11 +72,10 @@
 ##'   Unlike any other `point=` options for `as.matrix()`, `"hdi"` returns two
 ##'   values per parameter: the lower and upper credible-interval limits.
 ##'   This affects how the output is formatted.
-##'
-##'   For `as.matrix()`, `point=` can also be a `numeric` value between 0 and 1
-##'   (inclusive), passed to [stats::quantile()] as the `probs=` argument;
+##' * `point=numeric(1)` between 0 and 1 (inclusive) is accepted by
+##'   `as.matrix()`, passed to [stats::quantile()] as the `probs=` argument;
 ##'   other arguments can be passed via `...`.
-##'   For the `summary()` method, multiple options can be passed, but must be
+##' * For the `summary()` method, multiple options can be passed, but must be
 ##'   `%in% c("mean", "median", "mode")` or set to `NULL` to avoid returning
 ##'   point estimates.
 ##'
@@ -93,9 +94,9 @@
 ##'   summary for the specified SRM parameter and level of analysis.
 ##' * `summary()` loops over `as.matrix()` to return a `list()` of potentially
 ##'   multiple summaries of potentially multiple SRM parameters and components.
-##' * `vcov()` provides the posterior covariance matrix of sampled parameters at
-##'   the requested level of analysis.  This is only useful for the 2-stage
-##'   estimation provided using [lavaan::lavaan()].
+##' * `vcov()` provides the posterior covariance matrix of sampled (co)variance
+##'   parameters at the requested level of analysis.  This is only useful for
+##'   the 2-stage estimation provided using [lavaan::lavaan()].
 ##'
 ##' @section Objects from the Class: See the [mvsrm()] function for details.
 ##'
@@ -570,7 +571,7 @@ vcov.mvSRM <- function(object, component, meanstructure = FALSE, ...) {
   stopifnot(component %in% c("group", "case", "dyad"))
 
   if (meanstructure) {
-    if (object@call$fixed.groups) stop('means not modeled when fixed.groups=TRUE')
+    if (isTRUE(object@call$fixed.groups)) stop('means not modeled when fixed.groups=TRUE')
     if (component != "group") stop('Means can only be modeled at the group level.')
   }
 
@@ -627,7 +628,7 @@ vcov.mvSRM <- function(object, component, meanstructure = FALSE, ...) {
 
   ## posterior variability
   if (meanstructure) {
-
+    #TODO
   }
   postVar <- lapply(SigmaList, function(x) {
     if (categorical) {
