@@ -96,6 +96,9 @@ fitting a multivariate social relations model (mvSRM; Nestler,
 \item{\code{call}}{A copy of the \code{call} to the \code{\link[=mvsrm]{mvsrm()}} function that generated
 the object.}
 
+\item{\code{nobs}}{A vector of group-level (when relevant), case-level, and
+dyad-level sample sizes.}
+
 \item{\code{IDs}}{\code{list} of \code{data.frame}s containing ID variables from data sets at
 each level of analysis.  Stored as integers with \code{\link[=attributes]{attributes()}} that are
 the original labels in the user's \verb{data=} (and optionally \verb{case_data=}

@@ -489,6 +489,7 @@ mvsrm <- function(data, rr.vars = NULL, IDout, IDin, #TODO: na.code = -9999L,
   ## add slots to construct mvSRM object
   fit      <- as(fit, "mvSRM")
   fit@call <- MC
+  fit@N    <- c(group = knowns$Ng, case = knowns$Np, dyad = knowns$Nd)
   fit@IDs  <- ID_slot
 
   fit@varNames <- list(RR    = rr.names,

@@ -19,6 +19,9 @@
 ##'
 ##' @slot call A copy of the `call` to the [mvsrm()] function that generated
 ##'   the object.
+##' @slot nobs A vector of group-level (when relevant), case-level, and
+##'   dyad-level sample sizes.
+#TODO: make case-level nested for blocks?  Can be random across RR groups...
 ##' @slot IDs `list` of `data.frame`s containing ID variables from data sets at
 ##'   each level of analysis.  Stored as integers with [attributes()] that are
 ##'   the original labels in the user's `data=` (and optionally `case_data=`
@@ -127,10 +130,11 @@
 ##' @importFrom methods setClass
 ##' @export
 setClass("mvSRM", contains = "stanfit",
-         slots = c(call     = "call",   # mvsrm() call
-                   IDs      = "list",   # ID variables in each level's data set
-                   varNames = "list",   # variable names at each level
-                   parNames = "list"))  # names of sets of estimated parameters
+         slots = c(call     = "call",    # mvsrm() call
+                   N        = "integer", # level-specific sample sizes
+                   IDs      = "list",    # ID variables in each level's data set
+                   varNames = "list",    # variable names at each level
+                   parNames = "list"))   # names of sets of estimated parameters
 
 
 
