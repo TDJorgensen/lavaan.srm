@@ -15,6 +15,7 @@ mvsrm(
   case_data = NULL,
   block = NULL,
   return_stan_data = FALSE,
+  return_stanfit = FALSE,
   saveComp = FALSE,
   ...
 )
@@ -71,6 +72,10 @@ Not used yet.}
 
 \item{return_stan_data}{\code{logical}. Set \code{TRUE} to return the list passed to
 \code{rstan::sampling(data=)}. Helpful for creating reprex when Stan fails.}
+
+\item{return_stanfit}{\code{logical}. Set \code{TRUE} to return the
+\code{\linkS4class{stanfit}}-class object, without making it a
+\code{\linkS4class{mvSRM}}-class object.}
 
 \item{saveComp}{\code{logical} indicating whether to save the posterior samples
 of group- (if relevant), case-, and dyad-level components of each variable

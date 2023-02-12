@@ -1,5 +1,5 @@
 ### Terrence D. Jorgensen
-### Last updated: 12 February 2023
+### Last updated: 13 February 2023
 ### Class and Methods for mvSRM object
 
 
@@ -633,6 +633,7 @@ vcov.mvSRM <- function(object, component, meanstructure = FALSE, ...) {
   ## posterior variability
   if (meanstructure) {
     #TODO
+
   }
   postVar <- lapply(SigmaList, function(x) {
     if (categorical) {
@@ -673,4 +674,7 @@ setMethod("vcov", "mvSRM", vcov.mvSRM)
 
 #TODO: as.lavMoments, or define inherting lavSRMoments class?
 #      or just stan2lavData(), no real benefit of publicizing class/methods
+
+#TODO: as.stanfit() to enable using stanfit-class methods
+
 

@@ -1,5 +1,5 @@
 ### Terrence D. Jorgensen
-### Last updated: 12 February 2023
+### Last updated: 13 February 2023
 ### function to implement Stage-1 of 2-stage SR-SEM estimator
 
 
@@ -58,6 +58,9 @@
 ##'   Not used yet.
 ##' @param return_stan_data `logical`. Set `TRUE` to return the list passed to
 ##'   `rstan::sampling(data=)`. Helpful for creating reprex when Stan fails.
+##' @param return_stanfit `logical`. Set `TRUE` to return the
+##'   \code{\linkS4class{stanfit}}-class object, without making it a
+##'   \code{\linkS4class{mvSRM}}-class object.
 ##' @param saveComp `logical` indicating whether to save the posterior samples
 ##'   of group- (if relevant), case-, and dyad-level components of each variable
 ##'   in `data=` (and decomposed `case_data=`, if relevant)
@@ -142,7 +145,7 @@
 mvsrm <- function(data, rr.vars = NULL, IDout, IDin, #TODO: na.code = -9999L,
                   IDgroup = NULL, fixed.groups = FALSE, group_data = NULL,
                   case_data = NULL, block = NULL, return_stan_data = FALSE,
-                  saveComp = FALSE, ...) {
+                  return_stanfit = FALSE, saveComp = FALSE, ...) {
   MC <- match.call(expand.dots = TRUE) # to store in mvSRM-class slot
 
   if (is.data.frame(data)) {
@@ -485,6 +488,8 @@ mvsrm <- function(data, rr.vars = NULL, IDout, IDin, #TODO: na.code = -9999L,
             'message as a "try-error" object (see ?try documentation)')
     return(fit)
   }
+
+  if (return_stanfit) return(fit)
 
   ## add slots to construct mvSRM object
   fit      <- as(fit, "mvSRM")
