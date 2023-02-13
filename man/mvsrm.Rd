@@ -93,7 +93,7 @@ Estimate a multivariate social relations model (mvSRM; Nestler,
 (Carpenter et al., \href{https://doi.org/10.18637/jss.v076.i01}{2017}) software.
 Stan uses MCMC estimation, enabling Bayesian inferential methods for SRM
 parameters.  In addition to extending the mvSRM with level-specific
-covariates (including the round-robin group-level of analysis), this result
+covariates (including the round-robin-group level of analysis), this result
 provides Stage-1 estimates to use as input for a 2-stage estimator of the
 social relations structural equation model (SR-SEM; Nestler et al.,
 \href{https://doi.org/10.1007/s11336-020-09728-z}{2020}).

@@ -23,12 +23,22 @@
 ##   case- and dyad-level components, so syntax blocks will be required, rather
 ##   than standard multigroup syntax (see [lavaan::Demo.twolevel()] for an
 ##   example of block syntax, but replace `level:` with `group:`).
+## @param keep,drop Variables to include (`keep=`) or exclude (`drop=`) from
+##   the result.  `drop=` is ignored when `keep=` is specified.  For case- or
+##   dyad-level variables, `keep`/`drop` can be any combination of the original
+##   names of round-robin variables passed to [mvsrm()] or the names of
+##   specific components, which include `c("out","in")` suffixes for case-level
+##   components or `c("ij","ji")` suffixes for dyad/relationship-level
+##   components.
 #TODO (if this becomes public): create a syntax example, verify blocks work
 ## @param ... Any [lavaan::lavOptions()] to be passed to [lavaan::lavaan()]
-srm2lavData <- function(object, component, point = "mean",
+srm2lavData <- function(object, component, point = "mean", keep, drop,
                         meanstructure = FALSE, lavData = NULL, ...) {
   stopifnot(inherits(object, "mvSRM"))
   categorical <- FALSE #TODO: specify threshold model in Stan
+  component <- tolower(component[1]) # one at a time
+
+
 
   COV <- summary.mvSRM(object, component = component, stat = "cov",
                        point = point, interval = NULL)[[component]]$cov[[point]]
@@ -40,7 +50,7 @@ srm2lavData <- function(object, component, point = "mean",
     M <- setNames(list(M), nm = component)
   } else M <- NULL
 
-  NACOV <- vcov.mvSRM(object, component = component,
+  NACOV <- vcov.mvSRM(object, component = component, keep = keep, drop = drop,
                       meanstructure = meanstructure)
   if (categorical) {
     #TODO: thresholds
@@ -52,6 +62,15 @@ srm2lavData <- function(object, component, point = "mean",
   }
   NACOV <- setNames(list(NACOV), nm = component)
 
+  ## apply keep/drop to sample.stats
+  if (!is.null(attr(NACOV, "subset"))) {
+    SUBSET <- attr(NACOV, "subset")
+    attr(NACOV, "subset") <- NULL
+
+    COV <- COV[SUBSET, SUBSET]
+    if (!is.null(M)) M <- M[SUBSET]
+    #TODO: thresholds
+  }
 
   if (is.null(lavData)) {
     ## make a new lavMoments object

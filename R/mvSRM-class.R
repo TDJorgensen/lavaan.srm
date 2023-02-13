@@ -90,6 +90,13 @@
 ##' @param meanstructure `logical` indicating whether the `vcov()` method
 ##'   includes posterior variability of the mean estimates (only when
 ##'   `component="group"`).
+##' @param keep,drop Variables to include (`keep=`) or exclude (`drop=`) from
+##'   the result.  `drop=` is ignored when `keep=` is specified.  For case- or
+##'   dyad-level variables, `keep`/`drop` can be any combination of the original
+##'   names of round-robin variables passed to [mvsrm()] or the names of
+##'   specific components, which include `c("out","in")` suffixes for case-level
+##'   components or `c("ij","ji")` suffixes for dyad/relationship-level
+##'   components.
 ##'
 ##' @return
 ##' * `show()` simply prints a message stating the class and inheritance.
@@ -564,11 +571,10 @@ as.matrix.mvSRM <- function(x, stat, component, point = "mean", ...) {
 setMethod("as.matrix", "mvSRM", as.matrix.mvSRM)
 
 
-#TODO: vcov method to assemble uncertainty?
-#      This might not be useful for users, just to make lavMoments.
-#      But could be used for Wald tests based on MCMC-estimated ACOV.
+
 ##' @importFrom stats cov
-vcov.mvSRM <- function(object, component, meanstructure = FALSE, ...) {
+vcov.mvSRM <- function(object, component, meanstructure = FALSE,
+                       keep, drop, add.names.attr = FALSE, ...) {
   categorical <- FALSE #TODO: add threshold models to stan scripts
   #TODO: robust options?  (e.g., Spearman rank cor, scaled by median abs dev)
   component <- tolower(component[1])
@@ -583,8 +589,27 @@ vcov.mvSRM <- function(object, component, meanstructure = FALSE, ...) {
     if (!any(object@parNames$sigma == "S_g"))
       stop('group level not modeled (IDgroup=NULL or fixed.groups=TRUE)')
 
-    NAMES <- names(object@varNames$RR)
     PARS <- c("S_g", "Rg")
+    NAMES <- names(object@varNames$RR) #TODO: add covariates
+
+    if (!missing(keep)) {
+      SUBSET <- intersect(keep, NAMES)
+      if (!length(SUBSET)) stop('keep=', keep, ' leaves no variables to return')
+    } else if (!missing(drop)) {
+      SUBSET <- setdiff(NAMES, drop)
+      if (!length(SUBSET)) stop('drop=', drop, ' leaves no variables to return')
+    } else SUBSET <- NAMES
+
+    if (meanstructure) {
+      MuSamples <- do.call(rbind, rstan::As.mcmc.list(object, pars = "Mvec"))
+      MuList <- apply(MuSamples, MARGIN = 1, FUN = function(m) {
+        Mvec <- setNames(numeric(length(NAMES)), nm = NAMES)
+        for (i in names(m)) eval(parse(text = paste(i, "<-", m[i]) ))
+        Mvec[SUBSET]
+      }, simplify = FALSE)
+
+    } else MuList <- NULL
+
 
   } else if (component == "case") {
 
@@ -592,11 +617,64 @@ vcov.mvSRM <- function(object, component, meanstructure = FALSE, ...) {
     NAMES <- paste(rep(names(object@varNames$RR), each = 2),
                    c("out","in"), sep = "_")
 
+    if (!missing(keep)) {
+      KEEP <- do.call(c, sapply(keep, function(k) {
+        if (k %in% names(object@varNames$RR)) {
+          return(paste0(k, c("_out", "_in")))
+        } else if (k %in% object@varNames$case) {
+          return(k)
+        }
+        NULL
+      }))
+      SUBSET <- intersect(KEEP, NAMES) #FIXME: necessary? KEEP should be SUBSET
+      if (!length(SUBSET)) stop('keep=', keep, ' leaves no variables to return')
+
+    } else if (!missing(drop)) {
+      DROP <- do.call(c, sapply(drop, function(d) {
+        if (d %in% names(object@varNames$RR)) {
+          return(paste0(d, c("_out", "_in")))
+        } else if (d %in% object@varNames$case) {
+          return(d)
+        }
+        NULL
+      }))
+      SUBSET <- setdiff(NAMES, DROP)
+      if (!length(SUBSET)) stop('drop=', drop, ' leaves no variables to return')
+
+    } else SUBSET <- NAMES
+
+
   } else if (component == "dyad") {
 
     PARS <- c("s_rr", "Rd2")
     NAMES <- paste(rep(names(object@varNames$RR), each = 2),
                    c("ij","ji"), sep = "_")
+
+    if (!missing(keep)) {
+      KEEP <- do.call(c, sapply(keep, function(k) {
+        if (k %in% names(object@varNames$RR)) {
+          return(paste0(k, c("_ij", "_ji")))
+        } else if (k %in% object@varNames$dyad) {
+          return(k)
+        }
+        NULL
+      }))
+      SUBSET <- intersect(KEEP, NAMES) #FIXME: necessary? KEEP should be SUBSET
+      if (!length(SUBSET)) stop('keep=', keep, ' leaves no variables to return')
+
+    } else if (!missing(drop)) {
+      DROP <- do.call(c, sapply(drop, function(d) {
+        if (d %in% names(object@varNames$RR)) {
+          return(paste0(d, c("_ij", "_ji")))
+        } else if (d %in% object@varNames$dyad) {
+          return(d)
+        }
+        NULL
+      }))
+      SUBSET <- setdiff(NAMES, DROP)
+      if (!length(SUBSET)) stop('drop=', drop, ' leaves no variables to return')
+
+    } else SUBSET <- NAMES
   }
 
 
@@ -606,7 +684,7 @@ vcov.mvSRM <- function(object, component, meanstructure = FALSE, ...) {
     assign(PARS[2], matrix(0, nrow = length(NAMES), ncol = length(NAMES),
                            dimnames = list(NAMES, NAMES)))
     for (i in names(m)) eval(parse(text = paste(i, "<-", m[i]) ))
-    return( eval(as.name(PARS[2])) )
+    return( eval(as.name(PARS[2]))[SUBSET, SUBSET] )
   }, simplify = FALSE)
 
   ## store SDs in a diagonal matrix (per posterior sample)
@@ -623,7 +701,7 @@ vcov.mvSRM <- function(object, component, meanstructure = FALSE, ...) {
     } else SD <- diag( eval(as.name(PARS[1])) )
 
     dimnames(SD) <- list(NAMES, NAMES)
-    SD
+    SD[SUBSET, SUBSET]
   }, simplify = FALSE)
 
   ## scale correlations to covariance matrices
@@ -633,26 +711,28 @@ vcov.mvSRM <- function(object, component, meanstructure = FALSE, ...) {
   ## posterior variability
   if (meanstructure) {
     #TODO
+    MuList
+  } else MuList = NULL
 
-  }
-  postVar <- lapply(SigmaList, function(x) {
+  postVar <- mapply(function(S, M = NULL) {
     if (categorical) {
-      wls.obs <- c(NULL, # 1. interleaved thresholds + (negative) means, if any
+      wls.obs <- c(M, # 1. interleaved thresholds + (negative) means, if any
                    # 2. slopes (if any)
                    # 3. variances (of continuous variables, if any)
-                   as.numeric(diag(x)),
+                   as.numeric(diag(S)),
                    # 4. lower.tri covariances/correlations
-                   lavaan::lav_matrix_vech(x, diagonal = FALSE))
+                   lavaan::lav_matrix_vech(S, diagonal = FALSE))
     } else {
-       wls.obs <- c(NULL, # 1. means (if any)
+       wls.obs <- c(M, # 1. means (if any)
                     # 2. slopes (if any)
                     # 3. lower.tri (co)variance matrix
-                    lavaan::lav_matrix_vech(x, diagonal = TRUE))
+                    lavaan::lav_matrix_vech(S, diagonal = TRUE))
     }
     wls.obs
-  })
+  }, S = SigmaList, M = MuList)
   NACOV <- (length(SigmaList) - 1L) * cov(do.call(rbind, postVar))
   class(NACOV) <- c("lavaan.matrix.symmetric", "matrix", "array")
+  if (add.names.attr) attr(NACOV, "subset") <- SUBSET
   NACOV
 }
 ##' @name mvSRM-class
@@ -669,11 +749,10 @@ setMethod("vcov", "mvSRM", vcov.mvSRM)
 #      fitted fitted.values
 #      coef = call as.matrix(..., point = c("mean","median","mode"))
 #      confint = central or HDI
-#      vcov = (N)ACOV
 
 
 #TODO: as.lavMoments, or define inherting lavSRMoments class?
-#      or just stan2lavData(), no real benefit of publicizing class/methods
+#      or just srm2lavData(), no real benefit of publicizing class/methods
 
 #TODO: as.stanfit() to enable using stanfit-class methods
 

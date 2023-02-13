@@ -23,7 +23,15 @@
 
 \S4method{as.matrix}{mvSRM}(x, stat, component, point = "mean", ...)
 
-\S4method{vcov}{mvSRM}(object, component, meanstructure = FALSE, ...)
+\S4method{vcov}{mvSRM}(
+  object,
+  component,
+  meanstructure = FALSE,
+  keep,
+  drop,
+  add.names.attr = FALSE,
+  ...
+)
 }
 \arguments{
 \item{object, x}{An object of class \code{mvSRM}}
@@ -71,6 +79,14 @@ interval estimate.  Can be \verb{\%in\% c("central", "hdi")} or set to
 \item{meanstructure}{\code{logical} indicating whether the \code{vcov()} method
 includes posterior variability of the mean estimates (only when
 \code{component="group"}).}
+
+\item{keep, drop}{Variables to include (\verb{keep=}) or exclude (\verb{drop=}) from
+the result.  \verb{drop=} is ignored when \verb{keep=} is specified.  For case- or
+dyad-level variables, \code{keep}/\code{drop} can be any combination of the original
+names of round-robin variables passed to \code{\link[=mvsrm]{mvsrm()}} or the names of
+specific components, which include \code{c("out","in")} suffixes for case-level
+components or \code{c("ij","ji")} suffixes for dyad/relationship-level
+components.}
 }
 \value{
 \itemize{
