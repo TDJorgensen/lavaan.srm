@@ -709,11 +709,6 @@ vcov.mvSRM <- function(object, component, meanstructure = FALSE,
                       R = corList, S = sdList, SIMPLIFY = FALSE)
 
   ## posterior variability
-  if (meanstructure) {
-    #TODO
-    MuList
-  } else MuList = NULL
-
   postVar <- mapply(function(S, M = NULL) {
     if (categorical) {
       wls.obs <- c(M, # 1. interleaved thresholds + (negative) means, if any
@@ -730,9 +725,10 @@ vcov.mvSRM <- function(object, component, meanstructure = FALSE,
     }
     wls.obs
   }, S = SigmaList, M = MuList)
-  NACOV <- (length(SigmaList) - 1L) * cov(do.call(rbind, postVar))
+  #FIXME: multiply ACOV by N instead of N-1 ?
+  NACOV <- (object@N[[component]] - 1L) * cov(do.call(rbind, postVar))
   class(NACOV) <- c("lavaan.matrix.symmetric", "matrix", "array")
-  if (add.names.attr) attr(NACOV, "subset") <- SUBSET
+  if (add.names.attr) attr(NACOV, "subset") <- SUBSET # used in srm2lavData()
   NACOV
 }
 ##' @name mvSRM-class
