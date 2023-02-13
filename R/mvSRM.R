@@ -10,7 +10,7 @@
 ##' (Carpenter et al., [2017](https://doi.org/10.18637/jss.v076.i01)) software.
 ##' Stan uses MCMC estimation, enabling Bayesian inferential methods for SRM
 ##' parameters.  In addition to extending the mvSRM with level-specific
-##' covariates (including the round-robin group-level of analysis), this result
+##' covariates (including the round-robin-group level of analysis), this result
 ##' provides Stage-1 estimates to use as input for a 2-stage estimator of the
 ##' social relations structural equation model (SR-SEM; Nestler et al.,
 ##' [2020](https://doi.org/10.1007/s11336-020-09728-z)).
@@ -499,9 +499,12 @@ mvsrm <- function(data, rr.vars = NULL, IDout, IDin, #TODO: na.code = -9999L,
 
   fit@varNames <- list(RR    = rr.names,
                        dyad  = dyad_constant_vars,
-                       case  = colnames(case_data[, -1:ifelse(is.null(IDgroup),
-                                                              -1, -2)]),
-                       group = colnames(group_data[, -1]))
+                       case  = c(paste0(rep(names(rr.names), each = 2),
+                                        c("_out", "_in")),
+                                 colnames(case_data[, -1:ifelse(is.null(IDgroup),
+                                                                -1, -2)])),
+                       group = c(colnames(group_data[, -1])))
+  if ("S_g" %in% sigma) fit@varNames$group <- c(names(rr.names), fit@varNames$group)
 
   fit@parNames <- list(mu      = mu,
                        sigma   = sigma,
