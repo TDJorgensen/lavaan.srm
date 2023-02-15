@@ -31,9 +31,8 @@
 ##   components or `c("ij","ji")` suffixes for dyad/relationship-level
 ##   components.
 #TODO (if this becomes public): create a syntax example, verify blocks work
-## @param ... Any [lavaan::lavOptions()] to be passed to [lavaan::lavaan()]
 srm2lavData <- function(object, component, point = "mean", keep, drop,
-                        meanstructure = FALSE, lavData = NULL, ...) {
+                        meanstructure = FALSE, lavData = NULL) {
   stopifnot(inherits(object, "mvSRM"))
   categorical <- FALSE #TODO: specify threshold model in Stan
   component <- tolower(component[1]) # one at a time
@@ -63,12 +62,12 @@ srm2lavData <- function(object, component, point = "mean", keep, drop,
   NACOV <- setNames(list(NACOV), nm = component)
 
   ## apply keep/drop to sample.stats
-  if (!is.null(attr(NACOV, "subset"))) {
-    SUBSET <- attr(NACOV, "subset")
-    attr(NACOV, "subset") <- NULL
+  if (!is.null(attr(NACOV[[component]], "subset"))) {
+    SUBSET  <- attr(NACOV[[component]], "subset")
+    attr(NACOV[[component]], "subset") <- NULL
 
-    COV <- COV[SUBSET, SUBSET]
-    if (!is.null(M)) M <- M[SUBSET]
+    COV[[component]] <- COV[[component]][SUBSET, SUBSET]
+    if (!is.null(M)) M[[component]] <- M[[component]][SUBSET]
     #TODO: thresholds
   }
 
