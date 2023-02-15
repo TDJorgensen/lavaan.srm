@@ -1,5 +1,5 @@
 ### Terrence D. Jorgensen
-### Last updated: 13 February 2023
+### Last updated: 15 February 2023
 ### Class and Methods for mvSRM object
 
 
@@ -138,7 +138,7 @@
 ##' @export
 setClass("mvSRM", contains = "stanfit",
          slots = c(call     = "call",    # mvsrm() call
-                   N        = "integer", # level-specific sample sizes
+                   nobs     = "integer", # level-specific sample sizes
                    IDs      = "list",    # ID variables in each level's data set
                    varNames = "list",    # variable names at each level
                    parNames = "list"))   # names of sets of estimated parameters
@@ -608,7 +608,7 @@ vcov.mvSRM <- function(object, component, meanstructure = FALSE,
         Mvec[SUBSET]
       }, simplify = FALSE)
 
-    } else MuList <- NULL
+    }
 
 
   } else if (component == "case") {
@@ -708,6 +708,7 @@ vcov.mvSRM <- function(object, component, meanstructure = FALSE,
   SigmaList <- mapply(function(R, SD) SD %*% R %*% SD,
                       R = corList, S = sdList, SIMPLIFY = FALSE)
 
+  if (!exists("MuList")) MuList <- list(NULL)
   ## posterior variability
   postVar <- mapply(function(S, M = NULL) {
     if (categorical) {
@@ -724,9 +725,9 @@ vcov.mvSRM <- function(object, component, meanstructure = FALSE,
                     lavaan::lav_matrix_vech(S, diagonal = TRUE))
     }
     wls.obs
-  }, S = SigmaList, M = MuList)
+  }, S = SigmaList, M = MuList, SIMPLIFY = FALSE)
   #FIXME: multiply ACOV by N instead of N-1 ?
-  NACOV <- (object@N[[component]] - 1L) * cov(do.call(rbind, postVar))
+  NACOV <- (object@nobs[[component]] - 1L) * cov(do.call(rbind, postVar))
   class(NACOV) <- c("lavaan.matrix.symmetric", "matrix", "array")
   if (add.names.attr) attr(NACOV, "subset") <- SUBSET # used in srm2lavData()
   NACOV

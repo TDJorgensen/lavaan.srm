@@ -1,5 +1,5 @@
 ### Terrence D. Jorgensen
-### Last updated: 13 February 2023
+### Last updated: 15 February 2023
 ### (currently hidden) function to create a lavMoments-class object
 ### from a mvSRM-class object (inherits from stanfit-class)
 
@@ -75,7 +75,7 @@ srm2lavData <- function(object, component, point = "mean", keep, drop,
     ## make a new lavMoments object
     out <- list(sample.cov  = COV,
                 sample.mean = M,
-                sample.nobs = object@N[component],
+                sample.nobs = object@nobs[component],
                 NACOV       = NACOV)
     if (categorical) {
       #TODO: thresholds
@@ -89,7 +89,7 @@ srm2lavData <- function(object, component, point = "mean", keep, drop,
 
     out$sample.cov  <- c(out$sample.cov ,  COV )
     out$sample.mean <- c(out$sample.mean,   M  )
-    out$sample.nobs <- c(out$sample.nobs, object@N[component])
+    out$sample.nobs <- c(out$sample.nobs, object@nobs[component])
     out$NACOV       <- c(out$NACOV      , NACOV)
 
     if (categorical) {

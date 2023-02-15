@@ -150,7 +150,7 @@ lavaan.srm <- function(model, data, point = "mean", ...) {
 
   ## fit target model
   fit <- lavaan(model, data = srmMoments, ...)
-  return(fit)
+
   ## fit additional models?
   if (inherits(data, "lavMoments")) {
     warning('Cannot automatically specify h1 or baseline model unless ',
