@@ -1,5 +1,5 @@
 ### Terrence D. Jorgensen
-### Last updated: 13 February 2023
+### Last updated: 15 February 2023
 ### pass model, lavMoments, and other arguments to lavaan()
 
 
@@ -24,12 +24,98 @@
 ##' @return An object of `class?lavaan`.
 ##'
 ##'
+##' @seealso \code{\linkS4class{mvSRM}}
+##' @examples
+##'
+##'
+##' \dontrun{
+##'
+##' ## STAGE 1: Estimate the multivariate SRM
+##'
+##'
+##' ## use example data from the ?srm::srm help page
+##' data(data.srm01, package="srm")
+##' ## do NOT use the same case-level IDs across groups
+##' data.srm01$egoID   <- paste(data.srm01$Group, data.srm01$Actor  , sep = "_")
+##' data.srm01$alterID <- paste(data.srm01$Group, data.srm01$Partner, sep = "_")
+##'
+##' srmOut <- mvsrm(data = data.srm01, rr.vars = paste0("Wert", 1:3),
+##'                 IDout = "egoID", IDin = "alterID", IDgroup = "Group",
+##'                 ## rstan::sampling() arguments to run this quickly
+##'                 chains = 2, iter = 20, seed = 12345,
+##'                 cores = ifelse(parallel::detectCores() < 3L, 1L, 2L))
+##'
+##'
+##' ## STAGE 2: Specify and fit an SEM
+##'
+##'
+##' ## specify PERSON-level model
+##' modP <- ' ## factor loadings
+##'   f1_out =~ Wert1_out + Wert2_out + Wert3_out
+##'   f1_in  =~ Wert1_in  + Wert2_in  + Wert3_in
+##'
+##' ## correlated residuals
+##'   Wert1_out ~~ Wert1_in
+##'   Wert2_out ~~ Wert2_in
+##'   Wert3_out ~~ Wert3_in
+##' '
+##'
+##' ## fit CFA to PERSON-level components,
+##' ## using mvSRM-class object (Stage 1) as input data
+##' fitP <- lavaan.srm(modP, data = srmOut, # more arguments passed to lavaan()
+##'                    std.lv = TRUE, auto.var = TRUE, auto.cov.lv.x = TRUE)
+##' ## fitP is a lavaan-class object, so any lavaan function is available
+##' summary(fitP, std = TRUE, rsq = TRUE) # only use Browne's residual-based test
+##'
+##'
+##'
+##' ## specify DYAD-level model
+##' modD <- ' # equal loadings
+##'   f1_ij =~ L1*Wert1_ij + L2*Wert2_ij + L3*Wert3_ij
+##'   f1_ji =~ L1*Wert1_ji + L2*Wert2_ji + L3*Wert3_ji
+##'
+##' ## equal variances
+##'   f1_ij ~~ phi*f1_ij
+##'   f1_ji ~~ phi*f1_ji
+##'
+##'   Wert1_ij ~~ v1*Wert1_ij
+##'   Wert2_ij ~~ v2*Wert2_ij
+##'   Wert3_ij ~~ v3*Wert3_ij
+##'
+##'   Wert1_ji ~~ v1*Wert1_ji
+##'   Wert2_ji ~~ v2*Wert2_ji
+##'   Wert3_ji ~~ v3*Wert3_ji
+##'
+##' ## correlated residuals
+##'   Wert1_ij ~~ Wert1_ji
+##'   Wert2_ij ~~ Wert2_ji
+##'   Wert3_ij ~~ Wert3_ji
+##' '
+##'
+##' ## fit CFA to DYAD-level components,
+##' ## using mvSRM-class object (Stage 1) as input data
+##' fitD <- lavaan.srm(modD, data = srmOut, # more arguments passed to lavaan()
+##'                    std.lv = TRUE, auto.var = TRUE, auto.cov.lv.x = TRUE)
+##' summary(fitD, std = TRUE, rsq = TRUE)
+##'
+##'
+#TODO: model both at once
+##' }
+##'
+##'
 ##'
 ##' @importFrom lavaan lavaan lavParseModelString lavInspect
 ##' @export
 lavaan.srm <- function(model, data, point = "mean", ...) {
   MC <- match.call(expand.dots = TRUE) # to overwrite lavaan's default @call
   dots <- list(...)
+
+  ## lavOptions that can be passed to lavParseModelString()
+  WARN  <- dots$WARN
+  DEBUG <- dots$debug
+  ## if NULL, restore defaults
+  if (is.null(WARN))  WARN  <- formals(lavParseModelString)$warn
+  if (is.null(DEBUG)) DEBUG <- formals(lavParseModelString)$debug
 
   ## make template parTable to extract variable names
   if (is.character(model)) {
@@ -82,13 +168,6 @@ lavaan.srm <- function(model, data, point = "mean", ...) {
 
   } else if (inherits(data, "mvSRM")) {
     ## must create a lavMoments object
-
-    ## lavOptions that can be passed to lavParseModelString()
-    WARN  <- dots$WARN
-    DEBUG <- dots$debug
-    ## if NULL, restore defaults
-    if (is.null(WARN))  WARN  <- formals(lavParseModelString)$warn
-    if (is.null(DEBUG)) DEBUG <- formals(lavParseModelString)$debug
 
     ## check for group-level variables
     ov.group <- intersect(lavars, data@varNames$group)

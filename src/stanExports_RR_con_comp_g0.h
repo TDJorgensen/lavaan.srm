@@ -33,11 +33,15 @@ static int current_statement_begin__;
 stan::io::program_reader prog_reader__() {
     stan::io::program_reader reader;
     reader.add_event(0, 0, "start", "model_RR_con_comp_g0");
-    reader.add_event(183, 183, "include", "/include/license.stan");
-    reader.add_event(183, 0, "start", "/include/license.stan");
-    reader.add_event(197, 14, "end", "/include/license.stan");
-    reader.add_event(197, 184, "restart", "model_RR_con_comp_g0");
-    reader.add_event(199, 184, "end", "model_RR_con_comp_g0");
+    reader.add_event(159, 159, "include", "/OneGroup/OneGroup_Rsq.stan");
+    reader.add_event(159, 0, "start", "/OneGroup/OneGroup_Rsq.stan");
+    reader.add_event(179, 20, "end", "/OneGroup/OneGroup_Rsq.stan");
+    reader.add_event(179, 160, "restart", "model_RR_con_comp_g0");
+    reader.add_event(187, 168, "include", "/include/license.stan");
+    reader.add_event(187, 0, "start", "/include/license.stan");
+    reader.add_event(201, 14, "end", "/include/license.stan");
+    reader.add_event(201, 169, "restart", "model_RR_con_comp_g0");
+    reader.add_event(203, 169, "end", "model_RR_con_comp_g0");
     return reader;
 }
 #include <stan_meta_header.hpp>
@@ -1072,7 +1076,7 @@ public:
             Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> Rp((2 * Kd2), (2 * Kd2));
             stan::math::initialize(Rp, DUMMY_VAR__);
             stan::math::fill(Rp, DUMMY_VAR__);
-            current_statement_begin__ = 159;
+            current_statement_begin__ = 162;
             validate_non_negative_index("Rsq", "Kd2", Kd2);
             validate_non_negative_index("Rsq", "3", 3);
             Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> Rsq(Kd2, 3);
@@ -1080,49 +1084,49 @@ public:
             stan::math::fill(Rsq, DUMMY_VAR__);
             // generated quantities statements
             {
-            current_statement_begin__ = 163;
+            current_statement_begin__ = 166;
             validate_non_negative_index("vars", "Kd2", Kd2);
             validate_non_negative_index("vars", "3", 3);
             Eigen::Matrix<local_scalar_t__, Eigen::Dynamic, Eigen::Dynamic> vars(Kd2, 3);
             stan::math::initialize(vars, DUMMY_VAR__);
             stan::math::fill(vars, DUMMY_VAR__);
-            current_statement_begin__ = 164;
+            current_statement_begin__ = 167;
             validate_non_negative_index("totals", "Kd2", Kd2);
             Eigen::Matrix<local_scalar_t__, Eigen::Dynamic, 1> totals(Kd2);
             stan::math::initialize(totals, DUMMY_VAR__);
             stan::math::fill(totals, DUMMY_VAR__);
-            current_statement_begin__ = 166;
+            current_statement_begin__ = 169;
             for (int k = 1; k <= Kd2; ++k) {
-                current_statement_begin__ = 167;
+                current_statement_begin__ = 170;
                 stan::model::assign(vars, 
                             stan::model::cons_list(stan::model::index_uni(k), stan::model::cons_list(stan::model::index_uni(1), stan::model::nil_index_list())), 
                             square(get_base1(S_p, ((2 * k) - 1), "S_p", 1)), 
                             "assigning variable vars");
-                current_statement_begin__ = 168;
+                current_statement_begin__ = 171;
                 stan::model::assign(vars, 
                             stan::model::cons_list(stan::model::index_uni(k), stan::model::cons_list(stan::model::index_uni(2), stan::model::nil_index_list())), 
                             square(get_base1(S_p, (2 * k), "S_p", 1)), 
                             "assigning variable vars");
-                current_statement_begin__ = 169;
+                current_statement_begin__ = 172;
                 stan::model::assign(vars, 
                             stan::model::cons_list(stan::model::index_uni(k), stan::model::cons_list(stan::model::index_uni(3), stan::model::nil_index_list())), 
                             square(get_base1(s_rr, k, "s_rr", 1)), 
                             "assigning variable vars");
-                current_statement_begin__ = 171;
+                current_statement_begin__ = 174;
                 stan::model::assign(totals, 
                             stan::model::cons_list(stan::model::index_uni(k), stan::model::nil_index_list()), 
                             sum(stan::model::rvalue(vars, stan::model::cons_list(stan::model::index_uni(k), stan::model::cons_list(stan::model::index_omni(), stan::model::nil_index_list())), "vars")), 
                             "assigning variable totals");
-                current_statement_begin__ = 172;
+                current_statement_begin__ = 175;
                 stan::model::assign(Rsq, 
                             stan::model::cons_list(stan::model::index_uni(k), stan::model::cons_list(stan::model::index_omni(), stan::model::nil_index_list())), 
                             elt_divide(stan::model::rvalue(vars, stan::model::cons_list(stan::model::index_uni(k), stan::model::cons_list(stan::model::index_omni(), stan::model::nil_index_list())), "vars"), get_base1(totals, k, "totals", 1)), 
                             "assigning variable Rsq");
             }
             }
-            current_statement_begin__ = 178;
+            current_statement_begin__ = 182;
             stan::math::assign(Yd2e, subtract(Yd2, Mu_d));
-            current_statement_begin__ = 181;
+            current_statement_begin__ = 185;
             stan::math::assign(Rp, multiply_lower_tri_self_transpose(chol_p));
             // validate, write generated quantities
             current_statement_begin__ = 157;
@@ -1141,7 +1145,7 @@ public:
                     vars__.push_back(Rp(j_1__, j_2__));
                 }
             }
-            current_statement_begin__ = 159;
+            current_statement_begin__ = 162;
             size_t Rsq_j_2_max__ = 3;
             size_t Rsq_j_1_max__ = Kd2;
             for (size_t j_2__ = 0; j_2__ < Rsq_j_2_max__; ++j_2__) {

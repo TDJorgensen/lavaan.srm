@@ -625,7 +625,7 @@ vcov.mvSRM <- function(object, component, meanstructure = FALSE,
           return(k)
         }
         NULL
-      }))
+      }, simplify = FALSE))
       SUBSET <- intersect(KEEP, NAMES) #FIXME: necessary? KEEP should be SUBSET
       if (!length(SUBSET)) stop('keep=', keep, ' leaves no variables to return')
 
@@ -637,7 +637,7 @@ vcov.mvSRM <- function(object, component, meanstructure = FALSE,
           return(d)
         }
         NULL
-      }))
+      }, simplify = FALSE))
       SUBSET <- setdiff(NAMES, DROP)
       if (!length(SUBSET)) stop('drop=', drop, ' leaves no variables to return')
 
@@ -654,11 +654,11 @@ vcov.mvSRM <- function(object, component, meanstructure = FALSE,
       KEEP <- do.call(c, sapply(keep, function(k) {
         if (k %in% names(object@varNames$RR)) {
           return(paste0(k, c("_ij", "_ji")))
-        } else if (k %in% object@varNames$dyad) {
+        } else if (k %in% do.call(c, object@varNames$RR)) {
           return(k)
         }
         NULL
-      }))
+      }, simplify = FALSE))
       SUBSET <- intersect(KEEP, NAMES) #FIXME: necessary? KEEP should be SUBSET
       if (!length(SUBSET)) stop('keep=', keep, ' leaves no variables to return')
 
@@ -666,11 +666,11 @@ vcov.mvSRM <- function(object, component, meanstructure = FALSE,
       DROP <- do.call(c, sapply(drop, function(d) {
         if (d %in% names(object@varNames$RR)) {
           return(paste0(d, c("_ij", "_ji")))
-        } else if (d %in% object@varNames$dyad) {
+        } else if (d %in% do.call(c, object@varNames$RR)) {
           return(d)
         }
         NULL
-      }))
+      }, simplify = FALSE))
       SUBSET <- setdiff(NAMES, DROP)
       if (!length(SUBSET)) stop('drop=', drop, ' leaves no variables to return')
 
