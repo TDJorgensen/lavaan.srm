@@ -99,7 +99,49 @@
 ##' summary(fitD, std = TRUE, rsq = TRUE)
 ##'
 ##'
-#TODO: model both at once
+##'
+##' ## Simultaneously specifying BOTH person & dyad-level models
+##' ## requires block-structured syntax, analogous to multilevel SEM
+##'
+##' modPD <- ' group: 1   # why does "group: case" not work?
+##'   f1_out =~ Wert1_out + Wert2_out + Wert3_out
+##'   f1_in  =~ Wert1_in  + Wert2_in  + Wert3_in
+##'
+##' ## correlated residuals
+##'   Wert1_out ~~ Wert1_in
+##'   Wert2_out ~~ Wert2_in
+##'   Wert3_out ~~ Wert3_in
+##'
+##' group: 2   # why does "group: dyad" not work?
+##'
+##'   f1_ij =~ L1*Wert1_ij + L2*Wert2_ij + L3*Wert3_ij
+##'   f1_ji =~ L1*Wert1_ji + L2*Wert2_ji + L3*Wert3_ji
+##'
+##' ## equal variances
+##'   f1_ij ~~ phi*f1_ij
+##'   f1_ji ~~ phi*f1_ji
+##'
+##'   Wert1_ij ~~ v1*Wert1_ij
+##'   Wert2_ij ~~ v2*Wert2_ij
+##'   Wert3_ij ~~ v3*Wert3_ij
+##'
+##'   Wert1_ji ~~ v1*Wert1_ji
+##'   Wert2_ji ~~ v2*Wert2_ji
+##'   Wert3_ji ~~ v3*Wert3_ji
+##'
+##' ## correlated residuals
+##'   Wert1_ij ~~ Wert1_ji
+##'   Wert2_ij ~~ Wert2_ji
+##'   Wert3_ij ~~ Wert3_ji
+##' '
+##'
+##' fitPD <- lavaan.srm(modPD, data = srmOut, # more arguments passed to lavaan()
+##'                     std.lv = TRUE, auto.var = TRUE, auto.cov.lv.x = TRUE)
+##'
+##'
+##' summary(fitPD, std = TRUE, rsq = TRUE)
+##'
+##'
 ##' }
 ##'
 ##'
