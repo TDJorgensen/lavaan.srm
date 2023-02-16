@@ -1,5 +1,5 @@
 ### Terrence D. Jorgensen
-### Last updated: 15 February 2023
+### Last updated: 16 February 2023
 ### pass model, lavMoments, and other arguments to lavaan()
 
 
@@ -93,24 +93,30 @@
 ##' '
 ##'
 ##' ## fit CFA to DYAD-level components,
-##' ## using mvSRM-class object (Stage 1) as input data
-##' fitD <- lavaan.srm(modD, data = srmOut, # more arguments passed to lavaan()
-##'                    std.lv = TRUE, auto.var = TRUE, auto.cov.lv.x = TRUE)
+##' ## using wrapper analogous to lavaan::cfa()
+##' fitD <- cfa.srm(modD, data = srmOut, std.lv = TRUE)
 ##' summary(fitD, std = TRUE, rsq = TRUE)
 ##'
 ##'
 ##'
 ##' ## Simultaneously specifying BOTH person & dyad-level models
-##' ## requires block-structured syntax, analogous to multilevel SEM
+##' ## requires block-structured syntax, analogous to multilevel SEM.
 ##'
+##' ## specify a model with cross-level measurement equivalence
 ##' modPD <- ' group: 1   # why does "group: case" not work?
-##'   f1_out =~ Wert1_out + Wert2_out + Wert3_out
-##'   f1_in  =~ Wert1_in  + Wert2_in  + Wert3_in
+##'
+##'   f1_out =~ L1*Wert1_out + L2*Wert2_out + L3*Wert3_out
+##'   f1_in  =~ L1*Wert1_in  + L2*Wert2_in  + L3*Wert3_in
 ##'
 ##' ## correlated residuals
 ##'   Wert1_out ~~ Wert1_in
 ##'   Wert2_out ~~ Wert2_in
 ##'   Wert3_out ~~ Wert3_in
+##'
+##' ## free factor variances (use dyad-level = 1 as reference "group")
+##'   f1_out ~~ var_perceiver*f1_out
+##'   f1_in  ~~ var_target*f1_in
+##'
 ##'
 ##' group: 2   # why does "group: dyad" not work?
 ##'
@@ -118,8 +124,8 @@
 ##'   f1_ji =~ L1*Wert1_ji + L2*Wert2_ji + L3*Wert3_ji
 ##'
 ##' ## equal variances
-##'   f1_ij ~~ phi*f1_ij
-##'   f1_ji ~~ phi*f1_ji
+##'   f1_ij ~~ var_relationship*f1_ij
+##'   f1_ji ~~ var_relationship*f1_ji
 ##'
 ##'   Wert1_ij ~~ v1*Wert1_ij
 ##'   Wert2_ij ~~ v2*Wert2_ij
@@ -133,11 +139,14 @@
 ##'   Wert1_ij ~~ Wert1_ji
 ##'   Wert2_ij ~~ Wert2_ji
 ##'   Wert3_ij ~~ Wert3_ji
+##'
+##'
+##' ## Identification constraint: Sum of factor variances == 1
+##'   var_relationship == 1 - (var_perceiver + var_target)
+##' ## Thus, each estimated variance == proportion of total (ICC)
 ##' '
 ##'
-##' fitPD <- lavaan.srm(modPD, data = srmOut, # more arguments passed to lavaan()
-##'                     std.lv = TRUE, auto.var = TRUE, auto.cov.lv.x = TRUE)
-##'
+##' fitPD <- lavaan.srm(modPD, data = srmOut, auto.var = TRUE, auto.cov.lv.x = TRUE)
 ##'
 ##' summary(fitPD, std = TRUE, rsq = TRUE)
 ##'
@@ -146,7 +155,7 @@
 ##'
 ##'
 ##'
-##' @importFrom lavaan lavaan lavParseModelString lavInspect
+##' @importFrom lavaan lavaan cfa sem lavParseModelString lavInspect
 ##' @export
 lavaan.srm <- function(model, data, point = "mean", ...) {
   MC <- match.call(expand.dots = TRUE) # to overwrite lavaan's default @call
@@ -270,7 +279,20 @@ lavaan.srm <- function(model, data, point = "mean", ...) {
 
 
   ## fit target model
-  fit <- lavaan(model, data = srmMoments, ...)
+  if (is.null(MC$model.type)) {
+    fit <- lavaan(model, data = srmMoments, ...)
+  } else if (MC$model.type == "sem") {
+    fit <- sem(model, data = srmMoments, ...)
+  } else if (MC$model.type == "cfa") {
+    fit <- cfa(model, data = srmMoments, ...)
+  } else if (MC$model.type == "growth") {
+    ## not supported, only realistic for group-level model
+    ## burden is fully on the user to specify model.syntax for lavaan()
+    fit <- lavaan(model, data = srmMoments, ...)
+  }
+  ## overwrite lavaan's default @call
+  fit@call <- MC #FIXME: does this cause problems in lavaan?
+
 
   ## fit additional models?
   if (inherits(data, "lavMoments")) {
@@ -373,3 +395,24 @@ lavaan.srm <- function(model, data, point = "mean", ...) {
 
   fit
 }
+
+
+##' @rdname lavaan.srm
+##' @export
+cfa.srm <- function(model, data, point = "mean", ...) {
+  mc <- match.call(expand.dots = TRUE)
+  mc$model.type <- "cfa"
+  mc[[1L]] <- quote(lavaan.srm::lavaan.srm)
+  eval(mc, parent.frame())
+}
+
+##' @rdname lavaan.srm
+##' @export
+sem.srm <- function(model, data, point = "mean", ...) {
+  mc <- match.call(expand.dots = TRUE)
+  mc$model.type <- "sem"
+  mc[[1L]] <- quote(lavaan.srm::lavaan.srm)
+  eval(mc, parent.frame())
+}
+
+

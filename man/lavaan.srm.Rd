@@ -2,9 +2,15 @@
 % Please edit documentation in R/lavaan.R
 \name{lavaan.srm}
 \alias{lavaan.srm}
+\alias{cfa.srm}
+\alias{sem.srm}
 \title{Fit a \code{lavaan} Model to Multivariate SRM Results}
 \usage{
 lavaan.srm(model, data, point = "mean", ...)
+
+cfa.srm(model, data, point = "mean", ...)
+
+sem.srm(model, data, point = "mean", ...)
 }
 \arguments{
 \item{model}{\code{character} specifying an SEM.  See \code{\link[lavaan:model.syntax]{lavaan::model.syntax()}}.}
@@ -92,24 +98,30 @@ modD <- ' # equal loadings
 '
 
 ## fit CFA to DYAD-level components,
-## using mvSRM-class object (Stage 1) as input data
-fitD <- lavaan.srm(modD, data = srmOut, # more arguments passed to lavaan()
-                   std.lv = TRUE, auto.var = TRUE, auto.cov.lv.x = TRUE)
+## using wrapper analogous to lavaan::cfa()
+fitD <- cfa.srm(modD, data = srmOut, std.lv = TRUE)
 summary(fitD, std = TRUE, rsq = TRUE)
 
 
 
 ## Simultaneously specifying BOTH person & dyad-level models
-## requires block-structured syntax, analogous to multilevel SEM
+## requires block-structured syntax, analogous to multilevel SEM.
 
+## specify a model with cross-level measurement equivalence
 modPD <- ' group: 1   # why does "group: case" not work?
-  f1_out =~ Wert1_out + Wert2_out + Wert3_out
-  f1_in  =~ Wert1_in  + Wert2_in  + Wert3_in
+
+  f1_out =~ L1*Wert1_out + L2*Wert2_out + L3*Wert3_out
+  f1_in  =~ L1*Wert1_in  + L2*Wert2_in  + L3*Wert3_in
 
 ## correlated residuals
   Wert1_out ~~ Wert1_in
   Wert2_out ~~ Wert2_in
   Wert3_out ~~ Wert3_in
+
+## free factor variances (use dyad-level = 1 as reference "group")
+  f1_out ~~ var_perceiver*f1_out
+  f1_in  ~~ var_target*f1_in
+
 
 group: 2   # why does "group: dyad" not work?
 
@@ -117,8 +129,8 @@ group: 2   # why does "group: dyad" not work?
   f1_ji =~ L1*Wert1_ji + L2*Wert2_ji + L3*Wert3_ji
 
 ## equal variances
-  f1_ij ~~ phi*f1_ij
-  f1_ji ~~ phi*f1_ji
+  f1_ij ~~ var_relationship*f1_ij
+  f1_ji ~~ var_relationship*f1_ji
 
   Wert1_ij ~~ v1*Wert1_ij
   Wert2_ij ~~ v2*Wert2_ij
@@ -132,11 +144,14 @@ group: 2   # why does "group: dyad" not work?
   Wert1_ij ~~ Wert1_ji
   Wert2_ij ~~ Wert2_ji
   Wert3_ij ~~ Wert3_ji
+
+
+## Identification constraint: Sum of factor variances == 1
+  var_relationship == 1 - (var_perceiver + var_target)
+## Thus, each estimated variance == proportion of total (ICC)
 '
 
-fitPD <- lavaan.srm(modPD, data = srmOut, # more arguments passed to lavaan()
-                    std.lv = TRUE, auto.var = TRUE, auto.cov.lv.x = TRUE)
-
+fitPD <- lavaan.srm(modPD, data = srmOut, auto.var = TRUE, auto.cov.lv.x = TRUE)
 
 summary(fitPD, std = TRUE, rsq = TRUE)
 
