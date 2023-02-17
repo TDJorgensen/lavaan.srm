@@ -3,7 +3,6 @@
 \docType{package}
 \name{lavaan.srm-package}
 \alias{lavaan.srm-package}
-\alias{lavaan.srm}
 \title{The 'lavaan.srm' package.}
 \description{
 A DESCRIPTION OF THE PACKAGE
