@@ -18,6 +18,7 @@
   point = "mean",
   interval = "central",
   credMass = 0.95,
+  as.stanfit = FALSE,
   ...
 )
 
@@ -73,6 +74,12 @@ interval estimate.  Can be \verb{\%in\% c("central", "hdi")} or set to
 
 \item{credMass}{\code{numeric} passed to \code{\link[HDInterval:hdi]{HDInterval::hdi()}}, or used to request
 \verb{probs=} from \code{\link[stats:quantile]{stats::quantile()}} when \code{interval="central"}.}
+
+\item{as.stanfit}{\code{logical} indicating whether to use the \code{summary()} method
+defined for a \code{\linkS4class{stanfit}} object.  Useful for obtaining
+diagnostics (e.g., R-hat, effective sample size) about MCMC results.  If
+\code{TRUE}, further arguments to \link[rstan]{summary,stanfit-method} can be
+passed via \code{...}}
 
 \item{...}{Additional arguments passed to or from other methods}
 

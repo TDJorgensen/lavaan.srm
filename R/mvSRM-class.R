@@ -1,5 +1,5 @@
 ### Terrence D. Jorgensen
-### Last updated: 15 February 2023
+### Last updated: 17 February 2023
 ### Class and Methods for mvSRM object
 
 
@@ -87,6 +87,12 @@
 ##'   `NULL` to avoid returning interval estimates.
 ##' @param credMass `numeric` passed to [HDInterval::hdi()], or used to request
 ##'   `probs=` from [stats::quantile()] when `interval="central"`.
+##' @param as.stanfit `logical` indicating whether to use the `summary()` method
+##'   defined for a \code{\linkS4class{stanfit}} object.  Useful for obtaining
+##'   diagnostics (e.g., R-hat, effective sample size) about MCMC results.  If
+##'   `TRUE`, further arguments to \link[rstan]{summary,stanfit-method} can be
+##'   passed via `...`
+#TODO: @param from.stanfit (pars= via ...) to assign c("n_eff","Rhat") to rownames($summary)
 ##' @param meanstructure `logical` indicating whether the `vcov()` method
 ##'   includes posterior variability of the mean estimates (only when
 ##'   `component="group"`).
@@ -158,13 +164,17 @@ setMethod("show", "mvSRM", function(object) {
 })
 
 
-## @importFrom?
+##' @importFrom methods getMethod
 summary.mvSRM <- function(object, component = c("case","dyad"),
                           stat = c("sd","cor"), point = "mean",
                           interval = "central", credMass = .95,
                           #TODO? to.data.frame = FALSE,
                           #TODO: rsquare = TRUE,
-                          ...) {
+                          as.stanfit = FALSE, ...) {
+  if (as.stanfit) {
+    return(getMethod("summary", "stanfit")(object, ...))
+  }
+
   component <- intersect(tolower(component), c("group", "case", "dyad"))
   if (!length(component)) stop('No valid choice of component= was found')
 
