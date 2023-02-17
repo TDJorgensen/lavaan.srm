@@ -1,5 +1,5 @@
 ### Terrence D. Jorgensen
-### Last updated: 12 February 2023
+### Last updated: 17 February 2023
 ### (currently hidden) functions to format round-robin data
 ### between wide, long, and matrix
 
@@ -50,7 +50,7 @@ longUni2square <- function(y, data, IDout, IDin, group = NULL,
   ## list of data frames (one per group)
   dataList <- if (is.null(group) || !returnList) list(data) else {
     lapply(levels(gFac), function(g) {
-      subset(data, subset = eval(parse(text = paste(group, "==", g))))
+      data[data[,group] == g, ]
     })
   }
 
