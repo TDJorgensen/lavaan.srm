@@ -6,7 +6,7 @@
 \alias{sem.srm}
 \title{Fit a \code{lavaan} Model to Multivariate SRM Results}
 \usage{
-lavaan.srm(model, data, point = "mean", ...)
+lavaan.srm(model, data, component, point = "mean", ...)
 
 cfa.srm(model, data, point = "mean", ...)
 
@@ -16,6 +16,11 @@ sem.srm(model, data, point = "mean", ...)
 \item{model}{\code{character} specifying an SEM.  See \code{\link[lavaan:model.syntax]{lavaan::model.syntax()}}.}
 
 \item{data}{An object of class \code{\linkS4class{mvSRM}}}
+
+\item{component}{\code{character} specifying which SRM component(s) the \verb{model=}
+syntax is specified for.  Can be \verb{\%in\% c("case", "dyad")}, as well as
+\code{"group"} when group effects are modeled.  The order of multiple blocks
+in the \verb{model=} syntax must match the order specified in \verb{component=}.}
 
 \item{point}{\code{character} indicating choice of posterior point estimate.
 Must be \verb{\%in\% c("mean", "median", "mode")}.}
@@ -67,10 +72,14 @@ modP <- ' ## factor loadings
 
 ## fit CFA to PERSON-level components,
 ## using mvSRM-class object (Stage 1) as input data
-fitP <- lavaan.srm(modP, data = srmOut, # more arguments passed to lavaan()
+fitP <- lavaan.srm(modP, data = srmOut, component = "case",
+                   ## more arguments passed to lavaan()
                    std.lv = TRUE, auto.var = TRUE, auto.cov.lv.x = TRUE)
 ## fitP is a lavaan-class object, so any lavaan function is available
-summary(fitP, std = TRUE, rsq = TRUE) # only use Browne's residual-based test
+summary(fitP, std = TRUE, rsq = TRUE, fit.measures = TRUE,
+        ## Ignore standard test, only use Browne's residual-based test.
+        ## Also use Browne's residual-based test to calculate fit indices:
+        fm.args = list(standard.test = "browne.residual.adf"))
 
 
 
@@ -99,8 +108,11 @@ modD <- ' # equal loadings
 
 ## fit CFA to DYAD-level components,
 ## using wrapper analogous to lavaan::cfa()
-fitD <- cfa.srm(modD, data = srmOut, std.lv = TRUE)
-summary(fitD, std = TRUE, rsq = TRUE)
+fitD <- cfa.srm(modD, data = srmOut, component = "dyad", std.lv = TRUE)
+summary(fitD, std = TRUE, rsq = TRUE, fit.measures = TRUE,
+        ## Ignore standard test, only use Browne's residual-based test.
+        ## Also use Browne's residual-based test to calculate fit indices:
+        fm.args = list(standard.test = "browne.residual.adf"))
 
 
 
@@ -150,10 +162,14 @@ group: 2   # why does "group: dyad" not work?
   var_relationship == 1 - (var_perceiver + var_target)
 ## Thus, each estimated variance == proportion of total (ICC)
 '
+## order in componenent= must match order in model syntax above
+fitPD <- lavaan.srm(modPD, data = srmOut, component = c("case","dyad"),
+                    auto.var = TRUE, auto.cov.lv.x = TRUE)
 
-fitPD <- lavaan.srm(modPD, data = srmOut, auto.var = TRUE, auto.cov.lv.x = TRUE)
-
-summary(fitPD, std = TRUE, rsq = TRUE)
+summary(fitPD, std = TRUE, rsq = TRUEfit.measures = TRUE,
+        ## Ignore standard test, only use Browne's residual-based test.
+        ## Also use Browne's residual-based test to calculate fit indices:
+        fm.args = list(standard.test = "browne.residual.adf"))
 
 
 }
