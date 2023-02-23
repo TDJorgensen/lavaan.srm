@@ -1,11 +1,19 @@
 Package: lavaan.srm
 Title: Fit Structural Equation Models to Round-Robin Data
-Version: 0.1-0.0013
-Date/Publication: 2023-02-19
+Version: 0.1-0.0014
+Date/Publication: 2023-02-23
 Authors@R: 
-    c(person(given = "Terrence D.", family = "Jorgensen",
-             role = c("aut","cre"), email="TJorgensen314@gmail.com",
-             comment = c(ORCID = "0000-0001-5111-6773")) )
+    c(person(given   = "Terrence D.", family = "Jorgensen",
+             role    = c("aut","cre"), email="TJorgensen314@gmail.com",
+             comment = c(ORCID = "0000-0001-5111-6773")),
+      person(given   = "Yves", family = "Rosseel",
+             role    = c("rev"),
+             email   = "Yves.Rosseel@UGent.be",
+             comment = c(ORCID = "0000-0002-4129-4477")),
+      person(given   = "Nederlandse Organisatie voor Wetenschappelijk Onderzoek (NWO)",
+             role    = "fnd",
+             email   = "Yves.Rosseel@UGent.be",
+             comment = c(Veni.2019 = "016.Veni.195.457", OpenXS.2023 = "406.XS.01.078")) )
 Description: Implements 2-stage estimation of SEMs for round-robin data. Stage 1 uses Markov chain Monte Carlo (MCMC) estimation of a multivariate social relations model (mvSRM) using the `rstan` package.  Stage 2 uses weighted least squares (WLS) estimation of a SEM using the `lavaan` package.
 URL: https://github.com/TDJorgensen/lavaan.srm
 BugReports: https://github.com/TDJorgensen/lavaan.srm/issues
