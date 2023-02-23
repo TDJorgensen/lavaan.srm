@@ -122,7 +122,7 @@ summary(fitP, std = TRUE, rsq = TRUE, fit.measures = TRUE,
 ## requires block-structured syntax, analogous to multilevel SEM.
 
 ## specify a model with cross-level measurement equivalence
-modPD <- ' group: 1   # why does "group: case" not work?
+modPD <- ' group: 1   # eventually use "component: case"
 
   f1_out =~ L1*Wert1_out + L2*Wert2_out + L3*Wert3_out
   f1_in  =~ L1*Wert1_in  + L2*Wert2_in  + L3*Wert3_in
@@ -137,7 +137,7 @@ modPD <- ' group: 1   # why does "group: case" not work?
   f1_in  ~~ var_target*f1_in
 
 
-group: 2   # why does "group: dyad" not work?
+group: 2   # eventually use "component: dyad"
 
   f1_ij =~ L1*Wert1_ij + L2*Wert2_ij + L3*Wert3_ij
   f1_ji =~ L1*Wert1_ji + L2*Wert2_ji + L3*Wert3_ji
@@ -168,7 +168,7 @@ group: 2   # why does "group: dyad" not work?
 fitPD <- lavaan.srm(modPD, data = srmOut, component = c("case","dyad"),
                     auto.var = TRUE, auto.cov.lv.x = TRUE)
 
-summary(fitPD, std = TRUE, rsq = TRUEfit.measures = TRUE,
+summary(fitPD, std = TRUE, rsq = TRUE, fit.measures = TRUE,
         ## Ignore standard test, only use Browne's residual-based test.
         ## Also use Browne's residual-based test to calculate fit indices:
         fm.args = list(standard.test = "browne.residual.adf"))

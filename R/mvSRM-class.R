@@ -88,11 +88,11 @@
 ##'   `NULL` to avoid returning interval estimates.
 ##' @param credMass `numeric` passed to [HDInterval::hdi()], or used to request
 ##'   `probs=` from [stats::quantile()] when `interval="central"`.
-##' @param as.stanfit `logical` indicating whether to use the `summary()` method
-##'   defined for a \code{\linkS4class{stanfit}} object.  Useful for obtaining
-##'   diagnostics (e.g., R-hat, effective sample size) about MCMC results.  If
-##'   `TRUE`, further arguments to \link[rstan]{summary,stanfit-method} can be
-##'   passed via `...`
+##' @param as.stanfit `logical` indicating whether to use a method (e.g.,
+##'   `summary`) defined for a \code{\linkS4class{stanfit}} object.  Useful for
+##'   obtaining diagnostics (e.g., R-hat, effective sample size) about MCMC
+##'   results.  If `TRUE`, further arguments to
+##'   \link[rstan]{summary,stanfit-method} can be passed via `...`
 #TODO: @param from.stanfit (pars= via ...) to assign c("n_eff","Rhat") to rownames($summary)
 ##' @param meanstructure `logical` indicating whether the `vcov()` method
 ##'   includes posterior variability of the mean estimates (only when
@@ -349,9 +349,15 @@ setMethod("summary", "mvSRM", summary.mvSRM)
 
 #TODO: add srm.param = "dyadic.recip" (vector), "intra.inter.cor" (2-tri matrix)
 #TODO: optionally add.header=FALSE for summary() to set TRUE (its default)
+##' @importFrom methods as
 ##' @importFrom stats quantile
 ##' @importFrom utils combn
-as.matrix.mvSRM <- function(x, component, srm.param, posterior.est = "mean", ...) {
+as.matrix.mvSRM <- function(x, component, srm.param, posterior.est = "mean",
+                            as.stanfit = FALSE, ...) {
+  if (as.stanfit) {
+    return(as.matrix(as(object = x, Class = "stanfit", strict = TRUE), ...))
+  }
+
   if (missing(srm.param))
     stop('srm.param= argument must be specified. See class?mvSRM ',
          'help page for descriptions.')
