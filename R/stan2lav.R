@@ -1,5 +1,5 @@
 ### Terrence D. Jorgensen
-### Last updated: 15 February 2023
+### Last updated: 23 February 2023
 ### (currently hidden) function to create a lavMoments-class object
 ### from a mvSRM-class object (inherits from stanfit-class)
 
@@ -7,8 +7,9 @@
 ## @param component `character` specifying which SRM component to provide
 ##   estimated parameters for. Can be `%in% c("case", "dyad")`, as well as
 ##   `"group"` when group effects are modeled.
-## @param point `character` indicating choice of posterior point estimate.
-##   Must be `%in% c("mean", "median", "mode")`.
+## @param posterior.est `character` indicating choice of posterior point
+##   estimate. Must be `%in% c("mean", "median", "mode")`, or `"EAP"`
+##   (synonymous with `"mean"`) or `"MAP"` (synonymous with `"mode"`).
 ## @param meanstructure `logical` indicating whether to include estimated means
 ##    (when available), only for `component="group"`.
 ## @param lavData An object of class `lavMoments`. When `NULL`, a new instance
@@ -31,7 +32,7 @@
 ##   components or `c("ij","ji")` suffixes for dyad/relationship-level
 ##   components.
 #TODO (if this becomes public): create a syntax example, verify blocks work
-srm2lavData <- function(object, component, point = "mean", keep, drop,
+srm2lavData <- function(object, component, posterior.est = "mean", keep, drop,
                         meanstructure = FALSE, lavData = NULL) {
   stopifnot(inherits(object, "mvSRM"))
   categorical <- FALSE #TODO: specify threshold model in Stan
@@ -39,13 +40,14 @@ srm2lavData <- function(object, component, point = "mean", keep, drop,
 
 
 
-  COV <- summary.mvSRM(object, component = component, stat = "cov",
-                       point = point, interval = NULL)[[component]]$cov[[point]]
+  COV <- summary.mvSRM(object, component = component, srm.param = "cov",
+                       posterior.est = posterior.est,
+                       interval = NULL)[[component]]$cov[[posterior.est]]
   COV <- setNames(list(COV), nm = component)
 
   if (meanstructure && component == "group") {
-    M <- summary.mvSRM(object, stat = "mean", point = point,
-                       interval = NULL)$group$mean[[point]]
+    M <- summary.mvSRM(object, srm.param = "mean", posterior.est = posterior.est,
+                       interval = NULL)$group$mean[[posterior.est]]
     M <- setNames(list(M), nm = component)
   } else M <- NULL
 

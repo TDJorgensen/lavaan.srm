@@ -1,5 +1,5 @@
 ### Terrence D. Jorgensen
-### Last updated: 17 February 2023
+### Last updated: 23 February 2023
 ### Class and Methods for mvSRM object
 
 
@@ -56,31 +56,32 @@
 ##' @param ... Additional arguments passed to or from other methods
 ##' @param component `character` specifying which SRM component to report
 ##'   estimated parameters for. Can be `%in% c("case", "dyad")`, as well as
-##'   `"group"` when group effects are modeled.  Ignored when `stat="mean"`
+##'   `"group"` when group effects are modeled.  Ignored when `srm.param="mean"`
 ##'   because means are only a group-level statistic.
 ##'   Multiple options can be passed to `summary()` method, but `as.matrix()`
 ##'   only uses the first.
-##' @param stat `character` specifying which summary statistic to report for
-##'   `component`. Can be `%in% c("sd", "cor", "cov")`, as well as `"mean"` when
-##'   `fixed.groups=FALSE`. The `summary()` method will always return the
+##' @param srm.param `character` specifying the type of SRM parameter to provide
+##'   for `component`. Can be `%in% c("sd", "cor", "cov")`, as well as `"mean"`
+##'   when `fixed.groups=FALSE`. The `summary()` method will always return the
 ##'   means as a group-level statistic, even for a single round-robin group.
-##' @param point For `as.matrix()`, a length-1 `character` or `numeric`
-##'   indicating which posterior summary statistic should be returned.  Can be
-##'   `%in% c("mean", "median", "mode", "min", "max", "hdi")`.
+##' @param posterior.est For `as.matrix()`, a length-1 `character` or `numeric`
+##'   indicating which posterior summary statistic should be used as the point
+##'   estimate.  Can be `%in% c("mean", "median", "mode", "min", "max", "hdi")`,
+##'   or `c("EAP","MAP")` as alias for `c("mean","mode")`, respectively).
 ##'
-##' * `point="mode"` calls [modeest::mlv()], whose additional arguments can be
-##'   passed via `...` (recommended to avoid warnings about default `method=`).
-##' * `point="hdi"` calls [HDInterval::hdi()], whose additional arguments can
-##'   be passed via `...` (e.g., to overwrite the default `credMass=.95`).
-##'   Unlike any other `point=` options for `as.matrix()`, `"hdi"` returns two
-##'   values per parameter: the lower and upper credible-interval limits.
-##'   This affects how the output is formatted.
-##' * `point=numeric(1)` between 0 and 1 (inclusive) is accepted by
+##' * `posterior.est="mode"` calls [modeest::mlv()]. Pass additional arguments
+##'   via `...` (e.g., to avoid warnings about default `method=`).
+##' * `posterior.est="hdi"` calls [HDInterval::hdi()]. Pass additional arguments
+##'   via `...` (e.g., to overwrite the default `credMass=.95`).
+##'   Unlike any other `posterior.est=` options for `as.matrix()`, `"hdi"`
+##'   returns two values per parameter: the lower and upper credible-interval
+##'   limits.  This affects how the output is formatted.
+##' * `posterior.est=numeric(1)` between 0 and 1 (inclusive) is accepted by
 ##'   `as.matrix()`, passed to [stats::quantile()] as the `probs=` argument;
-##'   other arguments can be passed via `...`.
-##' * For the `summary()` method, multiple options can be passed, but must be
-##'   `%in% c("mean", "median", "mode")` or set to `NULL` to avoid returning
-##'   point estimates.
+##'   other arguments can be passed via `...` (e.g., `type=`).
+##' * For the `summary()` method, `posterior.est` can be a vector with multiple
+##'   options `%in% c("mean", "EAP", "median", "mode", "MAP")`, or can be set to
+##'   `NULL` to return no point estimates (e.g., only `interval=` estimates).
 ##'
 ##' @param interval `character` indicating the type of uncertainty/credible
 ##'   interval estimate.  Can be `%in% c("central", "hdi")` or set to
@@ -165,11 +166,14 @@ setMethod("show", "mvSRM", function(object) {
 
 
 ##' @importFrom methods getMethod
+#TODO: add EAP and MAP as options
 summary.mvSRM <- function(object, component = c("case","dyad"),
-                          stat = c("sd","cor"), point = "mean",
+                          srm.param = c("sd","cor"),
+                          posterior.est = "mean",
                           interval = "central", credMass = .95,
                           #TODO? to.data.frame = FALSE,
                           #TODO: rsquare = TRUE,
+                          #TODO: from.stanfit = c("n_eff","Rhat"),
                           as.stanfit = FALSE, ...) {
   if (as.stanfit) {
     return(getMethod("summary", "stanfit")(object, ...))
@@ -178,73 +182,78 @@ summary.mvSRM <- function(object, component = c("case","dyad"),
   component <- intersect(tolower(component), c("group", "case", "dyad"))
   if (!length(component)) stop('No valid choice of component= was found')
 
-  stat <- intersect(tolower(stat), c("mean", "sd", "cor", "cov"))
-  if (!length(stat)) stop('No valid choice of stat= was found')
+  srm.param <- intersect(tolower(srm.param), c("mean", "sd", "cor", "cov"))
+  if (!length(srm.param)) stop('No valid choice of srm.param= was found')
 
   ## can be NULL
-  point <- intersect(tolower(point), c("mean", "median", "mode"))
+  posterior.est <- intersect(posterior.est,
+                             c("mean", "median", "mode", "EAP", "MAP"))
   interval <- intersect(tolower(interval), c("central", "hdi"))
 
   output <- list()
 
   ## add mean structure to output?  Always in "group" component
-  if ("mean" %in% stat) {
-    if (length(point))  for (p in point) {
-      output$group$mean[[p]] <- as.matrix.mvSRM(x = object, stat = "mean",
-                                                point = p, ...)
+  if ("mean" %in% srm.param) {
+    if (length(posterior.est))  for (p in posterior.est) {
+      output$group$mean[[p]] <- as.matrix.mvSRM(x = object, srm.param = "mean",
+                                                posterior.est = p, ...)
     }
     if (length(interval)) {
       if ("central" %in% interval) {
         probs <- abs(0:1 - (1 - credMass)/2)
-        lower <- as.matrix.mvSRM(object, stat = "mean", point = probs[1], ...)
-        upper <- as.matrix.mvSRM(object, stat = "mean", point = probs[2], ...)
+        lower <- as.matrix.mvSRM(object, srm.param = "mean",
+                                 posterior.est = probs[1], ...)
+        upper <- as.matrix.mvSRM(object, srm.param = "mean",
+                                 posterior.est = probs[2], ...)
         output$group$mean$central <- rbind(lower = lower, upper = upper)
       }
       if ("hdi" %in% interval) {
         probs <- abs(0:1 - (1 - credMass)/2)
-        output$group$mean$hdi <- as.matrix.mvSRM(object, stat = "mean",
-                                                 point = "hdi",
+        output$group$mean$hdi <- as.matrix.mvSRM(object, srm.param = "mean",
+                                                 posterior.est = "hdi",
                                                  credMass = credMass, ...)
       }
     }
 
-    if (length(stat) == 1L) {
+    if (length(srm.param) == 1L) {
       ## nothing else to return
       return(output)
 
-      ## otherwise, drop "mean" from stat=
-    } else stat <- stat[-which(stat == "mean")]
+      ## otherwise, drop "mean" from srm.param=
+    } else srm.param <- srm.param[-which(srm.param == "mean")]
   }
 
 
-  ## loop over components for other SRM stats
+  ## loop over components to obtain their other SRM parameters
   for (COMP in component) {
     if (COMP == "group" && !any(object@parNames$sigma == "S_g")) {
       message('group level not modeled (IDgroup=NULL or fixed.groups=TRUE)')
       next
     }
-    for (STAT in stat) {
+    for (STAT in srm.param) {
       ## put SDs first
-      if ("sd" %in% stat) {
+      if ("sd" %in% srm.param) {
 
-        if (length(point))  for (p in point) {
-          output[[COMP]]$sd[[p]] <- as.matrix.mvSRM(x = object, stat = "sd",
-                                                    component = COMP, point = p)
+        if (length(posterior.est))  for (p in posterior.est) {
+          output[[COMP]]$sd[[p]] <- as.matrix.mvSRM(x = object,
+                                                    srm.param = "sd",
+                                                    component = COMP,
+                                                    posterior.est = p)
         }
         ## add intervals?
         if (length(interval)) {
           if ("central" %in% interval) {
             probs <- abs(0:1 - (1 - credMass)/2)
-            lower <- as.matrix.mvSRM(object, stat = "sd", component = COMP,
-                                     point = probs[1], ...)
-            upper <- as.matrix.mvSRM(object, stat = "sd", component = COMP,
-                                     point = probs[2], ...)
+            lower <- as.matrix.mvSRM(object, srm.param = "sd", component = COMP,
+                                     posterior.est = probs[1], ...)
+            upper <- as.matrix.mvSRM(object, srm.param = "sd", component = COMP,
+                                     posterior.est = probs[2], ...)
             output[[COMP]]$sd$central <- rbind(lower = lower, upper = upper)
           }
           if ("hdi" %in% interval) {
             probs <- abs(0:1 - (1 - credMass)/2)
-            output$group$sd$hdi <- as.matrix.mvSRM(object, stat = "sd",
-                                                   point = "hdi",
+            output$group$sd$hdi <- as.matrix.mvSRM(object, srm.param = "sd",
+                                                   posterior.est = "hdi",
                                                    credMass = credMass, ...)
           }
         }
@@ -252,66 +261,70 @@ summary.mvSRM <- function(object, component = c("case","dyad"),
       }
 
       ## then correlations
-      if ("cor" %in% stat) {
+      if ("cor" %in% srm.param) {
 
-        if (length(point))  for (p in point) {
-          output[[COMP]]$cor[[p]] <- as.matrix.mvSRM(x = object, stat = "cor",
-                                                     component = COMP, point = p)
+        if (length(posterior.est))  for (p in posterior.est) {
+          output[[COMP]]$cor[[p]] <- as.matrix.mvSRM(x = object,
+                                                     srm.param = "cor",
+                                                     component = COMP,
+                                                     posterior.est = p)
         }
         ## add intervals?
         if (length(interval)) {
           if ("central" %in% interval) {
             probs <- abs(0:1 - (1 - credMass)/2)
             output[[COMP]]$cor$central$lower <- as.matrix.mvSRM(x = object,
-                                                                stat = "cor",
+                                                                srm.param = "cor",
                                                                 component = COMP,
-                                                                point = probs[1],
+                                                                posterior.est = probs[1],
                                                                 ...)
             output[[COMP]]$cor$central$upper <- as.matrix.mvSRM(x = object,
-                                                                stat = "cor",
+                                                                srm.param = "cor",
                                                                 component = COMP,
-                                                                point = probs[2],
+                                                                posterior.est = probs[2],
                                                                 ...)
           }
           if ("hdi" %in% interval) {
             probs <- abs(0:1 - (1 - credMass)/2)
-            output$group$cor$hdi <- as.matrix.mvSRM(object, stat = "cor",
-                                                    point = "hdi",
+            output$group$cor$hdi <- as.matrix.mvSRM(object, srm.param = "cor",
+                                                    posterior.est = "hdi",
                                                     credMass = credMass, ...)
           }
         }
 
       }
 
-      #TODO: add dyadic correlations to stat = c("inter","intra")
+      #TODO: add dyadic correlations to srm.param = c("inter","intra")
       #      when both, put in lower/upper.tri()
 
       ## then covariances (dyadic available?)
-      if ("cov" %in% stat) {
+      if ("cov" %in% srm.param) {
 
-        if (length(point))  for (p in point) {
-          output[[COMP]]$cov[[p]] <- as.matrix.mvSRM(x = object, stat = "cov",
-                                                     component = COMP, point = p)
+        if (length(posterior.est))  for (p in posterior.est) {
+          output[[COMP]]$cov[[p]] <- as.matrix.mvSRM(x = object,
+                                                     srm.param = "cov",
+                                                     component = COMP,
+                                                     posterior.est = p)
         }
         ## add intervals?
         if (length(interval)) {
           if ("central" %in% interval) {
             probs <- abs(0:1 - (1 - credMass)/2)
             output[[COMP]]$cov$central$lower <- as.matrix.mvSRM(x = object,
-                                                                stat = "cov",
+                                                                srm.param = "cov",
                                                                 component = COMP,
-                                                                point = probs[1],
+                                                                posterior.est = probs[1],
                                                                 ...)
             output[[COMP]]$cov$central$upper <- as.matrix.mvSRM(x = object,
-                                                                stat = "cov",
+                                                                srm.param = "cov",
                                                                 component = COMP,
-                                                                point = probs[2],
+                                                                posterior.est = probs[2],
                                                                 ...)
           }
           if ("hdi" %in% interval) {
             probs <- abs(0:1 - (1 - credMass)/2)
-            output$group$cov$hdi <- as.matrix.mvSRM(object, stat = "cov",
-                                                    point = "hdi",
+            output$group$cov$hdi <- as.matrix.mvSRM(object, srm.param = "cov",
+                                                    posterior.est = "hdi",
                                                     credMass = credMass, ...)
           }
         }
@@ -334,58 +347,59 @@ summary.mvSRM <- function(object, component = c("case","dyad"),
 setMethod("summary", "mvSRM", summary.mvSRM)
 
 
-#TODO: add stat = "dyadic.recip" (vector), "intra.inter.cor" (2-tri matrix)
+#TODO: add srm.param = "dyadic.recip" (vector), "intra.inter.cor" (2-tri matrix)
 #TODO: optionally add.header=FALSE for summary() to set TRUE (its default)
 ##' @importFrom stats quantile
 ##' @importFrom utils combn
-as.matrix.mvSRM <- function(x, stat, component, point = "mean", ...) {
-  if (missing(stat))
-    stop('stat= argument must be specified. See class?mvSRM ',
+as.matrix.mvSRM <- function(x, component, srm.param, posterior.est = "mean", ...) {
+  if (missing(srm.param))
+    stop('srm.param= argument must be specified. See class?mvSRM ',
          'help page for descriptions.')
-  stat      <- tolower(stat[1])
-  stopifnot(stat %in% c("mean", "sd", "cor", "cov"))
+  srm.param <- tolower(srm.param[1])
+  stopifnot(srm.param %in% c("mean", "sd", "cor", "cov"))
 
-  point <- point[1]
-  if (is.numeric(point)) {
-    stopifnot(point >= 0 && point <= 1)
-  } else if (tolower(point) == "min") {
-    point <- 0
-  } else if (tolower(point) == "median") {
-    point <- .5
-  } else if (tolower(point) == "max") {
-    point <- 1
+  posterior.est <- posterior.est[1]
+  if (is.numeric(posterior.est)) {
+    stopifnot(posterior.est >= 0 && posterior.est <= 1)
+  } else if (tolower(posterior.est) == "min") {
+    posterior.est <- 0
+  } else if (tolower(posterior.est) == "median") {
+    posterior.est <- .5
+  } else if (tolower(posterior.est) == "max") {
+    posterior.est <- 1
   } else {
-    point <- tolower(point)
-    stopifnot(point %in% c("mean", "mode", "hdi"))
+    posterior.est <- tolower(posterior.est)
+    stopifnot(posterior.est %in% c("mean", "eap", "mode", "map", "hdi"))
 
-    if (point == "mode") {
+    if (posterior.est %in% c("mode","map")) {
       if (requireNamespace("modeest")) {
         if (!"package:modeest" %in% search()) attachNamespace("modeest")
-      } else stop('Install the modeest package to obtain point="mode".')
-      point <- "mlv"
+      } else stop('Install package `modeest` to estimate the posterior mode.')
+      posterior.est <- "mlv"
 
-    } else if (point == "hdi") {
+    } else if (posterior.est == "hdi") {
       if (requireNamespace("HDInterval")) {
         if (!"package:HDInterval" %in% search()) attachNamespace("HDInterval")
-      } else stop('Install the HDInterval package to obtain point="HDI".')
-    }
+      } else stop('Install package `HDInterval` to obtain posterior.est="HDI".')
+
+    } else if (posterior.est %in% c("mean","eap")) posterior.est <- "mean"
 
   }
 
-  if (stat == "mean") {
+  if (srm.param == "mean") {
     if (!"mu" %in% names(x@parNames))
       stop('Means were not included in this model (i.e., fixed.groups = TRUE)')
 
     ## extract samples
     paramMat <- do.call(rbind, rstan::As.mcmc.list(x, pars = "Mvec"))
     ## obtain summary statistic
-    if (is.numeric(point)) {
+    if (is.numeric(posterior.est)) {
       out <- apply(paramMat, MARGIN = 2, stats::quantile,
-                   probs = point, ...)
-    } else out <- apply(paramMat, MARGIN = 2, point, ...)
+                   probs = posterior.est, ...)
+    } else out <- apply(paramMat, MARGIN = 2, posterior.est, ...)
 
     #TODO: c() additional names of case/group_data or dyad-constant variables
-    if (point == "hdi") {
+    if (posterior.est == "hdi") {
       colnames(out) <- names(x@varNames$RR)
     } else names(out) <- names(x@varNames$RR)
 
@@ -394,7 +408,7 @@ as.matrix.mvSRM <- function(x, stat, component, point = "mean", ...) {
 
 
   } else if (missing(component)) {
-    stop('Unless stat="mean", the component= argument must be specified. ',
+    stop('Unless srm.param="mean", the component= argument must be specified. ',
          'See class?mvSRM help page for descriptions.')
   }
   component <- tolower(component[1])
@@ -404,17 +418,17 @@ as.matrix.mvSRM <- function(x, stat, component, point = "mean", ...) {
   if (component == "group") {
     if (!any(x@parNames$sigma == "S_g"))
       stop('group level not modeled (IDgroup=NULL or fixed.groups=TRUE)')
-    PARS <- ifelse(stat == "sd", "S_g", "Rg")
+    PARS <- ifelse(srm.param == "sd", "S_g", "Rg")
     NAMES <- names(x@varNames$RR)
 
   } else if (component == "case") {
-    PARS <- ifelse(stat == "sd", "S_p", "Rp")
+    PARS <- ifelse(srm.param == "sd", "S_p", "Rp")
     NAMES <- paste(rep(names(x@varNames$RR), each = 2),
                    c("out","in"), sep = "_")
 
   } else if (component == "dyad") {
-    PARS <- ifelse(stat == "sd", "s_rr", "Rd2")
-    if (stat == "sd") {
+    PARS <- ifelse(srm.param == "sd", "s_rr", "Rd2")
+    if (srm.param == "sd") {
       NAMES <- names(x@varNames$RR)
     } else {
       ## extended names for "cor" or "cov"
@@ -425,24 +439,24 @@ as.matrix.mvSRM <- function(x, stat, component, point = "mean", ...) {
   }
 
 
-  if (stat %in% c("sd", "cor")) {
+  if (srm.param %in% c("sd", "cor")) {
     ## extract samples
     paramMat <- do.call(rbind, rstan::As.mcmc.list(x, pars = PARS))
 
     ## obtain summary statistic
-    if (is.numeric(point)) {
+    if (is.numeric(posterior.est)) {
       out <- apply(paramMat, MARGIN = 2, stats::quantile,
-                   probs = point, ...)
-    } else out <- apply(paramMat, MARGIN = 2, point, ...)
+                   probs = posterior.est, ...)
+    } else out <- apply(paramMat, MARGIN = 2, posterior.est, ...)
 
-    if (stat == "sd") {
+    if (srm.param == "sd") {
       ## attach variable names
-      if (point == "hdi") {
+      if (posterior.est == "hdi") {
         colnames(out)   <- NAMES #TODO: c() case/group_data names
       } else names(out) <- NAMES
       return(out) # nothing else to do for SDs
 
-    } else if (point == "hdi") {
+    } else if (posterior.est == "hdi") {
       lower <- out[1,]
       upper <- out[2,]
       ## store correlations in a list of 2 matrices ($lower and $upper)
@@ -475,7 +489,7 @@ as.matrix.mvSRM <- function(x, stat, component, point = "mean", ...) {
     }
 
   }
-  ## else stat == "cov"
+  ## else srm.param == "cov"
 
   ## scale R with SDs per iteration, then assemble matrix
 
@@ -521,11 +535,11 @@ as.matrix.mvSRM <- function(x, stat, component, point = "mean", ...) {
 
   Sigma <- Reduce("+", SigmaList) / length(SigmaList)
   class(Sigma) <- c("lavaan.matrix.symmetric","matrix")
-  if (point == "mean") return(Sigma)
+  if (posterior.est == "mean") return(Sigma)
 
 
-  ## otherwise, get point= for each cell in Sigma (copy to retain class)
-  if (point == "hdi") {
+  ## otherwise, get posterior.est= for each cell in Sigma (copy to retain class)
+  if (posterior.est == "hdi") {
     SigmaSummaryStat <- list(lower = Sigma, upper = Sigma)
     ## obtain diagonal entries first
     for (RR in NAMES) {
@@ -553,19 +567,19 @@ as.matrix.mvSRM <- function(x, stat, component, point = "mean", ...) {
     ## obtain diagonal entries first
     for (RR in NAMES) {
       sigmaVec <- sapply(SigmaList, "[", i = RR, j = RR)
-      if (is.numeric(point)) {
-        SigmaSummaryStat[RR, RR] <- quantile(sigmaVec, probs = point, ...)
-      } else SigmaSummaryStat[RR, RR] <- eval(as.name(point))(sigmaVec, ...)
+      if (is.numeric(posterior.est)) {
+        SigmaSummaryStat[RR, RR] <- quantile(sigmaVec, probs = posterior.est, ...)
+      } else SigmaSummaryStat[RR, RR] <- eval(as.name(posterior.est))(sigmaVec, ...)
     }
     ## loop over (pairs of) variables
     PAIRS <- combn(NAMES, m = 2)
     for (RR in PAIRS[1,]) {
       for (CC in PAIRS[2,]) {
-        if (is.numeric(point)) {
-          SigmaSummaryStat[RR, CC] <- quantile(sigmaVec, probs = point, ...)
+        if (is.numeric(posterior.est)) {
+          SigmaSummaryStat[RR, CC] <- quantile(sigmaVec, probs = posterior.est, ...)
           SigmaSummaryStat[CC, RR] <- SigmaSummaryStat[RR, CC]
         } else {
-          SigmaSummaryStat[RR, CC] <- eval(as.name(point))(sigmaVec, ...)
+          SigmaSummaryStat[RR, CC] <- eval(as.name(posterior.est))(sigmaVec, ...)
           SigmaSummaryStat[CC, RR] <- SigmaSummaryStat[RR, CC]
         }
       }
@@ -754,13 +768,15 @@ setMethod("vcov", "mvSRM", vcov.mvSRM)
 #      nobs = vector of level-specific Ns
 #      resid(uals) = random effects (or direct to semTools::plausibleValues)
 #      fitted fitted.values
-#      coef = call as.matrix(..., point = c("mean","median","mode"))
+#      coef = call as.matrix(..., posterior.est = c("mean","median","mode"))
 #      confint = central or HDI
 
 
 #TODO: as.lavMoments, or define inherting lavSRMoments class?
 #      or just srm2lavData(), no real benefit of publicizing class/methods
 
-#TODO: as.stanfit() to enable using stanfit-class methods
+#TODO? as.stanfit() to enable using stanfit-class methods
+#      Methods already work, unless I defined new ones (e.g., summary).
+#      Better to keep including as.stanfit= argument to internally getMethod()
 
 

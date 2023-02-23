@@ -14,15 +14,15 @@
 \S4method{summary}{mvSRM}(
   object,
   component = c("case", "dyad"),
-  stat = c("sd", "cor"),
-  point = "mean",
+  srm.param = c("sd", "cor"),
+  posterior.est = "mean",
   interval = "central",
   credMass = 0.95,
   as.stanfit = FALSE,
   ...
 )
 
-\S4method{as.matrix}{mvSRM}(x, stat, component, point = "mean", ...)
+\S4method{as.matrix}{mvSRM}(x, component, srm.param, posterior.est = "mean", ...)
 
 \S4method{vcov}{mvSRM}(
   object,
@@ -39,33 +39,34 @@
 
 \item{component}{\code{character} specifying which SRM component to report
 estimated parameters for. Can be \verb{\%in\% c("case", "dyad")}, as well as
-\code{"group"} when group effects are modeled.  Ignored when \code{stat="mean"}
+\code{"group"} when group effects are modeled.  Ignored when \code{srm.param="mean"}
 because means are only a group-level statistic.
 Multiple options can be passed to \code{summary()} method, but \code{as.matrix()}
 only uses the first.}
 
-\item{stat}{\code{character} specifying which summary statistic to report for
-\code{component}. Can be \verb{\%in\% c("sd", "cor", "cov")}, as well as \code{"mean"} when
-\code{fixed.groups=FALSE}. The \code{summary()} method will always return the
+\item{srm.param}{\code{character} specifying the type of SRM parameter to provide
+for \code{component}. Can be \verb{\%in\% c("sd", "cor", "cov")}, as well as \code{"mean"}
+when \code{fixed.groups=FALSE}. The \code{summary()} method will always return the
 means as a group-level statistic, even for a single round-robin group.}
 
-\item{point}{For \code{as.matrix()}, a length-1 \code{character} or \code{numeric}
-indicating which posterior summary statistic should be returned.  Can be
-\verb{\%in\% c("mean", "median", "mode", "min", "max", "hdi")}.
+\item{posterior.est}{For \code{as.matrix()}, a length-1 \code{character} or \code{numeric}
+indicating which posterior summary statistic should be used as the point
+estimate.  Can be \verb{\%in\% c("mean", "median", "mode", "min", "max", "hdi")},
+or \code{c("EAP","MAP")} as alias for \code{c("mean","mode")}, respectively).
 \itemize{
-\item \code{point="mode"} calls \code{\link[modeest:mlv]{modeest::mlv()}}, whose additional arguments can be
-passed via \code{...} (recommended to avoid warnings about default \verb{method=}).
-\item \code{point="hdi"} calls \code{\link[HDInterval:hdi]{HDInterval::hdi()}}, whose additional arguments can
-be passed via \code{...} (e.g., to overwrite the default \code{credMass=.95}).
-Unlike any other \verb{point=} options for \code{as.matrix()}, \code{"hdi"} returns two
-values per parameter: the lower and upper credible-interval limits.
-This affects how the output is formatted.
-\item \code{point=numeric(1)} between 0 and 1 (inclusive) is accepted by
+\item \code{posterior.est="mode"} calls \code{\link[modeest:mlv]{modeest::mlv()}}. Pass additional arguments
+via \code{...} (e.g., to avoid warnings about default \verb{method=}).
+\item \code{posterior.est="hdi"} calls \code{\link[HDInterval:hdi]{HDInterval::hdi()}}. Pass additional arguments
+via \code{...} (e.g., to overwrite the default \code{credMass=.95}).
+Unlike any other \verb{posterior.est=} options for \code{as.matrix()}, \code{"hdi"}
+returns two values per parameter: the lower and upper credible-interval
+limits.  This affects how the output is formatted.
+\item \code{posterior.est=numeric(1)} between 0 and 1 (inclusive) is accepted by
 \code{as.matrix()}, passed to \code{\link[stats:quantile]{stats::quantile()}} as the \verb{probs=} argument;
-other arguments can be passed via \code{...}.
-\item For the \code{summary()} method, multiple options can be passed, but must be
-\verb{\%in\% c("mean", "median", "mode")} or set to \code{NULL} to avoid returning
-point estimates.
+other arguments can be passed via \code{...} (e.g., \verb{type=}).
+\item For the \code{summary()} method, \code{posterior.est} can be a vector with multiple
+options \verb{\%in\% c("mean", "EAP", "median", "mode", "MAP")}, or can be set to
+\code{NULL} to return no point estimates (e.g., only \verb{interval=} estimates).
 }}
 
 \item{interval}{\code{character} indicating the type of uncertainty/credible

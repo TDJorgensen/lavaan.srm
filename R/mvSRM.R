@@ -1,5 +1,5 @@
 ### Terrence D. Jorgensen
-### Last updated: 15 February 2023
+### Last updated: 23 February 2023
 ### function to implement Stage-1 of 2-stage SR-SEM estimator
 
 
@@ -108,16 +108,19 @@
 ##' summary(srmOut)
 ##'
 ##' ## round-robin variable means are always a group-level statistic
-##' summary(srmOut, stat = "mean")
+##' summary(srmOut, srm.param = "mean")
 ##'
 ##' ## other point estimates from posterior
-##' summary(srmOut, stat = "mean", point = "median", interval = "hdi")
+##' summary(srmOut, srm.param = "mean", posterior.est = "median",
+##'         ## choose 99% highest-density uncertainty intervals, overwrite
+##'         interval = "hdi", credMass = .99)
 ##'
 ##' ## for the mode, other arguments passed to modeest::mlv()
-##' summary(srmOut, stat = "mean", point = "mode", method = "shorth")
+##' summary(srmOut, srm.param = "mean",
+##'         posterior.est = "mode", method = "shorth")
 ##'
 ##' ## SDs & correlations of group effects
-##' summary(srmOut, component = "group")
+##' summary(srmOut, component = "group", interval = NULL) # no intervals
 ##'
 ##'
 ##' ## group-mean centered results (no group-level effects)
@@ -129,14 +132,14 @@
 ##' summary(gmcOut)
 ##'
 ##'
-##' ## group-mean centered results (no group-level effects)
+##' ## single round-robin group: no group-level random effects or (co)variances
 ##' g1out <- mvsrm(data = data.srm01[data.srm01$Group == 1,],
 ##'                rr.vars = paste0("Wert", 1:3),      # still an option:
 ##'                IDout = "egoID", IDin = "alterID",  # fixed.groups = TRUE,
 ##'                chains = 2, iter = 20, seed = 12345,
 ##'                cores = ifelse(parallel::detectCores() < 3L, 1L, 2L))
 ##' summary(g1out)
-##' summary(g1out, stat = "mean") # available unless fixed.groups = TRUE
+##' summary(g1out, srm.param = "mean") # available unless fixed.groups = TRUE
 ##' }
 ##'
 ##' @importFrom rstan sampling

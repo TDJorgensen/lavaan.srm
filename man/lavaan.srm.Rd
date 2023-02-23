@@ -6,11 +6,11 @@
 \alias{sem.srm}
 \title{Fit a \code{lavaan} Model to Multivariate SRM Results}
 \usage{
-lavaan.srm(model, data, component, point = "mean", ...)
+lavaan.srm(model, data, component, posterior.est = "mean", ...)
 
-cfa.srm(model, data, point = "mean", ...)
+cfa.srm(model, data, posterior.est = "EAP", ...)
 
-sem.srm(model, data, point = "mean", ...)
+sem.srm(model, data, posterior.est = "EAP", ...)
 }
 \arguments{
 \item{model}{\code{character} specifying an SEM.  See \code{\link[lavaan:model.syntax]{lavaan::model.syntax()}}.}
@@ -22,8 +22,9 @@ syntax is specified for.  Can be \verb{\%in\% c("case", "dyad")}, as well as
 \code{"group"} when group effects are modeled.  The order of multiple blocks
 in the \verb{model=} syntax must match the order specified in \verb{component=}.}
 
-\item{point}{\code{character} indicating choice of posterior point estimate.
-Must be \verb{\%in\% c("mean", "median", "mode")}.}
+\item{posterior.est}{\code{character} indicating choice of posterior point
+estimate.  Must be \verb{\%in\% c("mean", "median", "mode")}, or \code{"EAP"}
+(synonymous with \code{"mean"}) or \code{"MAP"} (synonymous with \code{"mode"}).}
 
 \item{...}{Arguments and \code{\link[lavaan:lavOptions]{lavaan::lavOptions()}} passed to \code{\link[lavaan:lavaan]{lavaan::lavaan()}}}
 }
@@ -59,30 +60,6 @@ srmOut <- mvsrm(data = data.srm01, rr.vars = paste0("Wert", 1:3),
 ## STAGE 2: Specify and fit an SEM
 
 
-## specify PERSON-level model
-modP <- ' ## factor loadings
-  f1_out =~ Wert1_out + Wert2_out + Wert3_out
-  f1_in  =~ Wert1_in  + Wert2_in  + Wert3_in
-
-## correlated residuals
-  Wert1_out ~~ Wert1_in
-  Wert2_out ~~ Wert2_in
-  Wert3_out ~~ Wert3_in
-'
-
-## fit CFA to PERSON-level components,
-## using mvSRM-class object (Stage 1) as input data
-fitP <- lavaan.srm(modP, data = srmOut, component = "case",
-                   ## more arguments passed to lavaan()
-                   std.lv = TRUE, auto.var = TRUE, auto.cov.lv.x = TRUE)
-## fitP is a lavaan-class object, so any lavaan function is available
-summary(fitP, std = TRUE, rsq = TRUE, fit.measures = TRUE,
-        ## Ignore standard test, only use Browne's residual-based test.
-        ## Also use Browne's residual-based test to calculate fit indices:
-        fm.args = list(standard.test = "browne.residual.adf"))
-
-
-
 ## specify DYAD-level model
 modD <- ' # equal loadings
   f1_ij =~ L1*Wert1_ij + L2*Wert2_ij + L3*Wert3_ij
@@ -107,9 +84,34 @@ modD <- ' # equal loadings
 '
 
 ## fit CFA to DYAD-level components,
-## using wrapper analogous to lavaan::cfa()
-fitD <- cfa.srm(modD, data = srmOut, component = "dyad", std.lv = TRUE)
+## using mvSRM-class object (Stage 1) as input data
+fitD <- lavaan.srm(modD, data = srmOut, component = "dyad",
+                   ## more arguments passed to lavaan()
+                   std.lv = TRUE,        # fix factor variances == 1
+                   auto.cov.lv.x = TRUE) # estimate factor correlation
 summary(fitD, std = TRUE, rsq = TRUE, fit.measures = TRUE,
+        ## Ignore standard test, only use Browne's residual-based test.
+        ## Also use Browne's residual-based test to calculate fit indices:
+        fm.args = list(standard.test = "browne.residual.adf"))
+
+
+
+## specify PERSON-level model
+modP <- ' ## factor loadings
+  f1_out =~ Wert1_out + Wert2_out + Wert3_out
+  f1_in  =~ Wert1_in  + Wert2_in  + Wert3_in
+
+## correlated residuals
+  Wert1_out ~~ Wert1_in
+  Wert2_out ~~ Wert2_in
+  Wert3_out ~~ Wert3_in
+'
+
+## fit CFA to PERSON-level components,
+## using wrapper analogous to lavaan::cfa()
+fitP <- cfa.srm(modP, data = srmOut, component = "case", std.lv = TRUE)
+## fitP is a lavaan-class object, so any lavaan function is available
+summary(fitP, std = TRUE, rsq = TRUE, fit.measures = TRUE,
         ## Ignore standard test, only use Browne's residual-based test.
         ## Also use Browne's residual-based test to calculate fit indices:
         fm.args = list(standard.test = "browne.residual.adf"))
@@ -171,9 +173,7 @@ summary(fitPD, std = TRUE, rsq = TRUEfit.measures = TRUE,
         ## Also use Browne's residual-based test to calculate fit indices:
         fm.args = list(standard.test = "browne.residual.adf"))
 
-
 }
-
 
 
 }

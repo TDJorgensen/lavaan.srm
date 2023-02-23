@@ -1,7 +1,14 @@
 ### Terrence D. Jorgensen
-### Last updated: 19 February 2023
+### Last updated: 23 February 2023
 ### pass model, lavMoments, and other arguments to lavaan()
 
+
+#TODO:
+#    - update lav_partable.R & lav_syntax.R (others?) to allow
+#      "component: dyad / case / group" blocks
+#    - figure out how block-design structure works (different or larger sample.cov?)
+#    - work out how to calculate correct lavResiduals()$summary
+#      - make @implied and @h1 functions?  or save appropriate elements to summarize?
 
 ##' Fit a `lavaan` Model to Multivariate SRM Results
 ##'
@@ -20,8 +27,9 @@
 ##'   syntax is specified for.  Can be `%in% c("case", "dyad")`, as well as
 ##'   `"group"` when group effects are modeled.  The order of multiple blocks
 ##'   in the `model=` syntax must match the order specified in `component=`.
-##' @param point `character` indicating choice of posterior point estimate.
-##'   Must be `%in% c("mean", "median", "mode")`.
+##' @param posterior.est `character` indicating choice of posterior point
+##'   estimate.  Must be `%in% c("mean", "median", "mode")`, or `"EAP"`
+##'   (synonymous with `"mean"`) or `"MAP"` (synonymous with `"mode"`).
 ##' @param ... Arguments and [lavaan::lavOptions()] passed to [lavaan::lavaan()]
 ##'
 ##' @return An object of `class?lavaan`.
@@ -52,30 +60,6 @@
 ##' ## STAGE 2: Specify and fit an SEM
 ##'
 ##'
-##' ## specify PERSON-level model
-##' modP <- ' ## factor loadings
-##'   f1_out =~ Wert1_out + Wert2_out + Wert3_out
-##'   f1_in  =~ Wert1_in  + Wert2_in  + Wert3_in
-##'
-##' ## correlated residuals
-##'   Wert1_out ~~ Wert1_in
-##'   Wert2_out ~~ Wert2_in
-##'   Wert3_out ~~ Wert3_in
-##' '
-##'
-##' ## fit CFA to PERSON-level components,
-##' ## using mvSRM-class object (Stage 1) as input data
-##' fitP <- lavaan.srm(modP, data = srmOut, component = "case",
-##'                    ## more arguments passed to lavaan()
-##'                    std.lv = TRUE, auto.var = TRUE, auto.cov.lv.x = TRUE)
-##' ## fitP is a lavaan-class object, so any lavaan function is available
-##' summary(fitP, std = TRUE, rsq = TRUE, fit.measures = TRUE,
-##'         ## Ignore standard test, only use Browne's residual-based test.
-##'         ## Also use Browne's residual-based test to calculate fit indices:
-##'         fm.args = list(standard.test = "browne.residual.adf"))
-##'
-##'
-##'
 ##' ## specify DYAD-level model
 ##' modD <- ' # equal loadings
 ##'   f1_ij =~ L1*Wert1_ij + L2*Wert2_ij + L3*Wert3_ij
@@ -100,9 +84,34 @@
 ##' '
 ##'
 ##' ## fit CFA to DYAD-level components,
-##' ## using wrapper analogous to lavaan::cfa()
-##' fitD <- cfa.srm(modD, data = srmOut, component = "dyad", std.lv = TRUE)
+##' ## using mvSRM-class object (Stage 1) as input data
+##' fitD <- lavaan.srm(modD, data = srmOut, component = "dyad",
+##'                    ## more arguments passed to lavaan()
+##'                    std.lv = TRUE,        # fix factor variances == 1
+##'                    auto.cov.lv.x = TRUE) # estimate factor correlation
 ##' summary(fitD, std = TRUE, rsq = TRUE, fit.measures = TRUE,
+##'         ## Ignore standard test, only use Browne's residual-based test.
+##'         ## Also use Browne's residual-based test to calculate fit indices:
+##'         fm.args = list(standard.test = "browne.residual.adf"))
+##'
+##'
+##'
+##' ## specify PERSON-level model
+##' modP <- ' ## factor loadings
+##'   f1_out =~ Wert1_out + Wert2_out + Wert3_out
+##'   f1_in  =~ Wert1_in  + Wert2_in  + Wert3_in
+##'
+##' ## correlated residuals
+##'   Wert1_out ~~ Wert1_in
+##'   Wert2_out ~~ Wert2_in
+##'   Wert3_out ~~ Wert3_in
+##' '
+##'
+##' ## fit CFA to PERSON-level components,
+##' ## using wrapper analogous to lavaan::cfa()
+##' fitP <- cfa.srm(modP, data = srmOut, component = "case", std.lv = TRUE)
+##' ## fitP is a lavaan-class object, so any lavaan function is available
+##' summary(fitP, std = TRUE, rsq = TRUE, fit.measures = TRUE,
 ##'         ## Ignore standard test, only use Browne's residual-based test.
 ##'         ## Also use Browne's residual-based test to calculate fit indices:
 ##'         fm.args = list(standard.test = "browne.residual.adf"))
@@ -164,16 +173,14 @@
 ##'         ## Also use Browne's residual-based test to calculate fit indices:
 ##'         fm.args = list(standard.test = "browne.residual.adf"))
 ##'
-##'
 ##' }
-##'
 ##'
 ##'
 ##' @importFrom lavaan lavaan lavParseModelString lavInspect lavOptions
 ##' @export
-lavaan.srm <- function(model, data, component, point = "mean", ...) {
+lavaan.srm <- function(model, data, component, posterior.est = "mean", ...) {
   stopifnot(all(component %in% c("group","case","dyad")),
-            point %in% c("mean","median","mode"))
+            posterior.est %in% c("mean","median","mode","EAP","MAP"))
 
   MC <- match.call(expand.dots = TRUE) # to overwrite lavaan's default @call
   dots <- list(...)
@@ -293,7 +300,7 @@ lavaan.srm <- function(model, data, component, point = "mean", ...) {
 
       ## prepare arguments to create a lavMoments object
       srm2lavArgs <- list(srm2lavData, object = data, component = component[b],
-                          point = point, keep = ov.names[[b]])
+                          posterior.est = posterior.est, keep = ov.names[[b]])
       if (b > 1L) srm2lavArgs$lavData <- srmMoments
 
       ## determine whether to include mean structure
@@ -476,7 +483,7 @@ lavaan.srm <- function(model, data, component, point = "mean", ...) {
 
 ##' @rdname lavaan.srm
 ##' @export
-cfa.srm <- function(model, data, point = "mean", ...) {
+cfa.srm <- function(model, data, posterior.est = "EAP", ...) {
   mc <- match.call(expand.dots = TRUE)
   mc$model.type <- "cfa"
   mc[[1L]] <- quote(lavaan.srm::lavaan.srm)
@@ -485,7 +492,7 @@ cfa.srm <- function(model, data, point = "mean", ...) {
 
 ##' @rdname lavaan.srm
 ##' @export
-sem.srm <- function(model, data, point = "mean", ...) {
+sem.srm <- function(model, data, posterior.est = "EAP", ...) {
   mc <- match.call(expand.dots = TRUE)
   mc$model.type <- "sem"
   mc[[1L]] <- quote(lavaan.srm::lavaan.srm)
