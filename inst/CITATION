@@ -2,18 +2,18 @@ citHeader("Please use the following citation for this package:")
 
 year <- sub(".*(2[[:digit:]]{3})-.*", "\\1", meta$Date, perl = TRUE)
 vers <- paste("R package version", meta$Version)
-url <- "https://CRAN.R-project.org/package=lavaan.srm"
+url <- "https://github.com/TDJorgensen/lavaan.srm"
+#TODO: eventually    url <- "https://CRAN.R-project.org/package=lavaan.srm"
 
 citEntry(entry = "Manual",
   title        = "\\texttt{lavaan.srm}: {F}it structural equation models to round-robin data",
-  author       = c(person(given = c("Terrence","D."), family = "Jorgensen"),
-                   person(given = "Yves", family = "Rosseel")),
+  author       = c(person(given = c("Terrence","D."), family = "Jorgensen") ),
   year         = year,
   note         = vers,
   url          = url,
 
   textVersion  =
-  paste("Jorgensen, T. D., & Rosseel, Y. (", year, 
+  paste("Jorgensen, T. D. (", year,
         "). lavaan.srm: Fit structural equation models to round-robin data.",
         vers, ". Retrieved from ", url, sep = "")
 )
