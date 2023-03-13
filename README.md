@@ -1,6 +1,21 @@
-# `lavaan.srm`
+# Installing `lavaan.srm`
 
-This is an R package whose primary purpose is to facilitate fitting a structural equation model (SEM) to round-robin data.  Estimation is accomplished via a two-stage estimation algorithm:
+This is an R package whose primary purpose is to facilitate fitting a structural equation model (SEM) to round-robin data.  Installation via the `remotes` package requires a C++ compiler, which can be enabled for 
+
+- Windows OS by installing [Rtools](https://cran.r-project.org/bin/windows/Rtools/)
+- Mac OS by installing Xcode / Command Line Tools (open Applications/Utilities/Terminal and run `xcode-select -—install`)
+
+After restarting your computer, open R, install the `remotes` package (if necessary), and use it to install `lavaan.srm`:
+
+```
+# install.packages("remotes")
+remotes::install_github("TDJorgensen/lavaan.srm")
+```
+
+
+# Estimation algorithm
+
+Estimation is accomplished via a two-stage estimation algorithm:
 
   1. Fit a multivariate social-relations model (SRM) to round-robin data, in order to estimate covariance matrices for person-level effects (e.g., actor and partner variances, generalized reciprocity) and for dyad-level effects (e.g., relationship variance, dyadic reciprocity).
   2. Fit a SEM using the summary statistics from Stage 1 as data.
@@ -22,6 +37,8 @@ These options will be explored, tested, and implemented in future versions of `l
 ## Stage 1
 
 Round-robin `data=` are passed to `mvsrm()`, along with case-level ID variables indicating the two members of the dyad.  Group IDs can also be provided to distinguish multiple round-robin groups.  The `data=` must be in long format, such that all observed values of a round-robin variable are stored in a single column, with 2 rows for each dyad.  An optional list of round-robin variable names in `data=` to be modeled, but all non-ID variables will be modeled by default.  Descriptions of further arguments and example syntax can be found on the `?mvsrm` help page.
+
+### Extracting SRM results
 
 The `mvsrm()` function fits a multivariate SRM using the Stan software, returning an object of `class?mvSRM` that inherits from `class?stanfit`.  Thus, any `methods(class = "stanfit")` and other `rstan` functions can be applied to the `mvsrm()` output, unless another method exists specifically for `mvSRM-class`.  For example, this package includes `summary()` and `as.matrix()` methods for `mvSRM-class` objects, but adding the argument `as.stanfit=TRUE` allows using the methods defined in the `rstan` package for `stanfit-class` objects.
 
