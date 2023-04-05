@@ -222,12 +222,12 @@ mvsrm <- function(data, rr.vars = NULL, IDout, IDin, #TODO: na.code = -9999L,
     dyadNAs <- which(is.na(sym))
     if (length(dyadNAs)) {
       stop('Currently, each observed dyad must have complete data on all ',
-           'round-robin variables.  Missing data on variable', rr,
-           'found in the following dyad(s):\n\t',
-           paste('Cases', Yd2$ID_i[dyadNAs], 'and', Yd2$IDj[dyadNAs],
+           'round-robin variables.  Missing data on variable ', rr,
+           ' found in the following dyad(s):\n\t',
+           paste('Cases', Yd2$ID_i[dyadNAs], 'and', Yd2$ID_j[dyadNAs],
                  ifelse(is.null(IDgroup), NULL,
                         paste('in group', Yd2[dyadNAs, IDgroup])),
-                 sep = "\n\t"))
+                 "\n\t"))
     }
 
     if (all(sym)) {
