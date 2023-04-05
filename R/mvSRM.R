@@ -1,5 +1,5 @@
 ### Terrence D. Jorgensen
-### Last updated: 23 February 2023
+### Last updated: 5 April 2023
 ### function to implement Stage-1 of 2-stage SR-SEM estimator
 
 
@@ -221,13 +221,14 @@ mvsrm <- function(data, rr.vars = NULL, IDout, IDin, #TODO: na.code = -9999L,
     #FIXME: enable data-augmentation in Stan script; set flag here?
     dyadNAs <- which(is.na(sym))
     if (length(dyadNAs)) {
+      NAlist <- paste('Cases', Yd2$ID_i[dyadNAs], 'and', Yd2$ID_j[dyadNAs])
+      if (is.null(IDgroup)) {
+        NAlist <- paste(NAlist, "\n\t")
+      } else NAlist <- paste(NAlist, 'in group', Yd2[dyadNAs, IDgroup], "\n\t")
+
       stop('Currently, each observed dyad must have complete data on all ',
            'round-robin variables.  Missing data on variable ', rr,
-           ' found in the following dyad(s):\n\t',
-           paste('Cases', Yd2$ID_i[dyadNAs], 'and', Yd2$ID_j[dyadNAs],
-                 ifelse(is.null(IDgroup), NULL,
-                        paste('in group', Yd2[dyadNAs, IDgroup])),
-                 "\n\t"))
+           ' found in the following dyad(s):\n\t', NAlist, )
     }
 
     if (all(sym)) {
