@@ -1,6 +1,6 @@
 Package: lavaan.srm
 Title: Fit Structural Equation Models to Round-Robin Data
-Version: 0.1-0.0016
+Version: 0.1-0.0017
 Date/Publication: 2023-04-05
 Authors@R: 
     c(person(given   = "Terrence D.", family = "Jorgensen",

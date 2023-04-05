@@ -191,6 +191,11 @@ mvsrm <- function(data, rr.vars = NULL, IDout, IDin, #TODO: na.code = -9999L,
 
   } else stop('Unrecognized format for data= argument')
 
+  #FIXME: Remove this after missing data are allowed?
+  #       Or add missing = c("augment","listwise") option?
+  Yd2 <- Yd2[complete.cases(Yd2),]
+
+
   ## check for enough groups
   if (!is.null(IDgroup) && !fixed.groups) {
     Ng <- length(unique(Yd2[ , IDgroup]))
@@ -228,7 +233,7 @@ mvsrm <- function(data, rr.vars = NULL, IDout, IDin, #TODO: na.code = -9999L,
 
       stop('Currently, each observed dyad must have complete data on all ',
            'round-robin variables.  Missing data on variable ', rr,
-           ' found in the following dyad(s):\n\t', NAlist, )
+           ' found in the following dyad(s):\n\t', NAlist)
     }
 
     if (all(sym)) {
