@@ -1,5 +1,5 @@
 ### Terrence D. Jorgensen
-### Last updated: 23 February 2023
+### Last updated: 10 April 2023
 ### Class and Methods for mvSRM object
 
 
@@ -740,7 +740,7 @@ vcov.mvSRM <- function(object, component, meanstructure = FALSE,
 
   if (!exists("MuList")) MuList <- list(NULL)
   ## posterior variability
-  postVar <- mapply(function(S, M = NULL) {
+  postList <- mapply(function(S, M = NULL) {
     if (categorical) {
       wls.obs <- c(M, # 1. interleaved thresholds + (negative) means, if any
                    # 2. slopes (if any)
@@ -756,8 +756,8 @@ vcov.mvSRM <- function(object, component, meanstructure = FALSE,
     }
     wls.obs
   }, S = SigmaList, M = MuList, SIMPLIFY = FALSE)
-  #FIXME: multiply ACOV by N instead of N-1 ?
-  NACOV <- (object@nobs[[component]] - 1L) * cov(do.call(rbind, postVar))
+  postSamp <- do.call(rbind, postList)
+  NACOV <- object@nobs[[component]] * cov(postSamp)
   class(NACOV) <- c("lavaan.matrix.symmetric", "matrix", "array")
   if (add.names.attr) attr(NACOV, "subset") <- SUBSET # used in srm2lavData()
   NACOV
