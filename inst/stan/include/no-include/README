@@ -1,0 +1,1 @@
+These are "complete" versions of the Stan models (in the top /stan directory), i.e., without any #include statements.  I can eventually throw these away.

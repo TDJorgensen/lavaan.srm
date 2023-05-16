@@ -1,5 +1,5 @@
 // Terrence D. Jorgensen
-// Last updated: 26 Jan 2023
+// Last updated: 16 May 2023
 
 // Program to estimate covariance matrices for multivariate SRM components
 // - standard round-robin design (indistinguishable subjects)
@@ -27,6 +27,8 @@ transformed data {
   // number of pairs of round-robin variables
   int<lower=0> nPairs = Kd2*(Kd2 - 1) / 2;
 
+#include /vanilla/tdata.stan
+
   // define counts of missing observations
   // int nMiss_d2 = 0;  // round-robin variables
 
@@ -48,10 +50,10 @@ parameters {
 
   // SDs
   vector<lower=0>[Kd2]  s_rr;  // round-robin residuals
-  vector<lower=0>[2*Kd2] S_p;  // person-level covariates + AP effects
+  vector<lower=0>[allKp] S_p;  // person-level covariates + AP effects
 
   // correlations among observed variables and random effects
-  cholesky_factor_corr[2*Kd2] chol_p; // person-level random-effect correlations
+  cholesky_factor_corr[allKp] chol_p; // person-level random-effect correlations
   // correlations among round-robin residuals
   real<lower=0,upper=1> r_d2[Kd2];          // dyadic reciprocity (within variable)
   real<lower=0,upper=1> r_intra[nPairs];    // intrapersonal residuals (between variable)
@@ -162,7 +164,7 @@ model {
 }
 generated quantities{
   matrix[Nd, 2*Kd2] Yd2e;   // residuals (relationship effects + error)
-  matrix[2*Kd2, 2*Kd2] Rp;  // person-level correlation matrix
+  matrix[allKp, allKp] Rp;  // person-level correlation matrix
 
 #include /OneGroup/OneGroup_Rsq.stan
 
