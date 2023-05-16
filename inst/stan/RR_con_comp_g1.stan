@@ -64,7 +64,7 @@ parameters {
 }
 transformed parameters {
   // expected values, given random effects
-  matrix[Nd, 2*Kd2] Mu_d;   // dyad-level \hat{y}s + means
+  matrix[Nd, 2*Kd2] Yd2hat;   // dyad-level \hat{y}s + means
   // combined dyad-level SDs and correlations
   vector[2*Kd2] S_d;
   matrix[2*Kd2, 2*Kd2] Rd2;
@@ -127,8 +127,8 @@ transformed parameters {
 
       for (d in 1:Nd) {
         // expected values of round-robin variables, given random effects
-        Mu_d[d, idx1] = S_p[idx1]*AP[ IDp[d,1], idx1] + S_p[idx2]*AP[ IDp[d,2], idx2];
-        Mu_d[d, idx2] = S_p[idx1]*AP[ IDp[d,2], idx1] + S_p[idx2]*AP[ IDp[d,1], idx2];
+        Yd2hat[d, idx1] = S_p[idx1]*AP[ IDp[d,1], idx1] + S_p[idx2]*AP[ IDp[d,2], idx2];
+        Yd2hat[d, idx2] = S_p[idx1]*AP[ IDp[d,2], idx1] + S_p[idx2]*AP[ IDp[d,1], idx2];
 
 #include /means/means_tparameters.stan
       }
@@ -159,7 +159,7 @@ model {
   }
 
   // likelihoods for observed data (== priors for imputed data & random effects)
-  for (n in 1:Nd) Yd2[n,] ~ multi_normal_cholesky(Mu_d[n,], chol_d);
+  for (n in 1:Nd) Yd2[n,] ~ multi_normal_cholesky(Yd2hat[n,], chol_d);
   for (n in 1:Np) AP[n,] ~ multi_normal_cholesky(rep_row_vector(0, 2*Kd2), chol_p);
 }
 generated quantities{
@@ -169,7 +169,7 @@ generated quantities{
 #include /OneGroup/OneGroup_Rsq.stan
 
   // calculate residuals to return as relationship effects
-  Yd2e = Yd2 - Mu_d;
+  Yd2e = Yd2 - Yd2hat;
 
   // calculate person-level correlation matrix
   Rp = multiply_lower_tri_self_transpose(chol_p);
