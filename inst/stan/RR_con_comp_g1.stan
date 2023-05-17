@@ -53,7 +53,7 @@ parameters {
   vector<lower=0>[allKp] S_p;  // person-level covariates + AP effects
 
   // correlations among observed variables and random effects
-  cholesky_factor_corr[allKp] chol_p; // person-level random-effect correlations
+  cholesky_factor_corr[allKp] chol_r_p; // person-level random-effect correlations
   // correlations among round-robin residuals
   real<lower=0,upper=1> r_d2[Kd2];          // dyadic reciprocity (within variable)
   real<lower=0,upper=1> r_intra[nPairs];    // intrapersonal residuals (between variable)
@@ -64,12 +64,13 @@ parameters {
 }
 transformed parameters {
   // expected values, given random effects
-  matrix[Nd, 2*Kd2] Yd2hat;   // dyad-level \hat{y}s + means
+  matrix[Nd, 2*Kd2] Yd2hat;   // dyad-level \hat{y}s
   // combined dyad-level SDs and correlations
   vector[2*Kd2] S_d;
   matrix[2*Kd2, 2*Kd2] Rd2;
   // cholesky decompositions of correlation matrices
-  matrix[2*Kd2, 2*Kd2] chol_d;          // dyad-level
+  matrix[2*Kd2, 2*Kd2] chol_d;  // dyad-level
+  matrix[allKp, allKp] chol_p;  // case-level
 
 
   // combine correlations among round-robin variables
@@ -116,6 +117,10 @@ transformed parameters {
   // cholesky decompositions for model{} block
   chol_d = diag_pre_multiply(S_d, cholesky_decompose(Rd2));
 
+  // scale cholesky for case-level covariates?
+  // TODO: Use #include /vanilla/tpar_chol_p.stan
+  chol_p = chol_r_p;
+
   // calculate and/or combine expected values
   {
     int idx1;  // arbitrary iterators
@@ -151,7 +156,7 @@ model {
   }
 
   // priors for correlations
-  chol_p ~ lkj_corr_cholesky(2);
+  chol_r_p ~ lkj_corr_cholesky(2);
   for (k in 1:Kd2) r_d2[k] ~ beta(1.5, 1.5);
   if (Kd2 > 1) for (kk in 1:nPairs) {
     r_intra[kk] ~ beta(1.5, 1.5);
@@ -172,7 +177,7 @@ generated quantities{
   Yd2e = Yd2 - Yd2hat;
 
   // calculate person-level correlation matrix
-  Rp = multiply_lower_tri_self_transpose(chol_p);
+  Rp = multiply_lower_tri_self_transpose(chol_r_p);
 }
 
 #include /include/license.stan
