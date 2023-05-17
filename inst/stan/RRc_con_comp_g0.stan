@@ -3,9 +3,10 @@
 
 // Program to estimate covariance matrices for multivariate SRM components
 // - standard round-robin design (indistinguishable subjects)
-//    - multiple RR groups have random effects
+//    - RR group effects expected to be partialed out (no means estimated)
 // - continuous data only
 // - no missing data
+// - add case-level covariates
 
 
 functions {}
@@ -14,13 +15,13 @@ data {
   int<lower=0> Nd;        // number of dyads   (Level 1)
   int<lower=0> Np;        // number of persons (Level 2, cross-classified)
   // number of observed measures (half the number of columns)
-  int<lower=0> Kd2;       // number of dyad-level measures   (vary within dyad)
+  int<lower=0> Kd2;       // number of dyad-level observations (vary within dyad)
   // observed data
   matrix[Nd, 2*Kd2] Yd2;  // observed round-robin variables
   // ID variables
-  int IDp[Nd, 2];         // person-level IDs (cross-classified)
+  int IDp[Nd, 2];         // person-level IDs (cross-classified) for dyad-level observations
 
-#include /multigroup/group_data.stan
+#include /covariates/case_data.stan
 
   // TODO: pass hyperparameters for priors as data?
 
@@ -29,9 +30,6 @@ transformed data {
   // number of pairs of round-robin variables
   int<lower=0> nPairs = Kd2*(Kd2 - 1) / 2;
 
-#include /vanilla/tdata_allKd.stan
-#include /vanilla/tdata_allKp.stan
-
   // define counts of missing observations
   // int nMiss_d2 = 0;  // round-robin variables
 
@@ -39,34 +37,33 @@ transformed data {
   matrix[Kd2, 2] limKd2;
   vector[Kd2] halfRangeKd2;
 
-  // calculate observed limits
+#include /vanilla/tdata_allKd.stan
+#include /covariates/case_tdata_declare.stan
+
+  // calculate observed limits for dyad-level observations
   for (k in 1:Kd2) {
     limKd2[k,1] = min(Yd2[ : , (2*k - 1):(2*k)] );
     limKd2[k,2] = max(Yd2[ : , (2*k - 1):(2*k)] );
     halfRangeKd2[k] = (limKd2[k, 2] - limKd2[k, 1]) / 2;
   }
 
+#include /covariates/case_tdata_calc.stan
+
 }
 parameters {
-  // means
-#include /means/means_parameters.stan
-
   // SDs
   vector<lower=0>[Kd2]  s_rr;  // round-robin residuals
   vector<lower=0>[allKp] S_p;  // person-level covariates + AP effects
 
   // correlations among observed variables and random effects
-  cholesky_factor_corr[allKp] chol_r_p; // person-level random-effect correlations
+  cholesky_factor_corr[allKp] chol_r_p;   // all person-level correlations (random-effects + covariates)
   // correlations among round-robin residuals
-  real<lower=0,upper=1> r_d2[Kd2];          // dyadic reciprocity (within variable)
-  real<lower=0,upper=1> r_intra[nPairs];    // intrapersonal residuals (between variable)
-  real<lower=0,upper=1> r_inter[nPairs];    // interpersonal residuals (between variable)
+  real<lower=0,upper=1> r_d2[Kd2];        // dyadic reciprocity (within variable)
+  real<lower=0,upper=1> r_intra[nPairs];  // intrapersonal residuals (between variable)
+  real<lower=0,upper=1> r_inter[nPairs];  // interpersonal residuals (between variable)
 
   // random effects to sample on unit scale
   matrix[Np, 2*Kd2] AP; // matrix of actor-partner effects for all RR variables
-
-#include /multigroup/group_parameters.stan
-
 }
 transformed parameters {
   // expected values, given random effects
@@ -82,6 +79,7 @@ transformed parameters {
   // (can include observed covariates, random effects, imputed missing values)
   matrix[Nd, allKd] augYd;  // all dyad-level variables
   matrix[Np, allKp] augYp;  // all case-level variables
+
 
   // combine correlations among round-robin variables
   {
@@ -127,7 +125,7 @@ transformed parameters {
   // cholesky decompositions for model{} block
   chol_d = diag_pre_multiply(S_d, cholesky_decompose(Rd2));
 
-#include /vanilla/tpar_chol_p.stan
+#include /covariates/case_tpar_scale.stan
 
   // calculate and/or combine expected values
   {
@@ -142,27 +140,31 @@ transformed parameters {
         // expected values of round-robin variables, given random effects
         Yd2hat[d, idx1] = S_p[idx1]*AP[ IDp[d,1], idx1] + S_p[idx2]*AP[ IDp[d,2], idx2];
         Yd2hat[d, idx2] = S_p[idx1]*AP[ IDp[d,2], idx1] + S_p[idx2]*AP[ IDp[d,1], idx2];
-
-#include /means/means_tparameters.stan
-#include /multigroup/group_tparameters.stan
       }
 
     }
   }
 
+  // Augment observed values with ...
+  // - level-specific covariates?
+  // - estimates of missing values?
+#include /vanilla/tpar_augYd.stan
+#include /covariates/case_tpar_aug_comp.stan
+
+
 }
 model {
   // priors for means and SDs, based on empirical ranges
   for (k in 1:Kd2) {
-    // means
-#include /means/means_model.stan
     // residual/dyadic SDs
     s_rr[k]      ~ student_t(4, halfRangeKd2[k] / 5, halfRangeKd2[k] / 5) T[0, ];
     // actor effect SDs
     S_p[2*k - 1] ~ student_t(4, halfRangeKd2[k] / 5, halfRangeKd2[k] / 5) T[0, ];
     // partner effect SDs
-    S_p[2*k]     ~ student_t(4, halfRangeKd2[k] / 5, halfRangeKd2[k] / 5) T[0, ];
+    S_p[2*k    ] ~ student_t(4, halfRangeKd2[k] / 5, halfRangeKd2[k] / 5) T[0, ];
   }
+
+#include /covariates/case_model.stan
 
   // priors for correlations
   chol_r_p ~ lkj_corr_cholesky(2);
@@ -175,15 +177,12 @@ model {
   // likelihoods for observed data (== priors for imputed data & random effects)
   for (n in 1:Nd) augYd[n,] ~ multi_normal_cholesky(Yd2hat[n,], chol_d);
   for (n in 1:Np) augYp[n,] ~ multi_normal_cholesky(rep_row_vector(0, allKp), chol_p);
-
-  // priors for group effects + their SDs & correlations
-#include /multigroup/group_model.stan
 }
 generated quantities{
   matrix[Nd, allKd] Yd2e;   // residuals (relationship effects + error)
   matrix[allKp, allKp] Rp;  // person-level correlation matrix
 
-#include /multigroup/group_GQs.stan
+#include /OneGroup/OneGroup_Rsq.stan
 
   // calculate residuals to return as relationship effects
   Yd2e = augYd - Yd2hat;

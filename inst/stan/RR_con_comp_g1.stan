@@ -27,7 +27,8 @@ transformed data {
   // number of pairs of round-robin variables
   int<lower=0> nPairs = Kd2*(Kd2 - 1) / 2;
 
-#include /vanilla/tdata.stan
+#include /vanilla/tdata_allKd.stan
+#include /vanilla/tdata_allKp.stan
 
   // define counts of missing observations
   // int nMiss_d2 = 0;  // round-robin variables
@@ -64,14 +65,18 @@ parameters {
 }
 transformed parameters {
   // expected values, given random effects
-  matrix[Nd, 2*Kd2] Yd2hat;   // dyad-level \hat{y}s
+  matrix[Nd, allKd] Yd2hat;   // dyad-level \hat{y}s
   // combined dyad-level SDs and correlations
-  vector[2*Kd2] S_d;
-  matrix[2*Kd2, 2*Kd2] Rd2;
+  vector[allKd] S_d;
+  matrix[allKd, allKd] Rd2;
   // cholesky decompositions of correlation matrices
-  matrix[2*Kd2, 2*Kd2] chol_d;  // dyad-level
+  matrix[allKd, allKd] chol_d;  // dyad-level
   matrix[allKp, allKp] chol_p;  // case-level
 
+  // augmented level-specific data sets
+  // (can include observed covariates, random effects, imputed missing values)
+  matrix[Nd, allKd] augYd;  // all dyad-level variables
+  matrix[Np, allKp] augYp;  // all case-level variables
 
   // combine correlations among round-robin variables
   {
@@ -117,9 +122,7 @@ transformed parameters {
   // cholesky decompositions for model{} block
   chol_d = diag_pre_multiply(S_d, cholesky_decompose(Rd2));
 
-  // scale cholesky for case-level covariates?
-  // TODO: Use #include /vanilla/tpar_chol_p.stan
-  chol_p = chol_r_p;
+#include /vanilla/tpar_chol_p.stan
 
   // calculate and/or combine expected values
   {
@@ -164,17 +167,17 @@ model {
   }
 
   // likelihoods for observed data (== priors for imputed data & random effects)
-  for (n in 1:Nd) Yd2[n,] ~ multi_normal_cholesky(Yd2hat[n,], chol_d);
-  for (n in 1:Np) AP[n,] ~ multi_normal_cholesky(rep_row_vector(0, 2*Kd2), chol_p);
+  for (n in 1:Nd) augYd[n,] ~ multi_normal_cholesky(Yd2hat[n,], chol_d);
+  for (n in 1:Np) augYp[n,] ~ multi_normal_cholesky(rep_row_vector(0, allKp), chol_p);
 }
 generated quantities{
-  matrix[Nd, 2*Kd2] Yd2e;   // residuals (relationship effects + error)
+  matrix[Nd, allKd] Yd2e;   // residuals (relationship effects + error)
   matrix[allKp, allKp] Rp;  // person-level correlation matrix
 
 #include /OneGroup/OneGroup_Rsq.stan
 
   // calculate residuals to return as relationship effects
-  Yd2e = Yd2 - Yd2hat;
+  Yd2e = augYd - Yd2hat;
 
   // calculate person-level correlation matrix
   Rp = multiply_lower_tri_self_transpose(chol_r_p);
