@@ -1,5 +1,5 @@
 ### Terrence D. Jorgensen
-### Last updated: 5 April 2023
+### Last updated: 18 May 2023
 ### function to implement Stage-1 of 2-stage SR-SEM estimator
 
 
@@ -38,6 +38,7 @@
 ##'   in `data` that represents the in-coming effect (alter, partner, or target)
 ##' @param IDgroup Optional `character` indicating the name of the ID variable
 ##'    in `data` that distinguishes between multiple round-robin groups
+##'
 ##' @param fixed.groups `logical` indicating whether means of multiple
 ##'   round-robin groups should be treated as fixed effects.  When `TRUE`,
 ##'   means will be "partialed out" by group-mean centering each round-robin
@@ -56,6 +57,15 @@
 ##'   grouping variable in `data` that distinguishes between multiple
 ##'   round-robin groups.
 ##'   Not used yet.
+##'
+#TODO: single format in a named list?  Or write a function with arguments
+#      for modeled-variable names:   srm_priors(rr.vars, cov_p, cov_d, cov_g)
+#       - t_df, t_m, t_sd: matrix[Kd2, 3] for 3 RR-components, vector[K] for covariate SDs
+#       - lkj_p(d) prior parameter for cor_p (cor_g when relevant)
+#       - beta_a, beta_b: matrix[Kd2,Kd2] for dyadic reciprocity (diagonal),
+#                         intra/inter correlations above/below diagonal
+## @param priors
+##'
 ##' @param return_stan_data `logical`. Set `TRUE` to return the list passed to
 ##'   `rstan::sampling(data=)`. Helpful for creating reprex when Stan fails.
 ##' @param return_stanfit `logical`. Set `TRUE` to return the
@@ -420,8 +430,27 @@ mvsrm <- function(data, rr.vars = NULL, IDout, IDin, #TODO: na.code = -9999L,
 
     ## (group-)mean center variables?
     if (fixed.groups) {
-      #TODO: save row.idx, sort by group, groupMC, re-sort
+      #FIXME: don't allow with incomplete data
+      if (is.null(IDgroup)) {
+        ## grand mean center
+        case_z <- data.frame(scale(case_data[,-1, drop = FALSE], scale = FALSE))
+        case_data <- cbind(case_data[,1, drop = FALSE], data.frame(case_z))
+
+      } else {
+        ## group mean center
+        case_gM <- aggregate(x = case_data[, -1:-2, drop = FALSE],
+                             by = case_data[IDgroup], FUN = mean)
+        for (g in case_gM[,IDgroup]) {
+          case.idx  <- case_data[,IDgroup] == g
+          group.idx <- case_gM[ , IDgroup] == g
+          for (v in names(case_data)[-1:-2]) {
+            case_data[case.idx, v] <- case_data[case.idx, v] - case_gM[group.idx, v]
+          }
+        }
+
+      }
     }
+
   }
 
   ## store IDs in list for mvSRM-class slot
@@ -443,14 +472,23 @@ mvsrm <- function(data, rr.vars = NULL, IDout, IDin, #TODO: na.code = -9999L,
 
   ## observed-data: Yd2, Yd1, Yp, Yg
   knowns$Yd2 <- as.matrix(Yd2[, -1:ifelse(is.null(IDgroup), -2, -3)])
-  #TODO: knowns$Yd1 <- as.matrix(Yd1[, -1:ifelse(is.null(IDgroup), -2, -3)])
+
+  ## assemble call for default hyperparameters
+  priorCall <- list(substitute(srm_priors),
+                    rr.data = Yd2[, -1:ifelse(is.null(IDgroup), -2, -3)])
+  if (length(dyad_constant_vars)) {
+    #TODO: knowns$Yd1 <- as.matrix(Yd1[, -1:ifelse(is.null(IDgroup), -2, -3)])
+    #TODO: priorCall$cov_d <- Yd1[, -1:ifelse(is.null(IDgroup), -2, -3)]
+  }
 
   ## case IDs and data
   knowns$IDp <- as.matrix(Yd2[, c("ID_i", "ID_j")])
   if (!is.null(case_data)) {
-    #TODO: knowns$Kp <-      ncol(case_data)   -  ifelse(is.null(IDgroup), 1L, 2L)
-    #TODO: knowns$Yp <- as.matrix( case_data[, -1:ifelse(is.null(IDgroup), -1, -2)])
-  } # else knowns$Yp <- matrix[1:knowns$Np]
+    knowns$Kp <-      ncol(case_data)   -  ifelse(is.null(IDgroup), 1L, 2L)
+    knowns$Yp <- as.matrix(case_data[ , -1:ifelse(is.null(IDgroup), -1, -2)])
+    knowns$IDpp <- case_data$ID
+    priorCall$cov_p <- case_data[ , -1:ifelse(is.null(IDgroup), -1, -2)]
+  }
 
   ## group IDs and data
   if (!is.null(IDgroup) && !fixed.groups) {
@@ -459,14 +497,27 @@ mvsrm <- function(data, rr.vars = NULL, IDout, IDin, #TODO: na.code = -9999L,
     if (!is.null(group_data)) {
       #TODO: knowns$Kg <-      ncol(group_data) - 1L
       #TODO: knowns$Yg <- as.matrix(group_data[, -1])
+      #TODO: priorCall$cov_g <- group_data[, -1]
+    }
+    if (!is.null(case_data)) {
+      #TODO: knowns$IDgp <- case_data[[IDgroup]]
     }
   }
+
+  priors <- eval(as.call(priorCall))
+  #TODO: Allow users to specify their own via priors= argument.
+  #      Check which defaults to replace?
+  knowns <- c(knowns, eval(as.call(priorCall)))
+
+  #TODO: after priors are chosen, then replace NAs in knowns$Y* with missCode=
+
+
   if (return_stan_data) return(knowns)
 
   ## save names of unknown parameters for Stan to sample
   mu <- if (fixed.groups) NULL else "Mvec"
   sigma <- c("s_rr","S_p")
-  corr <- c("Rd2","Rp")
+  corr <- c("r_d2","Rd2","Rp")
   derived <- c("Rsq")
   if (!is.null(IDgroup) && !fixed.groups) {
     sigma <- c(sigma, "S_g")
@@ -477,10 +528,13 @@ mvsrm <- function(data, rr.vars = NULL, IDout, IDin, #TODO: na.code = -9999L,
     ranFX <- c("Yd2e","AP")
     if (!is.null(IDgroup) && !fixed.groups) ranFX <- c(ranFX, "GG")
   } else ranFX <- NULL
-  #TODO: option to save imputed observations
-  ## imps <- "impYd","impYp",  if (!fixed.groups) "impYg"
+  #TODO: option to save imputed observations (with random effects)
+  ## imps <- "augYd","augYp",  if (!fixed.groups) "augYg"
   unknowns <- c(mu, sigma, corr, derived, ranFX)
 
+  #TODO: check for ...$init_r, set default to 0.5
+  #      assemble args in a call
+  #      specify model name by paste()ing features
   if (fixed.groups) {
     fit <- try(sampling(stanmodels$RR_con_comp_g0, data = knowns,
                         pars = unknowns, ...), silent = TRUE)
@@ -510,10 +564,13 @@ mvsrm <- function(data, rr.vars = NULL, IDout, IDin, #TODO: na.code = -9999L,
                        dyad  = dyad_constant_vars,
                        case  = c(paste0(rep(names(rr.names), each = 2),
                                         c("_out", "_in")),
+                                 #TODO: add dyad-level covariates (case components)
                                  colnames(case_data[, -1:ifelse(is.null(IDgroup),
                                                                 -1, -2)])),
                        group = c(colnames(group_data[, -1])))
-  if ("S_g" %in% sigma) fit@varNames$group <- c(names(rr.names), fit@varNames$group)
+  if ("S_g" %in% sigma) fit@varNames$group <- c(names(rr.names),
+                                                #TODO: add dyad/case covariates
+                                                fit@varNames$group)
 
   fit@parNames <- list(mu      = mu,
                        sigma   = sigma,
@@ -525,10 +582,11 @@ mvsrm <- function(data, rr.vars = NULL, IDout, IDin, #TODO: na.code = -9999L,
 }
 
 #TODO:
-#   - group-mean center case_data when fixed.groups=TRUE
+#   - model A(=P) random effects for dyad-constant covariates
 # Stan models:
+#   - univariate SRM (with level-specific covariates)
 #   - integrate covariates at each level
 #   - allow incomplete data at each level
 #   - allow ordered/mixed data
-
+#   - enable block designs (fSRM as a special case: blocks of n=1)
 

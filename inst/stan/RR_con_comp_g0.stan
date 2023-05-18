@@ -1,5 +1,5 @@
 // Terrence D. Jorgensen
-// Last updated: 16 May 2023
+// Last updated: 18 May 2023
 
 // Program to estimate covariance matrices for multivariate SRM components
 // - standard round-robin design (indistinguishable subjects)
@@ -20,30 +20,21 @@ data {
   // ID variables
   int IDp[Nd, 2];         // person-level IDs (cross-classified)
 
-  // TODO: pass hyperparameters for priors as data?
+  // (hyper)priors for model{}
 
+  // df,m,sd for SDs of round-robin variable components
+  matrix[Kd2, 3] rr_rel_t;  // dyad (relationship)
+  matrix[Kd2, 3] rr_out_t;  // out-going (actor / perceiver)
+  matrix[Kd2, 3] rr_in_t ;  // in-coming (partner / target)
+  // LKJ parameter for case-level correlations
+  real case_lkj;
+  // beta parameters (a and b) for dyad-level correlations
+  matrix[Kd2, Kd2] rr_beta_a;   // (dyadic reciprocity on diagonal,
+  matrix[Kd2, Kd2] rr_beta_b;   // intra/inter correlations above/below diagonal)
 }
 transformed data {
-  // number of pairs of round-robin variables
-  int<lower=0> nPairs = Kd2*(Kd2 - 1) / 2;
-
 #include /vanilla/tdata_allKd.stan
 #include /vanilla/tdata_allKp.stan
-
-  // define counts of missing observations
-  // int nMiss_d2 = 0;  // round-robin variables
-
-  // save limits for default priors
-  matrix[Kd2, 2] limKd2;
-  vector[Kd2] halfRangeKd2;
-
-  // calculate observed limits
-  for (k in 1:Kd2) {
-    limKd2[k,1] = min(Yd2[ : , (2*k - 1):(2*k)] );
-    limKd2[k,2] = max(Yd2[ : , (2*k - 1):(2*k)] );
-    halfRangeKd2[k] = (limKd2[k, 2] - limKd2[k, 1]) / 2;
-  }
-
 }
 parameters {
   // SDs
@@ -53,9 +44,10 @@ parameters {
   // correlations among observed variables and random effects
   cholesky_factor_corr[allKp] chol_r_p; // person-level random-effect correlations
   // correlations among round-robin residuals
-  real<lower=0,upper=1> r_d2[Kd2];          // dyadic reciprocity (within variable)
-  real<lower=0,upper=1> r_intra[nPairs];    // intrapersonal residuals (between variable)
-  real<lower=0,upper=1> r_inter[nPairs];    // interpersonal residuals (between variable)
+  //  - dyadic reciprocity (within variable) on diagonal
+  //  - intrapersonal correlations (between variable, within  case) below diagonal
+  //  - interpersonal correlations (between variable, between case) above diagonal
+  matrix<lower=0,upper=1>[Kd2, Kd2] r_d2;
 
   // random effects to sample on unit scale
   matrix[Np, 2*Kd2] AP; // matrix of actor-partner effects for all RR variables
@@ -81,9 +73,7 @@ transformed parameters {
     int idx2;
     int idp1;
     int idp2;
-    int pair;
 
-    pair = 1;
     for (k in 1:Kd2) {
       idx1 = k*2 - 1;
       idx2 = k*2;
@@ -93,24 +83,23 @@ transformed parameters {
       S_d[idx2] = s_rr[k];
       Rd2[idx1, idx1] = 1;        // diagonal = 1
       Rd2[idx2, idx2] = 1;
-      Rd2[idx1, idx2] = -1 + 2*r_d2[k];  // equal dyadic reciprocity
-      Rd2[idx2, idx1] = -1 + 2*r_d2[k];
+      Rd2[idx1, idx2] = -1 + 2*r_d2[k,k];  // equal dyadic reciprocity
+      Rd2[idx2, idx1] = -1 + 2*r_d2[k.k];
 
       // bewteen round-robin variables
-      if (k < Kd2) for (kk in (k+1):Kd2) {
+      if (k < Kd2) { for (kk in (k+1):Kd2) {
         idp1 = kk*2 - 1;
         idp2 = kk*2;
 
-        Rd2[idx1, idp1] = -1 + 2*r_intra[pair]; // within person
-        Rd2[idx2, idp2] = -1 + 2*r_intra[pair];
-        Rd2[idp1, idx1] = -1 + 2*r_intra[pair];
-        Rd2[idp2, idx2] = -1 + 2*r_intra[pair];
-        Rd2[idx1, idp2] = -1 + 2*r_inter[pair]; // between person
-        Rd2[idp2, idx1] = -1 + 2*r_inter[pair];
-        Rd2[idx2, idp1] = -1 + 2*r_inter[pair];
-        Rd2[idp1, idx2] = -1 + 2*r_inter[pair];
-        pair += 1;
-      }
+        Rd2[idx1, idp1] = -1 + 2*r_d2[kk, k ]; // within person (intra = BELOW)
+        Rd2[idx2, idp2] = -1 + 2*r_d2[kk, k ];
+        Rd2[idp1, idx1] = -1 + 2*r_d2[kk, k ];
+        Rd2[idp2, idx2] = -1 + 2*r_d2[kk, k ];
+        Rd2[idx1, idp2] = -1 + 2*r_d2[k , kk]; // between person (inter = ABOVE)
+        Rd2[idp2, idx1] = -1 + 2*r_d2[k , kk];
+        Rd2[idx2, idp1] = -1 + 2*r_d2[k , kk];
+        Rd2[idp1, idx2] = -1 + 2*r_d2[k , kk];
+      }}
 
     }
 
@@ -151,19 +140,23 @@ model {
   // priors for means and SDs, based on empirical ranges
   for (k in 1:Kd2) {
     // residual/dyadic SDs
-    s_rr[k]      ~ student_t(4, halfRangeKd2[k] / 5, halfRangeKd2[k] / 5) T[0, ];
+    s_rr[k]      ~ student_t(rr_rel_t[k,1], rr_rel_t[k,2], rr_rel_t[k,3]) T[0, ];
     // actor effect SDs
-    S_p[2*k - 1] ~ student_t(4, halfRangeKd2[k] / 5, halfRangeKd2[k] / 5) T[0, ];
+    S_p[2*k - 1] ~ student_t(rr_out_t[k,1], rr_out_t[k,2], rr_out_t[k,3]) T[0, ];
     // partner effect SDs
-    S_p[2*k]     ~ student_t(4, halfRangeKd2[k] / 5, halfRangeKd2[k] / 5) T[0, ];
+    S_p[2*k]     ~ student_t(rr_in_t[k,1 ], rr_in_t[k, 2], rr_in_t[k, 3]) T[0, ];
   }
 
   // priors for correlations
-  chol_r_p ~ lkj_corr_cholesky(2);
-  for (k in 1:Kd2) r_d2[k] ~ beta(1.5, 1.5);
-  if (Kd2 > 1) for (kk in 1:nPairs) {
-    r_intra[kk] ~ beta(1.5, 1.5);
-    r_inter[kk] ~ beta(1.5, 1.5);
+  chol_r_p ~ lkj_corr_cholesky(case_lkj);
+  for (k in 1:Kd2) {
+    // dyadic correlations (priors on diagonal)
+    r_d2[k,k] ~ beta(rr_beta_a[k,k], rr_beta_b[k,k]);
+    // between-variable correlations
+    if (k < Kd2) { for (kk in (k+1):Kd2) {
+      r_d2[kk, k ] ~ beta(rr_beta_a[kk, k ], rr_beta_b[kk, k ]); // intra = BELOW
+      r_d2[k , kk] ~ beta(rr_beta_a[k , kk], rr_beta_b[k , kk]); // inter = ABOVE
+    }}
   }
 
   // likelihoods for observed data (== priors for imputed data & random effects)
