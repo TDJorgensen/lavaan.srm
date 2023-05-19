@@ -490,7 +490,7 @@ mvsrm <- function(data, rr.vars = NULL, IDout, IDin, #TODO: na.code = -9999L,
 
   if (length(dyad_constant_vars)) {
     #TODO: knowns$Yd1 <- as.matrix(Yd1[, -1:ifelse(is.null(IDgroup), -2, -3)])
-    #TODO: priorCall$cov_d <- Yd1[, -1:ifelse(is.null(IDgroup), -2, -3)]
+    #TODO: priorCall$cov_d <- Yd1[, -1:ifelse(is.null(IDgroup), -2, -3), drop = FALSE]
   }
 
   ## case IDs and data
@@ -499,7 +499,7 @@ mvsrm <- function(data, rr.vars = NULL, IDout, IDin, #TODO: na.code = -9999L,
     knowns$Kp <-      ncol(case_data)   -  ifelse(is.null(IDgroup), 1L, 2L)
     knowns$Yp <- as.matrix(case_data[ , -1:ifelse(is.null(IDgroup), -1, -2)])
     knowns$IDpp <- case_data$ID
-    priorCall$cov_p <- case_data[ , -1:ifelse(is.null(IDgroup), -1, -2)]
+    priorCall$cov_p <- case_data[ , -1:ifelse(is.null(IDgroup), -1, -2), drop = FALSE]
   }
 
   ## group IDs and data
@@ -509,7 +509,7 @@ mvsrm <- function(data, rr.vars = NULL, IDout, IDin, #TODO: na.code = -9999L,
     if (!is.null(group_data)) {
       #TODO: knowns$Kg <-      ncol(group_data) - 1L
       #TODO: knowns$Yg <- as.matrix(group_data[, -1])
-      #TODO: priorCall$cov_g <- group_data[, -1]
+      #TODO: priorCall$cov_g <- group_data[, -1, drop = FALSE]
     }
     if (!is.null(case_data)) {
       #TODO: knowns$IDgp <- case_data[[IDgroup]]
@@ -579,9 +579,10 @@ mvsrm <- function(data, rr.vars = NULL, IDout, IDin, #TODO: na.code = -9999L,
                                         c("_out", "_in")),
                                  #TODO: add dyad-level covariates (case components)
                                  colnames(case_data[, -1:ifelse(is.null(IDgroup),
-                                                                -1, -2)])),
+                                                                -1, -2),
+                                                    drop = FALSE])),
                        #TODO: add group components of dyad/case-level covariates
-                       group = c(colnames(group_data[, -1])))
+                       group = c(colnames(group_data[, -1, drop = FALSE])))
   if ("S_g" %in% sigma) fit@varNames$group <- c(names(rr.names),
                                                 #TODO: add dyad/case covariates
                                                 fit@varNames$group)
