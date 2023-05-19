@@ -1,5 +1,5 @@
 // Terrence D. Jorgensen
-// Last updated: 18 May 2023
+// Last updated: 19 May 2023
 
 // Program to estimate covariance matrices for multivariate SRM components
 // - standard round-robin design (indistinguishable subjects)
@@ -89,7 +89,7 @@ transformed parameters {
       Rd2[idx1, idx1] = 1;        // diagonal = 1
       Rd2[idx2, idx2] = 1;
       Rd2[idx1, idx2] = -1 + 2*r_d2[k,k];  // equal dyadic reciprocity
-      Rd2[idx2, idx1] = -1 + 2*r_d2[k.k];
+      Rd2[idx2, idx1] = -1 + 2*r_d2[k,k];
 
       // bewteen round-robin variables
       if (k < Kd2) { for (kk in (k+1):Kd2) {

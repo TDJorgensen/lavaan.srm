@@ -1,2 +1,2 @@
 // priors, in a loop over RR variables (k in 1:Kd2)
-Mvec[k] ~ normal(limKd2[k, 1] + halfRangeKd2[k], halfRangeKd2[k]);
+Mvec[k] ~ normal(rr_Mvec_m, rr_Mvec_sd);
