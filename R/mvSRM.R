@@ -549,7 +549,7 @@ mvsrm <- function(data, rr.vars = NULL, IDout, IDin, #TODO: na.code = -9999L,
   if (is.null(dots$init_r)) dots$init_r <- 0.5
   ## assemble args in a call
   stanCall <- c(list(quote(rstan::sampling),
-                     object = stanmodels[[paste(SRMname, sep = "_")]],
+                     object = stanmodels[[paste(SRMname, collapse = "_")]],
                      data = knowns, pars = unknowns), dots)
   fit <- try(eval(as.call(stanCall)), silent = TRUE)
   ## check whether it worked
