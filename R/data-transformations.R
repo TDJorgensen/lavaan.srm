@@ -1,5 +1,5 @@
 ### Terrence D. Jorgensen
-### Last updated: 17 February 2023
+### Last updated: 19 May 2023
 ### (currently hidden) functions to format round-robin data
 ### between wide, long, and matrix
 
@@ -107,9 +107,7 @@ longUni2square <- function(y, data, IDout, IDin, group = NULL,
 
 ## transform from long format (bivariate outcome) to square format,
 ## like an adjacency matrix / sociometric data
-longBi2square <- function(Ys, data, ID1, ID2, IDdyad = NULL, group = NULL) {
-
-}
+# longBi2square <- function(Ys, data, ID1, ID2, IDdyad = NULL, group = NULL) {}
 
 
 ## transform from square (adjacency matrix) to long (bivariate outcome) format
@@ -247,20 +245,14 @@ square2longBi <- function(mat, dropNA = FALSE, label = "y", group = "group",
 
 
 ## TODO: extract case-level data from diagonal of each RR-variable matrix
-square2case <- function(mat) {
-
-}
+# square2case <- function(mat) {}
 
 ## transform from square (adjacency matrix) to long-long (univariate) format
-square2longUni <- function(mat, dropNA = TRUE) {
-
-}
+# square2longUni <- function(mat, dropNA = TRUE) {}
 
 
 ## transform from bivariate (long) to univariate (long-long) format
-longBi2longUni <- function(Ys, data, ID1, ID2, IDdyad = NULL, group = NULL) {
-
-}
+# longBi2longUni <- function(Ys, data, ID1, ID2, IDdyad = NULL, group = NULL) {}
 
 
 ## transform from univariate (long-long) to bivariate (long) format in 2 steps:
