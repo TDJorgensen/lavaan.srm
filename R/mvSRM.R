@@ -1,5 +1,5 @@
 ### Terrence D. Jorgensen
-### Last updated: 18 May 2023
+### Last updated: 19 May 2023
 ### function to implement Stage-1 of 2-stage SR-SEM estimator
 
 
@@ -52,7 +52,6 @@
 ##'   appear in `data[[IDout]]` and `data[[IDin]]` when `is.data.frame(data)`;
 ##'   or all the same `dimnames(data)[1:2]` when `data=` is a matrix/array (or
 ##'   all `dimnames()` when `data=` is a list of arrays).
-##'   Not used yet.
 ##' @param block Optional `character` indicating the name of a case-level
 ##'   grouping variable in `data` that distinguishes between multiple
 ##'   round-robin groups.
@@ -214,8 +213,9 @@ mvsrm <- function(data, rr.vars = NULL, IDout, IDin, #TODO: na.code = -9999L,
                        'variance cannot be calculated.\nLeave IDgroup=NULL.')
     if (Ng == 2L) stop('Only 2 IDgroup= values found. Group-level correlations',
                        ' can only be \u22121, 0, or +1.\n', msg)
-    if (Ng >= 3L && Ng < 10) warning('Insufficient group-level sample size to model ',
-                                     'group-level (co)variance.\n', msg)
+    if (Ng >= 3L && Ng < 10) warning('Group-level sample size might be too ',
+                                     'small to model group-level (co)variance.',
+                                     '\n', msg)
   } else Ng <- 0L
 
   ## check that variables are numeric
@@ -461,7 +461,13 @@ mvsrm <- function(data, rr.vars = NULL, IDout, IDin, #TODO: na.code = -9999L,
   }
 
 
-  ## format data for rstan::sampling()
+  ## format data for rstan::sampling(),
+  ## while assembling the correct model name
+  SRMname <- c(design = paste0("RR",ifelse(length(dyad_constant_vars), "d", ""),
+                               ifelse(length(dyad_constant_vars) == 1, "1", ""),
+                               ifelse(!is.null(case_data), "c", ""))) # add groups below
+  SRMname["scale"] <- "con" #TODO: check "ord" or "mix" when thresholds available
+  SRMname["NAs"] <- "comp" #TODO: enable "miss" with covariate suffixes "D", "C", or "G"
 
   ## sample sizes: Nd, Np, Ng
   knowns <- list(Nd = nrow(Yd2),
@@ -474,7 +480,7 @@ mvsrm <- function(data, rr.vars = NULL, IDout, IDin, #TODO: na.code = -9999L,
   knowns$Yd2 <- as.matrix(Yd2[, -1:ifelse(is.null(IDgroup), -2, -3)])
 
   ## assemble call for default hyperparameters
-  priorCall <- list(substitute(srm_priors),
+  priorCall <- list(quote(srm_priors),
                     rr.data = Yd2[, -1:ifelse(is.null(IDgroup), -2, -3)])
   if (length(dyad_constant_vars)) {
     #TODO: knowns$Yd1 <- as.matrix(Yd1[, -1:ifelse(is.null(IDgroup), -2, -3)])
@@ -502,6 +508,12 @@ mvsrm <- function(data, rr.vars = NULL, IDout, IDin, #TODO: na.code = -9999L,
     if (!is.null(case_data)) {
       #TODO: knowns$IDgp <- case_data[[IDgroup]]
     }
+    SRMname["design"] <- paste0(SRMname["design"], "g")
+    SRMname["groups"] <- "gN"
+  } else if (fixed.groups) {
+    SRMname["groups"] <- "g0"
+  } else {
+    SRMname["groups"] <- "g1" # must be is.null(IDgroup)
   }
 
   priors <- eval(as.call(priorCall))
@@ -532,20 +544,15 @@ mvsrm <- function(data, rr.vars = NULL, IDout, IDin, #TODO: na.code = -9999L,
   ## imps <- "augYd","augYp",  if (!fixed.groups) "augYg"
   unknowns <- c(mu, sigma, corr, derived, ranFX)
 
-  #TODO: check for ...$init_r, set default to 0.5
-  #      assemble args in a call
-  #      specify model name by paste()ing features
-  if (fixed.groups) {
-    fit <- try(sampling(stanmodels$RR_con_comp_g0, data = knowns,
-                        pars = unknowns, ...), silent = TRUE)
-  } else if (is.null(IDgroup)) {
-    fit <- try(sampling(stanmodels$RR_con_comp_g1, data = knowns,
-                        pars = unknowns, ...), silent = TRUE)
-  } else {
-    fit <- try(sampling(stanmodels$RR_con_comp_gN, data = knowns,
-                        pars = unknowns, ...), silent = TRUE)
-  }
-
+  ## check for ...$init_r, set default to 0.5
+  dots <- list(...)
+  if (is.null(dots$init_r)) dots$init_r <- 0.5
+  ## assemble args in a call
+  stanCall <- c(list(quote(rstan::sampling),
+                     object = stanmodels[[paste(SRMname, sep = "_")]],
+                     data = knowns, pars = unknowns), dots)
+  fit <- try(eval(as.call(stanCall)), silent = TRUE)
+  ## check whether it worked
   if (inherits(fit, "try-error")) {
     message('rstan::sampling() call was unsuccessful. Returned the error ',
             'message as a "try-error" object (see ?try documentation)')
@@ -567,6 +574,7 @@ mvsrm <- function(data, rr.vars = NULL, IDout, IDin, #TODO: na.code = -9999L,
                                  #TODO: add dyad-level covariates (case components)
                                  colnames(case_data[, -1:ifelse(is.null(IDgroup),
                                                                 -1, -2)])),
+                       #TODO: add group components of dyad/case-level covariates
                        group = c(colnames(group_data[, -1])))
   if ("S_g" %in% sigma) fit@varNames$group <- c(names(rr.names),
                                                 #TODO: add dyad/case covariates
@@ -577,6 +585,7 @@ mvsrm <- function(data, rr.vars = NULL, IDout, IDin, #TODO: na.code = -9999L,
                        corr    = corr,
                        derived = derived)
   if (saveComp) fit@parNames$components <- ranFX
+  #TODO: if (saveImps) fit@parNames$imputations <- imps
 
   fit
 }
