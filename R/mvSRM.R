@@ -261,7 +261,6 @@ mvsrm <- function(data, rr.vars = NULL, IDout, IDin, #TODO: na.code = -9999L,
     }
   }
 
-
   ## synchronize names of ID variables across dyad/case/group-level data sets
 
   if (!is.null(group_data)) {
@@ -342,13 +341,13 @@ mvsrm <- function(data, rr.vars = NULL, IDout, IDin, #TODO: na.code = -9999L,
   ## GROUP-level covariates
   if (!is.null(group_data)) {
     ## any group IDs in data missing from group_data?
-    not_in_gcov <- setdiff(group_data[ , IDgroup], dyad_gIDs)
+    not_in_gcov <- setdiff(dyad_gIDs, group_data[ , IDgroup])
     if (length(not_in_gcov)) {
       stop('Found the following "IDgroup" level(s) in "data" but not in ',
            '"group_data":\n', paste(not_in_gcov, collapse = ", "))
     }
     ## any group IDs from group_data missing in data?
-    g_not_in_data <- setdiff(dyad_gIDs, group_data[ , IDgroup])
+    g_not_in_data <- setdiff(group_data[ , IDgroup], dyad_gIDs)
     if (length(g_not_in_data)) {
       stop('Found the following "IDgroup" level(s) in "group_data" but not in ',
            '"data":\n', paste(g_not_in_data, collapse = ", "))
@@ -362,13 +361,13 @@ mvsrm <- function(data, rr.vars = NULL, IDout, IDin, #TODO: na.code = -9999L,
   if (!is.null(case_data)) {
 
     ## any person IDs in data missing from case_data?
-    p_not_in_pcov <- setdiff(case_data$ID, dyad_pIDs_vec)
+    p_not_in_pcov <- setdiff(dyad_pIDs_vec, case_data$ID)
     if (length(p_not_in_pcov)) {
       stop('Found the following "IDout/IDin" level(s) in "data" but not in ',
            '"case_data":\n', paste(p_not_in_pcov, collapse = ", "))
     }
     ## any person IDs in case_data missing from data?
-    p_not_in_data <- setdiff(dyad_pIDs_vec, case_data$ID)
+    p_not_in_data <- setdiff(case_data$ID, dyad_pIDs_vec)
     if (length(p_not_in_data)) {
       stop('Found the following "IDout/IDin" level(s) in "case_data" but not',
            ' in "data":\n', paste(p_not_in_data, collapse = ", "))
@@ -377,13 +376,13 @@ mvsrm <- function(data, rr.vars = NULL, IDout, IDin, #TODO: na.code = -9999L,
 
     if (!is.null(IDgroup)) {
       ## any group IDs in data missing from case_data?
-      pg_not_in_pcov <- setdiff(case_data[ , IDgroup], dyad_gIDs)
+      pg_not_in_pcov <- setdiff(dyad_gIDs, case_data[ , IDgroup])
       if (length(pg_not_in_pcov)) {
         stop('Found the following "IDgroup" level(s) in "data" but not in ',
              '"case_data":\n', paste(pg_not_in_pcov, collapse = ", "))
       }
       ## any group IDs in case_data missing from data?
-      pg_not_in_data <- setdiff(dyad_gIDs, case_data[ , IDgroup])
+      pg_not_in_data <- setdiff(case_data[ , IDgroup], dyad_gIDs)
       if (length(pg_not_in_data)) {
         stop('Found the following "IDgroup" level(s) in "case_data" but not in',
              ' "data":\n', paste(pg_not_in_data, collapse = ", "))
@@ -480,8 +479,15 @@ mvsrm <- function(data, rr.vars = NULL, IDout, IDin, #TODO: na.code = -9999L,
   knowns$Yd2 <- as.matrix(Yd2[, -1:ifelse(is.null(IDgroup), -2, -3)])
 
   ## assemble call for default hyperparameters
-  priorCall <- list(quote(srm_priors),
-                    rr.data = Yd2[, -1:ifelse(is.null(IDgroup), -2, -3)])
+  priorCall <- list(quote(srm_priors))
+  ## in order to call srm_priors() below, make sure "data" is long-uni format
+  dat_ij <- Yd2[paste0(rr.vars, "_ij")]
+  dat_ji <- Yd2[paste0(rr.vars, "_ji")]
+  ## set common names for round-robin variables
+  names(dat_ij) <- rr.vars
+  names(dat_ji) <- rr.vars
+  priorCall$rr.data <- rbind(dat_ij, dat_ji)
+
   if (length(dyad_constant_vars)) {
     #TODO: knowns$Yd1 <- as.matrix(Yd1[, -1:ifelse(is.null(IDgroup), -2, -3)])
     #TODO: priorCall$cov_d <- Yd1[, -1:ifelse(is.null(IDgroup), -2, -3)]

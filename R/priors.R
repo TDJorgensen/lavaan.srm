@@ -1,11 +1,13 @@
 ### Terrence D. Jorgensen
-### Last updated: 19 May 2023
+### Last updated: 20 May 2023
 ### function to set default priors for mvsrm()
 
 ## - t_df, t_m, t_sd: matrix[Kd2, 3] for 3 RR-components, vector[K] for covariate SDs
 ## - lkj_p(d) prior parameter for cor_p (cor_g when relevant)
 ## - beta_a, beta_b: matrix[Kd2,Kd2] for dyadic reciprocity (diagonal),
 ##                   intra/inter correlations above/below diagonal
+
+## rr.data must ALWAYS be long-uni format
 
 srm_priors <- function(rr.data, cov_d, cov_p, cov_g,
                        modelG = FALSE, modelM = FALSE) {
