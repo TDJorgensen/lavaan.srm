@@ -1,5 +1,5 @@
 ### Terrence D. Jorgensen
-### Last updated: 19 May 2023
+### Last updated: 20 May 2023
 ### (currently hidden) functions to format round-robin data
 ### between wide, long, and matrix
 
@@ -103,11 +103,6 @@ longUni2square <- function(y, data, IDout, IDin, group = NULL,
   }
   outList
 }
-
-
-## transform from long format (bivariate outcome) to square format,
-## like an adjacency matrix / sociometric data
-# longBi2square <- function(Ys, data, ID1, ID2, IDdyad = NULL, group = NULL) {}
 
 
 ## transform from square (adjacency matrix) to long (bivariate outcome) format
@@ -244,15 +239,27 @@ square2longBi <- function(mat, dropNA = FALSE, label = "y", group = "group",
 }
 
 
-## TODO: extract case-level data from diagonal of each RR-variable matrix
-# square2case <- function(mat) {}
-
-## transform from square (adjacency matrix) to long-long (univariate) format
-# square2longUni <- function(mat, dropNA = TRUE) {}
-
 
 ## transform from bivariate (long) to univariate (long-long) format
-# longBi2longUni <- function(Ys, data, ID1, ID2, IDdyad = NULL, group = NULL) {}
+longBi2longUni <- function(Ys, data, ID1, ID2, group = NULL) {
+  dat_ij <- data[c(group, ID1, ID2, paste0(Ys, "_ij"))]
+  dat_ji <- data[c(group, ID2, ID1, paste0(Ys, "_ji"))]
+  ## indices for ID variables
+  idx <- 1:ifelse(is.null(group), 2, 3)
+  ## set common names for IDs
+  names(dat_ij)[idx] <- c(group, "IDout", "IDin")
+  names(dat_ji)[idx] <- c(group, "IDout", "IDin")
+  ## set common names for round-robin variables
+  names(dat_ij)[-idx] <- Ys
+  names(dat_ji)[-idx] <- Ys
+  ## return stacked data
+  rbind(dat_ij, dat_ji)
+}
+
+
+
+## The rest call 2 of the 3 above
+
 
 
 ## transform from univariate (long-long) to bivariate (long) format in 2 steps:
@@ -270,5 +277,16 @@ longUni2longBi <- function(y, data, IDout, IDin, group = NULL, groupMC = FALSE,
                 group = group, groupMC = groupMC,
                 label = if (is.null(label)) y else label)
 }
+
+
+
+## transform from square (adjacency matrix) to long-long (univariate) format
+# square2longUni <- function(mat, dropNA = TRUE) {}
+#TODO: call square2longBi() then longBi2longUni()
+
+## transform from long format (bivariate outcome) to square format,
+## like an adjacency matrix / sociometric data
+# longBi2square <- function(Ys, data, ID1, ID2, group = NULL) {}
+#TODO: call longBi2longUni() then longUni2square()
 
 
