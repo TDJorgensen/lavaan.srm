@@ -1,5 +1,5 @@
 ### Terrence D. Jorgensen
-### Last updated: 10 April 2023
+### Last updated: 20 May 2023
 ### Class and Methods for mvSRM object
 
 
@@ -167,6 +167,8 @@ setMethod("show", "mvSRM", function(object) {
 
 ##' @importFrom methods getMethod
 #TODO: add EAP and MAP as options
+#TODO: for cov/cor matrices, return single matrix for interval estimates
+#      (lower / upper limits can go below / above the diagonal)
 summary.mvSRM <- function(object, component = c("case","dyad"),
                           srm.param = c("sd","cor"),
                           posterior.est = "mean",
@@ -425,21 +427,20 @@ as.matrix.mvSRM <- function(x, component, srm.param, posterior.est = "mean",
     if (!any(x@parNames$sigma == "S_g"))
       stop('group level not modeled (IDgroup=NULL or fixed.groups=TRUE)')
     PARS <- ifelse(srm.param == "sd", "S_g", "Rg")
-    NAMES <- names(x@varNames$RR)
+    NAMES <- x@varNames$group
 
   } else if (component == "case") {
     PARS <- ifelse(srm.param == "sd", "S_p", "Rp")
-    NAMES <- paste(rep(names(x@varNames$RR), each = 2),
-                   c("out","in"), sep = "_")
+    NAMES <- x@varNames$case
 
   } else if (component == "dyad") {
     PARS <- ifelse(srm.param == "sd", "s_rr", "Rd2")
     if (srm.param == "sd") {
-      NAMES <- names(x@varNames$RR)
+      NAMES <- c(names(x@varNames$RR), x@varNames$dyad)
     } else {
       ## extended names for "cor" or "cov"
-      NAMES <- paste(rep(names(x@varNames$RR), each = 2),
-                     c("ij","ji"), sep = "_")
+      NAMES <- c(c(x@varNames$RR, recursive = TRUE, use.names = FALSE),
+                 x@varNames$dyad)
     }
 
   }

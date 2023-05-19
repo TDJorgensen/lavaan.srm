@@ -62,8 +62,7 @@ Not used yet.}
 Must contain a variable named \code{ID}, with \strong{all the same values} that
 appear in \code{data[[IDout]]} and \code{data[[IDin]]} when \code{is.data.frame(data)};
 or all the same \code{dimnames(data)[1:2]} when \verb{data=} is a matrix/array (or
-all \code{dimnames()} when \verb{data=} is a list of arrays).
-Not used yet.}
+all \code{dimnames()} when \verb{data=} is a list of arrays).}
 
 \item{block}{Optional \code{character} indicating the name of a case-level
 grouping variable in \code{data} that distinguishes between multiple
