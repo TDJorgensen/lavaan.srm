@@ -621,7 +621,7 @@ vcov.mvSRM <- function(object, component, meanstructure = FALSE,
       stop('group level not modeled (IDgroup=NULL or fixed.groups=TRUE)')
 
     PARS <- c("S_g", "Rg")
-    NAMES <- names(object@varNames$RR) #TODO: add covariates
+    NAMES <- object@varNames$group
 
     if (!missing(keep)) {
       SUBSET <- intersect(keep, NAMES)
@@ -645,8 +645,7 @@ vcov.mvSRM <- function(object, component, meanstructure = FALSE,
   } else if (component == "case") {
 
     PARS <- c("S_p", "Rp")
-    NAMES <- paste(rep(names(object@varNames$RR), each = 2),
-                   c("out","in"), sep = "_")
+    NAMES <- object@varNames$case
 
     if (!missing(keep)) {
       KEEP <- do.call(c, sapply(keep, function(k) {
@@ -678,14 +677,14 @@ vcov.mvSRM <- function(object, component, meanstructure = FALSE,
   } else if (component == "dyad") {
 
     PARS <- c("s_rr", "Rd2")
-    NAMES <- paste(rep(names(object@varNames$RR), each = 2),
-                   c("ij","ji"), sep = "_")
+    NAMES <- c(c(object@varNames$RR, recursive = TRUE, use.names = FALSE),
+               object@varNames$dyad)
 
     if (!missing(keep)) {
       KEEP <- do.call(c, sapply(keep, function(k) {
         if (k %in% names(object@varNames$RR)) {
           return(paste0(k, c("_ij", "_ji")))
-        } else if (k %in% do.call(c, object@varNames$RR)) {
+        } else if (k %in% NAMES) {
           return(k)
         }
         NULL
@@ -697,7 +696,7 @@ vcov.mvSRM <- function(object, component, meanstructure = FALSE,
       DROP <- do.call(c, sapply(drop, function(d) {
         if (d %in% names(object@varNames$RR)) {
           return(paste0(d, c("_ij", "_ji")))
-        } else if (d %in% do.call(c, object@varNames$RR)) {
+        } else if (d %in% NAMES) {
           return(d)
         }
         NULL
