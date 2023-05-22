@@ -1,5 +1,5 @@
 ### Terrence D. Jorgensen
-### Last updated: 20 May 2023
+### Last updated: 23 May 2023
 ### function to implement Stage-1 of 2-stage SR-SEM estimator
 
 
@@ -516,13 +516,25 @@ mvsrm <- function(data, rr.vars = NULL, IDout, IDin, #TODO: na.code = -9999L,
     }
     SRMname["design"] <- paste0(SRMname["design"], "g")
     SRMname["groups"] <- "gN"
+
+    ## model both group-level effects and means
+    priorCall$modelG <- TRUE
+    priorCall$modelM <- TRUE
+
   } else if (fixed.groups) {
     SRMname["groups"] <- "g0"
+    ## model neither group-level effects nor means
+    priorCall$modelG <- FALSE
+    priorCall$modelM <- FALSE
+
   } else {
     SRMname["groups"] <- "g1" # must be is.null(IDgroup)
+    ## model means, but not group-level effects
+    priorCall$modelG <- FALSE
+    priorCall$modelM <- TRUE
   }
 
-  priors <- eval(as.call(priorCall))
+  # priors <- eval(as.call(priorCall))
   #TODO: Allow users to specify their own via priors= argument.
   #      Check which defaults to replace?
   knowns <- c(knowns, eval(as.call(priorCall)))
