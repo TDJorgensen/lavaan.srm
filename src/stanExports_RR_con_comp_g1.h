@@ -687,15 +687,15 @@ public:
                                 ((get_base1(S_p, idx1, "S_p", 1) * get_base1(AP, get_base1(get_base1(IDp, d, "IDp", 1), 2, "IDp", 2), idx1, "AP", 1)) + (get_base1(S_p, idx2, "S_p", 1) * get_base1(AP, get_base1(get_base1(IDp, d, "IDp", 1), 1, "IDp", 2), idx2, "AP", 1))), 
                                 "assigning variable Yd2hat");
                     current_statement_begin__ = 139;
-                    stan::model::assign(augYd, 
+                    stan::model::assign(Yd2hat, 
                                 stan::model::cons_list(stan::model::index_uni(d), stan::model::cons_list(stan::model::index_uni(idx1), stan::model::nil_index_list())), 
-                                (stan::model::rvalue(augYd, stan::model::cons_list(stan::model::index_uni(d), stan::model::cons_list(stan::model::index_uni(idx1), stan::model::nil_index_list())), "augYd") + get_base1(Mvec, k, "Mvec", 1)), 
-                                "assigning variable augYd");
+                                (stan::model::rvalue(Yd2hat, stan::model::cons_list(stan::model::index_uni(d), stan::model::cons_list(stan::model::index_uni(idx1), stan::model::nil_index_list())), "Yd2hat") + get_base1(Mvec, k, "Mvec", 1)), 
+                                "assigning variable Yd2hat");
                     current_statement_begin__ = 140;
-                    stan::model::assign(augYd, 
+                    stan::model::assign(Yd2hat, 
                                 stan::model::cons_list(stan::model::index_uni(d), stan::model::cons_list(stan::model::index_uni(idx2), stan::model::nil_index_list())), 
-                                (stan::model::rvalue(augYd, stan::model::cons_list(stan::model::index_uni(d), stan::model::cons_list(stan::model::index_uni(idx2), stan::model::nil_index_list())), "augYd") + get_base1(Mvec, k, "Mvec", 1)), 
-                                "assigning variable augYd");
+                                (stan::model::rvalue(Yd2hat, stan::model::cons_list(stan::model::index_uni(d), stan::model::cons_list(stan::model::index_uni(idx2), stan::model::nil_index_list())), "Yd2hat") + get_base1(Mvec, k, "Mvec", 1)), 
+                                "assigning variable Yd2hat");
                 }
             }
             }
@@ -1173,15 +1173,15 @@ public:
                                 ((get_base1(S_p, idx1, "S_p", 1) * get_base1(AP, get_base1(get_base1(IDp, d, "IDp", 1), 2, "IDp", 2), idx1, "AP", 1)) + (get_base1(S_p, idx2, "S_p", 1) * get_base1(AP, get_base1(get_base1(IDp, d, "IDp", 1), 1, "IDp", 2), idx2, "AP", 1))), 
                                 "assigning variable Yd2hat");
                     current_statement_begin__ = 139;
-                    stan::model::assign(augYd, 
+                    stan::model::assign(Yd2hat, 
                                 stan::model::cons_list(stan::model::index_uni(d), stan::model::cons_list(stan::model::index_uni(idx1), stan::model::nil_index_list())), 
-                                (stan::model::rvalue(augYd, stan::model::cons_list(stan::model::index_uni(d), stan::model::cons_list(stan::model::index_uni(idx1), stan::model::nil_index_list())), "augYd") + get_base1(Mvec, k, "Mvec", 1)), 
-                                "assigning variable augYd");
+                                (stan::model::rvalue(Yd2hat, stan::model::cons_list(stan::model::index_uni(d), stan::model::cons_list(stan::model::index_uni(idx1), stan::model::nil_index_list())), "Yd2hat") + get_base1(Mvec, k, "Mvec", 1)), 
+                                "assigning variable Yd2hat");
                     current_statement_begin__ = 140;
-                    stan::model::assign(augYd, 
+                    stan::model::assign(Yd2hat, 
                                 stan::model::cons_list(stan::model::index_uni(d), stan::model::cons_list(stan::model::index_uni(idx2), stan::model::nil_index_list())), 
-                                (stan::model::rvalue(augYd, stan::model::cons_list(stan::model::index_uni(d), stan::model::cons_list(stan::model::index_uni(idx2), stan::model::nil_index_list())), "augYd") + get_base1(Mvec, k, "Mvec", 1)), 
-                                "assigning variable augYd");
+                                (stan::model::rvalue(Yd2hat, stan::model::cons_list(stan::model::index_uni(d), stan::model::cons_list(stan::model::index_uni(idx2), stan::model::nil_index_list())), "Yd2hat") + get_base1(Mvec, k, "Mvec", 1)), 
+                                "assigning variable Yd2hat");
                 }
             }
             }
