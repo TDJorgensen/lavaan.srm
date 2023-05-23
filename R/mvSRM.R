@@ -510,11 +510,11 @@ mvsrm <- function(data, rr.vars = NULL, IDout, IDin, #TODO: na.code = -9999L,
       #TODO: knowns$Kg <-      ncol(group_data) - 1L
       #TODO: knowns$Yg <- as.matrix(group_data[, -1])
       #TODO: priorCall$cov_g <- group_data[, -1, drop = FALSE]
+      SRMname["design"] <- paste0(SRMname["design"], "g")
     }
     if (!is.null(case_data)) {
       #TODO: knowns$IDgp <- case_data[[IDgroup]]
     }
-    SRMname["design"] <- paste0(SRMname["design"], "g")
     SRMname["groups"] <- "gN"
 
     ## model both group-level effects and means
