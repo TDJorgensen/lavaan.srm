@@ -61,19 +61,19 @@ stan::io::program_reader prog_reader__() {
     reader.add_event(157, 0, "start", "/covariates/case_tpar_aug_comp.stan");
     reader.add_event(166, 9, "end", "/covariates/case_tpar_aug_comp.stan");
     reader.add_event(166, 140, "restart", "model_RRc_con_comp_g0");
-    reader.add_event(180, 154, "include", "/covariates/case_model.stan");
-    reader.add_event(180, 0, "start", "/covariates/case_model.stan");
-    reader.add_event(184, 4, "end", "/covariates/case_model.stan");
-    reader.add_event(184, 155, "restart", "model_RRc_con_comp_g0");
-    reader.add_event(205, 176, "include", "/OneGroup/OneGroup_Rsq.stan");
-    reader.add_event(205, 0, "start", "/OneGroup/OneGroup_Rsq.stan");
-    reader.add_event(225, 20, "end", "/OneGroup/OneGroup_Rsq.stan");
-    reader.add_event(225, 177, "restart", "model_RRc_con_comp_g0");
-    reader.add_event(233, 185, "include", "/include/license.stan");
-    reader.add_event(233, 0, "start", "/include/license.stan");
-    reader.add_event(247, 14, "end", "/include/license.stan");
-    reader.add_event(247, 186, "restart", "model_RRc_con_comp_g0");
-    reader.add_event(249, 186, "end", "model_RRc_con_comp_g0");
+    reader.add_event(179, 153, "include", "/covariates/case_model.stan");
+    reader.add_event(179, 0, "start", "/covariates/case_model.stan");
+    reader.add_event(183, 4, "end", "/covariates/case_model.stan");
+    reader.add_event(183, 154, "restart", "model_RRc_con_comp_g0");
+    reader.add_event(204, 175, "include", "/OneGroup/OneGroup_Rsq.stan");
+    reader.add_event(204, 0, "start", "/OneGroup/OneGroup_Rsq.stan");
+    reader.add_event(224, 20, "end", "/OneGroup/OneGroup_Rsq.stan");
+    reader.add_event(224, 176, "restart", "model_RRc_con_comp_g0");
+    reader.add_event(232, 184, "include", "/include/license.stan");
+    reader.add_event(232, 0, "start", "/include/license.stan");
+    reader.add_event(246, 14, "end", "/include/license.stan");
+    reader.add_event(246, 185, "restart", "model_RRc_con_comp_g0");
+    reader.add_event(248, 185, "end", "model_RRc_con_comp_g0");
     return reader;
 }
 #include <stan_meta_header.hpp>
@@ -818,53 +818,53 @@ public:
                 }
             }
             // model body
-            current_statement_begin__ = 172;
+            current_statement_begin__ = 171;
             for (int k = 1; k <= Kd2; ++k) {
-                current_statement_begin__ = 174;
+                current_statement_begin__ = 173;
                 lp_accum__.add(student_t_log<propto__>(get_base1(s_rr, k, "s_rr", 1), get_base1(rr_rel_t, k, 1, "rr_rel_t", 1), get_base1(rr_rel_t, k, 2, "rr_rel_t", 1), get_base1(rr_rel_t, k, 3, "rr_rel_t", 1)));
                 if (get_base1(s_rr, k, "s_rr", 1) < 0) lp_accum__.add(-std::numeric_limits<double>::infinity());
                 else lp_accum__.add(-student_t_ccdf_log(0, get_base1(rr_rel_t, k, 1, "rr_rel_t", 1), get_base1(rr_rel_t, k, 2, "rr_rel_t", 1), get_base1(rr_rel_t, k, 3, "rr_rel_t", 1)));
-                current_statement_begin__ = 176;
+                current_statement_begin__ = 175;
                 lp_accum__.add(student_t_log<propto__>(get_base1(S_p, ((2 * k) - 1), "S_p", 1), get_base1(rr_out_t, k, 1, "rr_out_t", 1), get_base1(rr_out_t, k, 2, "rr_out_t", 1), get_base1(rr_out_t, k, 3, "rr_out_t", 1)));
                 if (get_base1(S_p, ((2 * k) - 1), "S_p", 1) < 0) lp_accum__.add(-std::numeric_limits<double>::infinity());
                 else lp_accum__.add(-student_t_ccdf_log(0, get_base1(rr_out_t, k, 1, "rr_out_t", 1), get_base1(rr_out_t, k, 2, "rr_out_t", 1), get_base1(rr_out_t, k, 3, "rr_out_t", 1)));
-                current_statement_begin__ = 178;
+                current_statement_begin__ = 177;
                 lp_accum__.add(student_t_log<propto__>(get_base1(S_p, (2 * k), "S_p", 1), get_base1(rr_in_t, k, 1, "rr_in_t", 1), get_base1(rr_in_t, k, 2, "rr_in_t", 1), get_base1(rr_in_t, k, 3, "rr_in_t", 1)));
                 if (get_base1(S_p, (2 * k), "S_p", 1) < 0) lp_accum__.add(-std::numeric_limits<double>::infinity());
                 else lp_accum__.add(-student_t_ccdf_log(0, get_base1(rr_in_t, k, 1, "rr_in_t", 1), get_base1(rr_in_t, k, 2, "rr_in_t", 1), get_base1(rr_in_t, k, 3, "rr_in_t", 1)));
             }
-            current_statement_begin__ = 182;
+            current_statement_begin__ = 181;
             for (int k = 1; k <= Kp; ++k) {
-                current_statement_begin__ = 183;
+                current_statement_begin__ = 182;
                 lp_accum__.add(normal_log<propto__>(get_base1(S_p, ((2 * Kd2) + k), "S_p", 1), (get_base1(halfRangeKp, k, "halfRangeKp", 1) / 5), (get_base1(halfRangeKp, k, "halfRangeKp", 1) / 5)));
                 if (get_base1(S_p, ((2 * Kd2) + k), "S_p", 1) < 0) lp_accum__.add(-std::numeric_limits<double>::infinity());
                 else lp_accum__.add(-normal_ccdf_log(0, (get_base1(halfRangeKp, k, "halfRangeKp", 1) / 5), (get_base1(halfRangeKp, k, "halfRangeKp", 1) / 5)));
             }
-            current_statement_begin__ = 187;
+            current_statement_begin__ = 186;
             lp_accum__.add(lkj_corr_cholesky_log<propto__>(chol_r_p, 2));
-            current_statement_begin__ = 188;
+            current_statement_begin__ = 187;
             for (int k = 1; k <= Kd2; ++k) {
-                current_statement_begin__ = 190;
+                current_statement_begin__ = 189;
                 lp_accum__.add(beta_log<propto__>(get_base1(r_d2, k, k, "r_d2", 1), get_base1(rr_beta_a, k, k, "rr_beta_a", 1), get_base1(rr_beta_b, k, k, "rr_beta_b", 1)));
-                current_statement_begin__ = 192;
+                current_statement_begin__ = 191;
                 if (as_bool(logical_lt(k, Kd2))) {
-                    current_statement_begin__ = 192;
+                    current_statement_begin__ = 191;
                     for (int kk = (k + 1); kk <= Kd2; ++kk) {
-                        current_statement_begin__ = 193;
+                        current_statement_begin__ = 192;
                         lp_accum__.add(beta_log<propto__>(get_base1(r_d2, kk, k, "r_d2", 1), get_base1(rr_beta_a, kk, k, "rr_beta_a", 1), get_base1(rr_beta_b, kk, k, "rr_beta_b", 1)));
-                        current_statement_begin__ = 194;
+                        current_statement_begin__ = 193;
                         lp_accum__.add(beta_log<propto__>(get_base1(r_d2, k, kk, "r_d2", 1), get_base1(rr_beta_a, k, kk, "rr_beta_a", 1), get_base1(rr_beta_b, k, kk, "rr_beta_b", 1)));
                     }
                 }
             }
-            current_statement_begin__ = 199;
+            current_statement_begin__ = 198;
             for (int n = 1; n <= Nd; ++n) {
-                current_statement_begin__ = 199;
+                current_statement_begin__ = 198;
                 lp_accum__.add(multi_normal_cholesky_log<propto__>(stan::model::rvalue(augYd, stan::model::cons_list(stan::model::index_uni(n), stan::model::cons_list(stan::model::index_omni(), stan::model::nil_index_list())), "augYd"), stan::model::rvalue(Yd2hat, stan::model::cons_list(stan::model::index_uni(n), stan::model::cons_list(stan::model::index_omni(), stan::model::nil_index_list())), "Yd2hat"), chol_d));
             }
-            current_statement_begin__ = 200;
+            current_statement_begin__ = 199;
             for (int n = 1; n <= Np; ++n) {
-                current_statement_begin__ = 200;
+                current_statement_begin__ = 199;
                 lp_accum__.add(multi_normal_cholesky_log<propto__>(stan::model::rvalue(augYp, stan::model::cons_list(stan::model::index_uni(n), stan::model::cons_list(stan::model::index_omni(), stan::model::nil_index_list())), "augYp"), rep_row_vector(0, allKp), chol_p));
             }
         } catch (const std::exception& e) {
@@ -1290,19 +1290,19 @@ public:
             }
             if (!include_gqs__) return;
             // declare and define generated quantities
-            current_statement_begin__ = 203;
+            current_statement_begin__ = 202;
             validate_non_negative_index("Yd2e", "Nd", Nd);
             validate_non_negative_index("Yd2e", "allKd", allKd);
             Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> Yd2e(Nd, allKd);
             stan::math::initialize(Yd2e, DUMMY_VAR__);
             stan::math::fill(Yd2e, DUMMY_VAR__);
-            current_statement_begin__ = 204;
+            current_statement_begin__ = 203;
             validate_non_negative_index("Rp", "allKp", allKp);
             validate_non_negative_index("Rp", "allKp", allKp);
             Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> Rp(allKp, allKp);
             stan::math::initialize(Rp, DUMMY_VAR__);
             stan::math::fill(Rp, DUMMY_VAR__);
-            current_statement_begin__ = 208;
+            current_statement_begin__ = 207;
             validate_non_negative_index("Rsq", "Kd2", Kd2);
             validate_non_negative_index("Rsq", "3", 3);
             Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> Rsq(Kd2, 3);
@@ -1310,52 +1310,52 @@ public:
             stan::math::fill(Rsq, DUMMY_VAR__);
             // generated quantities statements
             {
-            current_statement_begin__ = 212;
+            current_statement_begin__ = 211;
             validate_non_negative_index("vars", "Kd2", Kd2);
             validate_non_negative_index("vars", "3", 3);
             Eigen::Matrix<local_scalar_t__, Eigen::Dynamic, Eigen::Dynamic> vars(Kd2, 3);
             stan::math::initialize(vars, DUMMY_VAR__);
             stan::math::fill(vars, DUMMY_VAR__);
-            current_statement_begin__ = 213;
+            current_statement_begin__ = 212;
             validate_non_negative_index("totals", "Kd2", Kd2);
             Eigen::Matrix<local_scalar_t__, Eigen::Dynamic, 1> totals(Kd2);
             stan::math::initialize(totals, DUMMY_VAR__);
             stan::math::fill(totals, DUMMY_VAR__);
-            current_statement_begin__ = 215;
+            current_statement_begin__ = 214;
             for (int k = 1; k <= Kd2; ++k) {
-                current_statement_begin__ = 216;
+                current_statement_begin__ = 215;
                 stan::model::assign(vars, 
                             stan::model::cons_list(stan::model::index_uni(k), stan::model::cons_list(stan::model::index_uni(1), stan::model::nil_index_list())), 
                             square(get_base1(S_p, ((2 * k) - 1), "S_p", 1)), 
                             "assigning variable vars");
-                current_statement_begin__ = 217;
+                current_statement_begin__ = 216;
                 stan::model::assign(vars, 
                             stan::model::cons_list(stan::model::index_uni(k), stan::model::cons_list(stan::model::index_uni(2), stan::model::nil_index_list())), 
                             square(get_base1(S_p, (2 * k), "S_p", 1)), 
                             "assigning variable vars");
-                current_statement_begin__ = 218;
+                current_statement_begin__ = 217;
                 stan::model::assign(vars, 
                             stan::model::cons_list(stan::model::index_uni(k), stan::model::cons_list(stan::model::index_uni(3), stan::model::nil_index_list())), 
                             square(get_base1(s_rr, k, "s_rr", 1)), 
                             "assigning variable vars");
-                current_statement_begin__ = 220;
+                current_statement_begin__ = 219;
                 stan::model::assign(totals, 
                             stan::model::cons_list(stan::model::index_uni(k), stan::model::nil_index_list()), 
                             sum(stan::model::rvalue(vars, stan::model::cons_list(stan::model::index_uni(k), stan::model::cons_list(stan::model::index_omni(), stan::model::nil_index_list())), "vars")), 
                             "assigning variable totals");
-                current_statement_begin__ = 221;
+                current_statement_begin__ = 220;
                 stan::model::assign(Rsq, 
                             stan::model::cons_list(stan::model::index_uni(k), stan::model::cons_list(stan::model::index_omni(), stan::model::nil_index_list())), 
                             elt_divide(stan::model::rvalue(vars, stan::model::cons_list(stan::model::index_uni(k), stan::model::cons_list(stan::model::index_omni(), stan::model::nil_index_list())), "vars"), get_base1(totals, k, "totals", 1)), 
                             "assigning variable Rsq");
             }
             }
-            current_statement_begin__ = 228;
+            current_statement_begin__ = 227;
             stan::math::assign(Yd2e, subtract(augYd, Yd2hat));
-            current_statement_begin__ = 231;
+            current_statement_begin__ = 230;
             stan::math::assign(Rp, multiply_lower_tri_self_transpose(chol_r_p));
             // validate, write generated quantities
-            current_statement_begin__ = 203;
+            current_statement_begin__ = 202;
             size_t Yd2e_j_2_max__ = allKd;
             size_t Yd2e_j_1_max__ = Nd;
             for (size_t j_2__ = 0; j_2__ < Yd2e_j_2_max__; ++j_2__) {
@@ -1363,7 +1363,7 @@ public:
                     vars__.push_back(Yd2e(j_1__, j_2__));
                 }
             }
-            current_statement_begin__ = 204;
+            current_statement_begin__ = 203;
             size_t Rp_j_2_max__ = allKp;
             size_t Rp_j_1_max__ = allKp;
             for (size_t j_2__ = 0; j_2__ < Rp_j_2_max__; ++j_2__) {
@@ -1371,7 +1371,7 @@ public:
                     vars__.push_back(Rp(j_1__, j_2__));
                 }
             }
-            current_statement_begin__ = 208;
+            current_statement_begin__ = 207;
             size_t Rsq_j_2_max__ = 3;
             size_t Rsq_j_1_max__ = Kd2;
             for (size_t j_2__ = 0; j_2__ < Rsq_j_2_max__; ++j_2__) {

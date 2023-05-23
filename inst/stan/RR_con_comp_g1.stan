@@ -1,5 +1,5 @@
 // Terrence D. Jorgensen
-// Last updated: 19 May 2023
+// Last updated: 23 May 2023
 
 // Program to estimate covariance matrices for multivariate SRM components
 // - standard round-robin design (indistinguishable subjects)
@@ -132,6 +132,12 @@ transformed parameters {
 
     }
   }
+
+  // Augment observed values with ...
+  // - level-specific covariates?
+  // - estimates of missing values?
+#include /vanilla/tpar_augYd.stan
+#include /vanilla/tpar_augYp.stan
 
 }
 model {

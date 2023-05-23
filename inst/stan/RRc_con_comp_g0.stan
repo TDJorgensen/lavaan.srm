@@ -139,7 +139,6 @@ transformed parameters {
 #include /vanilla/tpar_augYd.stan
 #include /covariates/case_tpar_aug_comp.stan
 
-
 }
 model {
   // priors for means and SDs, based on empirical ranges
