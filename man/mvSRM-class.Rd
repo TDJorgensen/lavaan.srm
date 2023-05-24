@@ -137,7 +137,7 @@ and \verb{group_data=}) passed to \code{\link[=mvsrm]{mvsrm()}}.}
 
 \item{\code{varNames}}{\code{list} of variable names at each level of analysis.  This is
 used to ease the writing of methods to extract information by variable,
-since each variable has 2 person-level and 2 dyad-level components.}
+since each round-robin variable has 2 person-level and 2 dyad-level components.}
 
 \item{\code{parNames}}{\code{list} of parameters, organized in sets:
 \itemize{

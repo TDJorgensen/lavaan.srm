@@ -1,5 +1,5 @@
 ### Terrence D. Jorgensen
-### Last updated: 23 February 2023
+### Last updated: 24 May 2023
 ### (currently hidden) function to create a lavMoments-class object
 ### from a mvSRM-class object (inherits from stanfit-class)
 
@@ -31,7 +31,10 @@
 ##   specific components, which include `c("out","in")` suffixes for case-level
 ##   components or `c("ij","ji")` suffixes for dyad/relationship-level
 ##   components.
+
 #TODO (if this becomes public): create a syntax example, verify blocks work
+
+
 srm2lavData <- function(object, component, posterior.est = "mean", keep, drop,
                         meanstructure = FALSE, lavData = NULL) {
   stopifnot(inherits(object, "mvSRM"))
@@ -52,7 +55,7 @@ srm2lavData <- function(object, component, posterior.est = "mean", keep, drop,
   } else M <- NULL
 
   NACOV <- vcov.mvSRM(object, component = component, keep = keep, drop = drop,
-                      meanstructure = meanstructure)
+                      meanstructure = meanstructure, add.names.attr = TRUE)
   if (categorical) {
     #TODO: thresholds
 
@@ -100,7 +103,7 @@ srm2lavData <- function(object, component, posterior.est = "mean", keep, drop,
     }
 
   }
-
+  out$ov.order <- "data" # should be default with NACOV=, but just in case
 
   ## set recommended arguments (estimator, se, test)
   out$lavOptions <- list(sample.cov.rescale = FALSE,

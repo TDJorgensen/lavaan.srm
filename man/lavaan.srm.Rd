@@ -32,7 +32,7 @@ estimate.  Must be \verb{\%in\% c("mean", "median", "mode")}, or \code{"EAP"}
 An object of \code{class?lavaan}.
 }
 \description{
-Estimate a structural equation model (SEM) parameters, using MCMC-estimated
+Estimate structural equation model (SEM) parameters, using MCMC-estimated
 summary statistics from a multivariate social relations model (mvSRM;
 Nestler, \href{https://doi.org/10.3102/1076998617741106}{2018}) as data.
 }

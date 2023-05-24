@@ -1,5 +1,5 @@
 ### Terrence D. Jorgensen
-### Last updated: 20 May 2023
+### Last updated: 24 May 2023
 ### Class and Methods for mvSRM object
 
 
@@ -28,7 +28,7 @@
 ##'   and `group_data=`) passed to [mvsrm()].
 ##' @slot varNames `list` of variable names at each level of analysis.  This is
 ##'   used to ease the writing of methods to extract information by variable,
-##'   since each variable has 2 person-level and 2 dyad-level components.
+##'   since each round-robin variable has 2 person-level and 2 dyad-level components.
 ##' @slot parNames `list` of parameters, organized in sets:
 ##'   - `$mu` contains `"Mvec"` (the mean vector, if estimated)
 ##'   - `$sigma` contains `c("s_rr","S_p")` (also `"S_g"`, if estimated). These
