@@ -1,5 +1,5 @@
 ### Terrence D. Jorgensen
-### Last updated: 23 February 2023
+### Last updated: 24 May 2023
 ### pass model, lavMoments, and other arguments to lavaan()
 
 
@@ -12,7 +12,7 @@
 
 ##' Fit a `lavaan` Model to Multivariate SRM Results
 ##'
-##' Estimate a structural equation model (SEM) parameters, using MCMC-estimated
+##' Estimate structural equation model (SEM) parameters, using MCMC-estimated
 ##' summary statistics from a multivariate social relations model (mvSRM;
 ##' Nestler, [2018](https://doi.org/10.3102/1076998617741106)) as data.
 ##'
@@ -457,6 +457,9 @@ lavaan.srm <- function(model, data, component, posterior.est = "mean", ...) {
   fit <- eval(as.call(lavCall))
   ## overwrite lavaan's default @call
   fit@call <- MC #FIXME: does this cause problems in lavaan?
+
+  ## save srmMoments, to save time when fitting model to same variables
+  fit@external$lavMoments <- srmMoments
 
   if (fitMore && lavInspect(fit, "converged")) {
     ## fit saturated model regardless
