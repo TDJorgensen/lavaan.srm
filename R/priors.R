@@ -1,5 +1,5 @@
 ### Terrence D. Jorgensen
-### Last updated: 20 May 2023
+### Last updated: 6 June 2023
 ### function to set default priors for mvsrm()
 
 ## - t_df, t_m, t_sd: matrix[Kd2, 3] for 3 RR-components, vector[K] for covariate SDs
@@ -14,29 +14,29 @@ srm_priors <- function(rr.data, cov_d, cov_p, cov_g,
   priors <- list()
 
   ## SDs for each RR component (out, in, rel)
-  ## by default, half-range / 5 for each
-  halfR5rr <- sapply(rr.data, function(v) diff(range(v, na.rm = TRUE)) / 5)
-  priors$rr_rel_t <- data.frame(df = 4, m = halfR5rr, sd = halfR5rr)
-  priors$rr_out_t <- data.frame(df = 4, m = halfR5rr, sd = halfR5rr)
-  priors$rr_in_t  <- data.frame(df = 4, m = halfR5rr, sd = halfR5rr)
-  if (modelG) priors$rr_group_t <- data.frame(df = 4, m = halfR5rr, sd = halfR5rr)
+  ## by default, half-range / 5 for each (so divide range by 10)
+  halfRrr <- sapply(rr.data, function(v) diff(range(v, na.rm = TRUE)) / 2)
+  priors$rr_rel_t <- data.frame(df = 4, m = halfRrr/5, sd = halfRrr/5)
+  priors$rr_out_t <- data.frame(df = 4, m = halfRrr/5, sd = halfRrr/5)
+  priors$rr_in_t  <- data.frame(df = 4, m = halfRrr/5, sd = halfRrr/5)
+  if (modelG) priors$rr_group_t <- data.frame(df = 4, m = halfRrr/5, sd = halfRrr/5)
 
   if (!missing(cov_d)) {
-    halfR5d <- sapply(cov_d, function(v) diff(range(v, na.rm = TRUE)) / 5)
-    priors$d1_dyad_t <- data.frame(df = 4, m = halfR5d, sd = halfR5d)
-    priors$d1_case_t <- data.frame(df = 4, m = halfR5d, sd = halfR5d)
-    if (modelG) priors$d1_group_t <- data.frame(df = 4, m = halfR5d, sd = halfR5d)
+    halfRd <- sapply(cov_d, function(v) diff(range(v, na.rm = TRUE)) / 2)
+    priors$d1_dyad_t <- data.frame(df = 4, m = halfRd/5, sd = halfRd/2)
+    priors$d1_case_t <- data.frame(df = 4, m = halfRd/5, sd = halfRd/2)
+    if (modelG) priors$d1_group_t <- data.frame(df = 4, m = halfRd/5, sd = halfRd/5)
   }
 
   if (!missing(cov_p)) {
-    halfR5c <- sapply(cov_p, function(v) diff(range(v, na.rm = TRUE)) / 5)
-    priors$case_cov_t <- data.frame(df = 4, m = halfR5c, sd = halfR5c)
-    if (modelG) priors$case_group_t <- data.frame(df = 4, m = halfR5c, sd = halfR5c)
+    halfRc <- sapply(cov_p, function(v) diff(range(v, na.rm = TRUE)) / 2)
+    priors$case_cov_t <- data.frame(df = 4, m = halfRc/3, sd = halfRc/3)
+    if (modelG) priors$case_group_t <- data.frame(df = 4, m = halfRc/5, sd = halfRc/5)
   }
 
   if (modelG & !missing(cov_g)) {
-    halfR5g <- sapply(cov_g, function(v) diff(range(v, na.rm = TRUE)) / 5)
-    priors$group_cov_t <- data.frame(df = 4, m = halfR5g, sd = halfR5g)
+    halfRg <- sapply(cov_g, function(v) diff(range(v, na.rm = TRUE)) / 2)
+    priors$group_cov_t <- data.frame(df = 4, m = halfRg/3, sd = halfRg/3)
   }
 
   ## LKJ priors for intact correlation matrices
