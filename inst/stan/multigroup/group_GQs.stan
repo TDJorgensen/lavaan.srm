@@ -23,4 +23,4 @@
   }
 
   // calculate group-level correlation matrix
-  Rg = multiply_lower_tri_self_transpose(chol_g);
+  Rg = multiply_lower_tri_self_transpose(chol_r_g);

@@ -5,7 +5,7 @@
   }
 
   // priors for correlations
-  chol_g ~ lkj_corr_cholesky(group_lkj);
+  chol_r_g ~ lkj_corr_cholesky(group_lkj);
 
   // priors for random effects
   // FIXME: this assumes no group-level covariates

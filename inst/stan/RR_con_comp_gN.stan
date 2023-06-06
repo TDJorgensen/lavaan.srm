@@ -1,5 +1,5 @@
 // Terrence D. Jorgensen
-// Last updated: 23 May 2023
+// Last updated: 6 June 2023
 
 // Program to estimate covariance matrices for multivariate SRM components
 // - standard round-robin design (indistinguishable subjects)
@@ -37,6 +37,7 @@ data {
 transformed data {
 #include /vanilla/tdata_allKd.stan
 #include /vanilla/tdata_allKp.stan
+#include /vanilla/tdata_allKg.stan
 }
 parameters {
   // means
@@ -69,6 +70,7 @@ transformed parameters {
   // cholesky decompositions of correlation matrices
   matrix[allKd, allKd] chol_d;  // dyad-level
   matrix[allKp, allKp] chol_p;  // case-level
+#include /multigroup/group_tpar_declare.stan
 
   // augmented level-specific data sets
   // (can include observed covariates, random effects, imputed missing values)
@@ -117,6 +119,7 @@ transformed parameters {
   chol_d = diag_pre_multiply(S_d, cholesky_decompose(Rd2));
 
 #include /vanilla/tpar_chol_p.stan
+#include /vanilla/tpar_chol_g.stan
 
   // calculate and/or combine expected values
   {
