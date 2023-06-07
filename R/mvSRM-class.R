@@ -1,5 +1,5 @@
 ### Terrence D. Jorgensen
-### Last updated: 24 May 2023
+### Last updated: 7 June 2023
 ### Class and Methods for mvSRM object
 
 
@@ -47,6 +47,11 @@
 ##'     accounted for by outgoing (e.g., actor, perceiver, ego) effects, by
 ##'     incoming (e.g., partner, target, alter) effects, and by relationship
 ##'     effects (confounded with any dyad-level measurement error).
+##'     `$derived` also contains covariance matrices, which are simply the
+##'     correlation matrices in `$corr` scaled by the standard deviations
+##'     in `$sigma`. Relationship-level (`"dSigma"`) and case-level (`"pSigma"`)
+##'     covariance matrices are always included, as is the group-level matrix
+##'     (`"gSigma"`) when estimated.
 ##'   - `$components` contains the relationship-level and case-level components
 ##'     themselves when `object@call$saveComp=TRUE`. This makes the object take
 ##'     much more computer memory, but it would enable the plausible-values
@@ -60,8 +65,9 @@
 ##'   because means are only a group-level statistic.
 ##'   Multiple options can be passed to `summary()` method, but `as.matrix()`
 ##'   only uses the first.
-##' @param srm.param `character` specifying the type of SRM parameter to provide
-##'   for `component`. Can be `%in% c("sd", "cor", "cov")`, as well as `"mean"`
+##' @param srm.param Optional `character` vector (or `NULL`) specifying the type
+##'   of SRM parameter to provide for `component`.
+##'   Can be `%in% c("sd", "cor", "cov")`, as well as `"mean"`
 ##'   when `fixed.groups=FALSE`. The `summary()` method will always return the
 ##'   means as a group-level statistic, even for a single round-robin group.
 ##' @param posterior.est For `as.matrix()`, a length-1 `character` or `numeric`
@@ -253,8 +259,8 @@ summary.mvSRM <- function(object, component = c("case","dyad"),
             output[[COMP]]$sd$central <- rbind(lower = lower, upper = upper)
           }
           if ("hdi" %in% interval) {
-            probs <- abs(0:1 - (1 - credMass)/2)
             output$group$sd$hdi <- as.matrix.mvSRM(object, srm.param = "sd",
+                                                   component = COMP,
                                                    posterior.est = "hdi",
                                                    credMass = credMass, ...)
           }
@@ -287,8 +293,8 @@ summary.mvSRM <- function(object, component = c("case","dyad"),
                                                                 ...)
           }
           if ("hdi" %in% interval) {
-            probs <- abs(0:1 - (1 - credMass)/2)
             output$group$cor$hdi <- as.matrix.mvSRM(object, srm.param = "cor",
+                                                    component = COMP,
                                                     posterior.est = "hdi",
                                                     credMass = credMass, ...)
           }
@@ -324,8 +330,8 @@ summary.mvSRM <- function(object, component = c("case","dyad"),
                                                                 ...)
           }
           if ("hdi" %in% interval) {
-            probs <- abs(0:1 - (1 - credMass)/2)
             output$group$cov$hdi <- as.matrix.mvSRM(object, srm.param = "cov",
+                                                    component = COMP,
                                                     posterior.est = "hdi",
                                                     credMass = credMass, ...)
           }
@@ -409,8 +415,11 @@ as.matrix.mvSRM <- function(x, component, srm.param, posterior.est = "mean",
     #TODO: c() additional names of case/group_data or dyad-constant variables
     if (posterior.est == "hdi") {
       colnames(out) <- names(x@varNames$RR)
-    } else names(out) <- names(x@varNames$RR)
-
+      class(out) <- c("lavaan.matrix", "matrix")
+    } else {
+      names(out) <- names(x@varNames$RR)
+      class(out) <- c("lavaan.vector", "numeric")
+    }
     ## nothing else to do for means
     return(out)
 
@@ -426,19 +435,35 @@ as.matrix.mvSRM <- function(x, component, srm.param, posterior.est = "mean",
   if (component == "group") {
     if (!any(x@parNames$sigma == "S_g"))
       stop('group level not modeled (IDgroup=NULL or fixed.groups=TRUE)')
-    PARS <- ifelse(srm.param == "sd", "S_g", "Rg")
+    if (srm.param == "sd") {
+      PARS <- "S_g"
+    } else if (srm.param == "cor") {
+      PARS <- "Rg"
+    } else if (srm.param == "cov") {
+      PARS <- "gSigma"
+    }
     NAMES <- x@varNames$group
 
   } else if (component == "case") {
-    PARS <- ifelse(srm.param == "sd", "S_p", "Rp")
+    if (srm.param == "sd") {
+      PARS <- "S_p"
+    } else if (srm.param == "cor") {
+      PARS <- "Rp"
+    } else if (srm.param == "cov") {
+      PARS <- "pSigma"
+    }
     NAMES <- x@varNames$case
 
   } else if (component == "dyad") {
-    PARS <- ifelse(srm.param == "sd", "s_rr", "Rd2")
     if (srm.param == "sd") {
+      PARS <- "s_rr"
       NAMES <- c(names(x@varNames$RR), x@varNames$dyad)
-    } else {
-      ## extended names for "cor" or "cov"
+    } else if (srm.param == "cor") {
+      PARS <- "r_d2"
+      NAMES <- c(names(x@varNames$RR), x@varNames$dyad)
+    } else if (srm.param == "cov") {
+      PARS <- "gSigma"
+      ## extended names for covariance matrix
       NAMES <- c(c(x@varNames$RR, recursive = TRUE, use.names = FALSE),
                  x@varNames$dyad)
     }
@@ -446,155 +471,59 @@ as.matrix.mvSRM <- function(x, component, srm.param, posterior.est = "mean",
   }
 
 
-  if (srm.param %in% c("sd", "cor")) {
-    ## extract samples
-    paramMat <- do.call(rbind, rstan::As.mcmc.list(x, pars = PARS))
+  ## extract samples
+  paramMat <- do.call(rbind, rstan::As.mcmc.list(x, pars = PARS))
 
-    ## obtain summary statistic
-    if (is.numeric(posterior.est)) {
-      out <- apply(paramMat, MARGIN = 2, stats::quantile,
-                   probs = posterior.est, ...)
-    } else out <- apply(paramMat, MARGIN = 2, posterior.est, ...)
+  ## obtain summary statistic
+  if (is.numeric(posterior.est)) {
+    out <- apply(paramMat, MARGIN = 2, stats::quantile,
+                 probs = posterior.est, ...)
+  } else out <- apply(paramMat, MARGIN = 2, posterior.est, ...)
 
-    if (srm.param == "sd") {
-      ## attach variable names
-      if (posterior.est == "hdi") {
-        colnames(out)   <- NAMES #TODO: c() case/group_data names
-      } else names(out) <- NAMES
-      return(out) # nothing else to do for SDs
-
-    } else if (posterior.est == "hdi") {
-      lower <- out[1,]
-      upper <- out[2,]
-      ## store correlations in a list of 2 matrices ($lower and $upper)
-      assign(PARS, matrix(0, nrow = length(NAMES), ncol = length(NAMES),
-                          dimnames = list(NAMES, NAMES)))
-      for (i in names(lower)) {
-        eval(parse(text = paste(i, "<-", lower[i]) ))
-      }
-      LOWER <- eval(as.name(PARS))
-      class(LOWER) <- c("lavaan.matrix.symmetric","matrix")
-      for (i in names(upper)) {
-        eval(parse(text = paste(i, "<-", upper[i]) ))
-      }
-      UPPER <- eval(as.name(PARS))
-      class(UPPER) <- c("lavaan.matrix.symmetric","matrix")
-      ## nothing else to do for correlation limits
-      return(list(lower = LOWER, upper = UPPER))
-
+  if (srm.param == "sd") {
+    ## attach variable names
+    if (posterior.est == "hdi") {
+      colnames(out) <- NAMES #TODO: c() case/group_data names
+      class(out) <- c("lavaan.matrix", "matrix")
     } else {
-      ## store correlations in a matrix
-      assign(PARS, matrix(0, nrow = length(NAMES), ncol = length(NAMES),
-                          dimnames = list(NAMES, NAMES)))
-      for (i in names(out)) {
-        eval(parse(text = paste(i, "<-", out[i]) ))
-      }
-      out <- eval(as.name(PARS))
-      class(out) <- c("lavaan.matrix.symmetric","matrix")
-
-      return(out) # nothing else to do for correlations
+      names(out) <- NAMES
+      class(out) <- c("lavaan.vector", "numeric")
     }
 
-  }
-  ## else srm.param == "cov"
-
-  ## scale R with SDs per iteration, then assemble matrix
-
-  ## extract samples of both SDs and correlations
-  if (component == "group") {
-    PARS <- c("S_g", "Rg")
-  } else if (component == "case") {
-    PARS <- c("S_p", "Rp")
-  } else if (component == "dyad") {
-    PARS <- c("s_rr", "Rd2")
-  }
-  sdMat  <- do.call(rbind, rstan::As.mcmc.list(x, pars = PARS[1]))
-  corMat <- do.call(rbind, rstan::As.mcmc.list(x, pars = PARS[2]))
-
-
-  ## store correlations in a matrix (per posterior sample)
-  corList <- apply(corMat, MARGIN = 1, FUN = function(m) {
-    assign(PARS[2], matrix(0, nrow = length(NAMES), ncol = length(NAMES),
-                           dimnames = list(NAMES, NAMES)))
-    for (i in names(m)) eval(parse(text = paste(i, "<-", m[i]) ))
-    return( eval(as.name(PARS[2])) )
-  }, simplify = FALSE)
-
-  ## store SDs in a diagonal matrix (per posterior sample)
-  sdList <- apply(sdMat, MARGIN = 1, FUN = function(m) {
-    if (PARS[1] == "s_rr") {
-           assign(PARS[1], numeric(length(NAMES)/2)) # equality constraints
-    } else assign(PARS[1], numeric(length(NAMES)  ))
-
-    for (i in names(m)) eval(parse(text = paste(i, "<-", m[i]) ))
-
-    if (PARS[1] == "s_rr") {
-      SD <- diag(rep(eval(as.name(PARS[1])), each = 2)) # repeat equal variances
-    } else SD <- diag( eval(as.name(PARS[1])) )
-
-    dimnames(SD) <- list(NAMES, NAMES)
-    SD
-  }, simplify = FALSE)
-
-  ## scale correlations to covariance matrices
-  SigmaList <- mapply(function(R, SD) SD %*% R %*% SD,
-                       R = corList, S = sdList, SIMPLIFY = FALSE)
-
-  Sigma <- Reduce("+", SigmaList) / length(SigmaList)
-  class(Sigma) <- c("lavaan.matrix.symmetric","matrix")
-  if (posterior.est == "mean") return(Sigma)
-
-
-  ## otherwise, get posterior.est= for each cell in Sigma (copy to retain class)
-  if (posterior.est == "hdi") {
-    SigmaSummaryStat <- list(lower = Sigma, upper = Sigma)
-    ## obtain diagonal entries first
-    for (RR in NAMES) {
-      sigmaHDI <- HDInterval::hdi(sapply(SigmaList, "[", i = RR, j = RR), ...)
-      SigmaSummaryStat$lower[RR, RR] <- sigmaHDI[["lower"]]
-      SigmaSummaryStat$upper[RR, RR] <- sigmaHDI[["upper"]]
+  } else if (posterior.est == "hdi") {
+    lower <- out[1,]
+    upper <- out[2,]
+    ## store correlations/covariances in a list of 2 matrices ($lower & $upper)
+    assign(PARS, matrix(0, nrow = length(NAMES), ncol = length(NAMES),
+                        dimnames = list(NAMES, NAMES)))
+    for (i in names(lower)) {
+      eval(parse(text = paste(i, "<-", lower[i]) ))
     }
-    ## loop over (pairs of) variables
-    PAIRS <- combn(NAMES, m = 2)
-    for (RR in PAIRS[1,]) {
-      for (CC in PAIRS[2,]) {
-        sigmaHDI <- HDInterval::hdi(sapply(SigmaList, "[", i = RR, j = CC), ...)
-
-        SigmaSummaryStat$lower[RR, CC] <- sigmaHDI[["lower"]]
-        SigmaSummaryStat$lower[CC, RR] <- sigmaHDI[["lower"]]
-
-        SigmaSummaryStat$upper[RR, CC] <- sigmaHDI[["upper"]]
-        SigmaSummaryStat$upper[CC, RR] <- sigmaHDI[["upper"]]
-      }
+    LOWER <- eval(as.name(PARS))
+    class(LOWER) <- c(ifelse(PARS == "r_d2", "lavaan.matrix",
+                             "lavaan.matrix.symmetric"), "matrix")
+    for (i in names(upper)) {
+      eval(parse(text = paste(i, "<-", upper[i]) ))
     }
+    UPPER <- eval(as.name(PARS))
+    class(UPPER) <- c(ifelse(PARS == "r_d2", "lavaan.matrix",
+                             "lavaan.matrix.symmetric"), "matrix")
+    ## nothing else to do for correlation/covariance limits
+    out <- list(lower = LOWER, upper = UPPER)
 
   } else {
-    ## only scalars returned
-    SigmaSummaryStat <- Sigma
-    ## obtain diagonal entries first
-    for (RR in NAMES) {
-      sigmaVec <- sapply(SigmaList, "[", i = RR, j = RR)
-      if (is.numeric(posterior.est)) {
-        SigmaSummaryStat[RR, RR] <- quantile(sigmaVec, probs = posterior.est, ...)
-      } else SigmaSummaryStat[RR, RR] <- eval(as.name(posterior.est))(sigmaVec, ...)
+    ## store correlations/covariances in a matrix
+    assign(PARS, matrix(0, nrow = length(NAMES), ncol = length(NAMES),
+                        dimnames = list(NAMES, NAMES)))
+    for (i in names(out)) {
+      eval(parse(text = paste(i, "<-", out[i]) ))
     }
-    ## loop over (pairs of) variables
-    PAIRS <- combn(NAMES, m = 2)
-    for (RR in PAIRS[1,]) {
-      for (CC in PAIRS[2,]) {
-        if (is.numeric(posterior.est)) {
-          SigmaSummaryStat[RR, CC] <- quantile(sigmaVec, probs = posterior.est, ...)
-          SigmaSummaryStat[CC, RR] <- SigmaSummaryStat[RR, CC]
-        } else {
-          SigmaSummaryStat[RR, CC] <- eval(as.name(posterior.est))(sigmaVec, ...)
-          SigmaSummaryStat[CC, RR] <- SigmaSummaryStat[RR, CC]
-        }
-      }
-    }
-
+    out <- eval(as.name(PARS))
+    class(out) <- c(ifelse(PARS == "r_d2", "lavaan.matrix",
+                           "lavaan.matrix.symmetric"), "matrix")
   }
 
-  SigmaSummaryStat
+  out
 }
 ##' @name mvSRM-class
 ##' @aliases as.matrix,mvSRM-method
@@ -620,7 +549,7 @@ vcov.mvSRM <- function(object, component, meanstructure = FALSE,
     if (!any(object@parNames$sigma == "S_g"))
       stop('group level not modeled (IDgroup=NULL or fixed.groups=TRUE)')
 
-    PARS <- c("S_g", "Rg")
+    PARS <- "gSigma"
     NAMES <- object@varNames$group
 
     if (!missing(keep)) {
@@ -644,7 +573,7 @@ vcov.mvSRM <- function(object, component, meanstructure = FALSE,
 
   } else if (component == "case") {
 
-    PARS <- c("S_p", "Rp")
+    PARS <- "pSigma"
     NAMES <- object@varNames$case
 
     if (!missing(keep)) {
@@ -676,7 +605,7 @@ vcov.mvSRM <- function(object, component, meanstructure = FALSE,
 
   } else if (component == "dyad") {
 
-    PARS <- c("s_rr", "Rd2")
+    PARS <- "dSigma"
     NAMES <- c(c(object@varNames$RR, recursive = TRUE, use.names = FALSE),
                object@varNames$dyad)
 
@@ -708,39 +637,19 @@ vcov.mvSRM <- function(object, component, meanstructure = FALSE,
   }
 
 
-  ## store correlations in a matrix (per posterior sample)
-  corMat <- do.call(rbind, rstan::As.mcmc.list(object, pars = PARS[2]))
-  corList <- apply(corMat, MARGIN = 1, FUN = function(m) {
-    assign(PARS[2], matrix(0, nrow = length(NAMES), ncol = length(NAMES),
-                           dimnames = list(NAMES, NAMES)))
+  ## store covariances in a matrix (per posterior sample)
+  covMats <- do.call(rbind, rstan::As.mcmc.list(object, pars = PARS))
+  SigmaList <- apply(covMats, MARGIN = 1, FUN = function(m) {
+    assign(PARS, matrix(0, nrow = length(NAMES), ncol = length(NAMES),
+                        dimnames = list(NAMES, NAMES)))
     for (i in names(m)) eval(parse(text = paste(i, "<-", m[i]) ))
-    return( eval(as.name(PARS[2]))[SUBSET, SUBSET] )
+    return( eval(as.name(PARS))[SUBSET, SUBSET] )
   }, simplify = FALSE)
-
-  ## store SDs in a diagonal matrix (per posterior sample)
-  sdMat  <- do.call(rbind, rstan::As.mcmc.list(object, pars = PARS[1]))
-  sdList <- apply(sdMat, MARGIN = 1, FUN = function(m) {
-    if (PARS[1] == "s_rr") {
-      assign(PARS[1], numeric(length(NAMES)/2)) # equality constraints
-    } else assign(PARS[1], numeric(length(NAMES)  ))
-
-    for (i in names(m)) eval(parse(text = paste(i, "<-", m[i]) ))
-
-    if (PARS[1] == "s_rr") {
-      SD <- diag(rep(eval(as.name(PARS[1])), each = 2)) # repeat equal variances
-    } else SD <- diag( eval(as.name(PARS[1])) )
-
-    dimnames(SD) <- list(NAMES, NAMES)
-    SD[SUBSET, SUBSET]
-  }, simplify = FALSE)
-
-  ## scale correlations to covariance matrices
-  SigmaList <- mapply(function(R, SD) SD %*% R %*% SD,
-                      R = corList, S = sdList, SIMPLIFY = FALSE)
 
   if (!exists("MuList")) MuList <- list(NULL)
   ## posterior variability
   postList <- mapply(function(S, M = NULL) {
+    namesMatrix <- outer(X = rownames(S), Y = colnames(S), paste, sep = "~~")
     if (categorical) {
       wls.obs <- c(M, # 1. interleaved thresholds + (negative) means, if any
                    # 2. slopes (if any)
@@ -748,12 +657,17 @@ vcov.mvSRM <- function(object, component, meanstructure = FALSE,
                    as.numeric(diag(S)),
                    # 4. lower.tri covariances/correlations
                    lavaan::lav_matrix_vech(S, diagonal = FALSE))
+      DIMNAMES <- c(diag(namesMatrix),
+                    lavaan::lav_matrix_vech(namesMatrix, diagonal = FALSE))
     } else {
        wls.obs <- c(M, # 1. means (if any)
                     # 2. slopes (if any)
                     # 3. lower.tri (co)variance matrix
                     lavaan::lav_matrix_vech(S, diagonal = TRUE))
+       DIMNAMES <- lavaan::lav_matrix_vech(namesMatrix, diagonal = TRUE)
     }
+    if (!is.null(M)) DIMNAMES <- c(paste0(names(M), "~1"), DIMNAMES)
+    names(wls.obs) <- DIMNAMES
     wls.obs
   }, S = SigmaList, M = MuList, SIMPLIFY = FALSE)
   postSamp <- do.call(rbind, postList)

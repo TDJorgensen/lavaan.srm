@@ -182,8 +182,10 @@ model {
 #include /multigroup/group_model.stan
 }
 generated quantities{
-  matrix[Nd, allKd] Yd2e;   // residuals (relationship effects + error)
-  matrix[allKp, allKp] Rp;  // person-level correlation matrix
+  matrix[Nd, allKd] Yd2e;      // residuals (relationship effects + error)
+  matrix[allKp, allKp] Rp;     // person-level correlation matrix
+  matrix[allKp, allKp] pSigma; // person-level covariance matrix
+  matrix[allKp, allKp] dSigma; // dyad-level covariance matrix
 
 #include /multigroup/group_GQs.stan
 
@@ -192,6 +194,10 @@ generated quantities{
 
   // calculate person-level correlation matrix
   Rp = multiply_lower_tri_self_transpose(chol_r_p);
+  // calculate group-level covariance matrix
+  pSigma = multiply_lower_tri_self_transpose(chol_p);
+  // calculate dyad-level covariance matrix
+  dSigma = multiply_lower_tri_self_transpose(chol_d);
 }
 
 #include /include/license.stan

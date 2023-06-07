@@ -1,5 +1,5 @@
 ### Terrence D. Jorgensen
-### Last updated: 23 May 2023
+### Last updated: 7 June 2023
 ### function to implement Stage-1 of 2-stage SR-SEM estimator
 
 
@@ -548,10 +548,11 @@ mvsrm <- function(data, rr.vars = NULL, IDout, IDin, #TODO: na.code = -9999L,
   mu <- if (fixed.groups) NULL else "Mvec"
   sigma <- c("s_rr","S_p")
   corr <- c("r_d2","Rd2","Rp")
-  derived <- c("Rsq")
+  derived <- c("Rsq", "dSigma","pSigma")
   if (!is.null(IDgroup) && !fixed.groups) {
     sigma <- c(sigma, "S_g")
-    corr  <- c(corr , "Rg")
+    corr  <- c(corr, "Rg")
+    derived <- c(derived, "gSigma")
   }
   if (saveComp) {
     ## add the group-, case-, and dyad-level components

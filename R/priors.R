@@ -1,5 +1,5 @@
 ### Terrence D. Jorgensen
-### Last updated: 6 June 2023
+### Last updated: 7 June 2023
 ### function to set default priors for mvsrm()
 
 ## - t_df, t_m, t_sd: matrix[Kd2, 3] for 3 RR-components, vector[K] for covariate SDs
@@ -59,7 +59,7 @@ srm_priors <- function(rr.data, cov_d, cov_p, cov_g,
 
   if (modelM) {
     priors$rr_Mvec_m  <- sapply(rr.data, median, na.rm = TRUE)
-    priors$rr_Mvec_sd <- halfR5rr * 5 # use half-range, not divided by 5
+    priors$rr_Mvec_sd <- halfRrr
     #TODO: separate Mvec (RR) from group-means of each level's covariate(s)?
   }
 

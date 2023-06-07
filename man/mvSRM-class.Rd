@@ -51,8 +51,9 @@ because means are only a group-level statistic.
 Multiple options can be passed to \code{summary()} method, but \code{as.matrix()}
 only uses the first.}
 
-\item{srm.param}{\code{character} specifying the type of SRM parameter to provide
-for \code{component}. Can be \verb{\%in\% c("sd", "cor", "cov")}, as well as \code{"mean"}
+\item{srm.param}{Optional \code{character} vector (or \code{NULL}) specifying the type
+of SRM parameter to provide for \code{component}.
+Can be \verb{\%in\% c("sd", "cor", "cov")}, as well as \code{"mean"}
 when \code{fixed.groups=FALSE}. The \code{summary()} method will always return the
 means as a group-level statistic, even for a single round-robin group.}
 
@@ -158,6 +159,11 @@ differences.  The remaining columns are proportions of variance
 accounted for by outgoing (e.g., actor, perceiver, ego) effects, by
 incoming (e.g., partner, target, alter) effects, and by relationship
 effects (confounded with any dyad-level measurement error).
+\verb{$derived} also contains covariance matrices, which are simply the
+correlation matrices in \verb{$corr} scaled by the standard deviations
+in \verb{$sigma}. Relationship-level (\code{"dSigma"}) and case-level (\code{"pSigma"})
+covariance matrices are always included, as is the group-level matrix
+(\code{"gSigma"}) when estimated.
 \item \verb{$components} contains the relationship-level and case-level components
 themselves when \code{object@call$saveComp=TRUE}. This makes the object take
 much more computer memory, but it would enable the plausible-values
