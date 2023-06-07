@@ -24,4 +24,8 @@
   // calculate group-level correlation matrix
   Rg = multiply_lower_tri_self_transpose(chol_r_g);
   // calculate group-level covariance matrix
-  gSigma = multiply_lower_tri_self_transpose(chol_g);
+  {
+    matrix[allKg, allKg] chol_g_all;
+    chol_g_all = diag_pre_multiply(S_g, chol_r_g);
+    gSigma = multiply_lower_tri_self_transpose(chol_g_all);
+  }

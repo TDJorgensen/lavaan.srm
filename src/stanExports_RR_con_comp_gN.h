@@ -99,13 +99,13 @@ stan::io::program_reader prog_reader__() {
     reader.add_event(222, 182, "restart", "model_RR_con_comp_gN");
     reader.add_event(229, 189, "include", "/multigroup/group_GQs.stan");
     reader.add_event(229, 0, "start", "/multigroup/group_GQs.stan");
-    reader.add_event(256, 27, "end", "/multigroup/group_GQs.stan");
-    reader.add_event(256, 190, "restart", "model_RR_con_comp_gN");
-    reader.add_event(268, 202, "include", "/include/license.stan");
-    reader.add_event(268, 0, "start", "/include/license.stan");
-    reader.add_event(282, 14, "end", "/include/license.stan");
-    reader.add_event(282, 203, "restart", "model_RR_con_comp_gN");
-    reader.add_event(284, 203, "end", "model_RR_con_comp_gN");
+    reader.add_event(260, 31, "end", "/multigroup/group_GQs.stan");
+    reader.add_event(260, 190, "restart", "model_RR_con_comp_gN");
+    reader.add_event(276, 206, "include", "/include/license.stan");
+    reader.add_event(276, 0, "start", "/include/license.stan");
+    reader.add_event(290, 14, "end", "/include/license.stan");
+    reader.add_event(290, 207, "restart", "model_RR_con_comp_gN");
+    reader.add_event(292, 207, "end", "model_RR_con_comp_gN");
     return reader;
 }
 #include <stan_meta_header.hpp>
@@ -1629,15 +1629,35 @@ public:
             }
             current_statement_begin__ = 254;
             stan::math::assign(Rg, multiply_lower_tri_self_transpose(chol_r_g));
-            current_statement_begin__ = 256;
-            stan::math::assign(gSigma, multiply_lower_tri_self_transpose(chol_g));
+            {
+            current_statement_begin__ = 257;
+            validate_non_negative_index("chol_g_all", "allKg", allKg);
+            validate_non_negative_index("chol_g_all", "allKg", allKg);
+            Eigen::Matrix<local_scalar_t__, Eigen::Dynamic, Eigen::Dynamic> chol_g_all(allKg, allKg);
+            stan::math::initialize(chol_g_all, DUMMY_VAR__);
+            stan::math::fill(chol_g_all, DUMMY_VAR__);
+            current_statement_begin__ = 258;
+            stan::math::assign(chol_g_all, diag_pre_multiply(S_g, chol_r_g));
             current_statement_begin__ = 259;
+            stan::math::assign(gSigma, multiply_lower_tri_self_transpose(chol_g_all));
+            }
+            current_statement_begin__ = 263;
             stan::math::assign(Yd2e, subtract(augYd, Yd2hat));
-            current_statement_begin__ = 262;
-            stan::math::assign(Rp, multiply_lower_tri_self_transpose(chol_r_p));
-            current_statement_begin__ = 264;
-            stan::math::assign(pSigma, multiply_lower_tri_self_transpose(chol_p));
             current_statement_begin__ = 266;
+            stan::math::assign(Rp, multiply_lower_tri_self_transpose(chol_r_p));
+            {
+            current_statement_begin__ = 269;
+            validate_non_negative_index("chol_p_all", "allKp", allKp);
+            validate_non_negative_index("chol_p_all", "allKp", allKp);
+            Eigen::Matrix<local_scalar_t__, Eigen::Dynamic, Eigen::Dynamic> chol_p_all(allKp, allKp);
+            stan::math::initialize(chol_p_all, DUMMY_VAR__);
+            stan::math::fill(chol_p_all, DUMMY_VAR__);
+            current_statement_begin__ = 270;
+            stan::math::assign(chol_p_all, diag_pre_multiply(S_p, chol_r_p));
+            current_statement_begin__ = 271;
+            stan::math::assign(pSigma, multiply_lower_tri_self_transpose(chol_p_all));
+            }
+            current_statement_begin__ = 274;
             stan::math::assign(dSigma, multiply_lower_tri_self_transpose(chol_d));
             // validate, write generated quantities
             current_statement_begin__ = 225;

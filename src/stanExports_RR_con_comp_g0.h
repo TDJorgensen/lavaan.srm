@@ -57,11 +57,11 @@ stan::io::program_reader prog_reader__() {
     reader.add_event(175, 0, "start", "/OneGroup/OneGroup_Rsq.stan");
     reader.add_event(195, 20, "end", "/OneGroup/OneGroup_Rsq.stan");
     reader.add_event(195, 172, "restart", "model_RR_con_comp_g0");
-    reader.add_event(207, 184, "include", "/include/license.stan");
-    reader.add_event(207, 0, "start", "/include/license.stan");
-    reader.add_event(221, 14, "end", "/include/license.stan");
-    reader.add_event(221, 185, "restart", "model_RR_con_comp_g0");
-    reader.add_event(223, 185, "end", "model_RR_con_comp_g0");
+    reader.add_event(211, 188, "include", "/include/license.stan");
+    reader.add_event(211, 0, "start", "/include/license.stan");
+    reader.add_event(225, 14, "end", "/include/license.stan");
+    reader.add_event(225, 189, "restart", "model_RR_con_comp_g0");
+    reader.add_event(227, 189, "end", "model_RR_con_comp_g0");
     return reader;
 }
 #include <stan_meta_header.hpp>
@@ -1234,9 +1234,19 @@ public:
             stan::math::assign(Yd2e, subtract(augYd, Yd2hat));
             current_statement_begin__ = 201;
             stan::math::assign(Rp, multiply_lower_tri_self_transpose(chol_r_p));
-            current_statement_begin__ = 203;
-            stan::math::assign(pSigma, multiply_lower_tri_self_transpose(chol_p));
+            {
+            current_statement_begin__ = 204;
+            validate_non_negative_index("chol_p_all", "allKp", allKp);
+            validate_non_negative_index("chol_p_all", "allKp", allKp);
+            Eigen::Matrix<local_scalar_t__, Eigen::Dynamic, Eigen::Dynamic> chol_p_all(allKp, allKp);
+            stan::math::initialize(chol_p_all, DUMMY_VAR__);
+            stan::math::fill(chol_p_all, DUMMY_VAR__);
             current_statement_begin__ = 205;
+            stan::math::assign(chol_p_all, diag_pre_multiply(S_p, chol_r_p));
+            current_statement_begin__ = 206;
+            stan::math::assign(pSigma, multiply_lower_tri_self_transpose(chol_p_all));
+            }
+            current_statement_begin__ = 209;
             stan::math::assign(dSigma, multiply_lower_tri_self_transpose(chol_d));
             // validate, write generated quantities
             current_statement_begin__ = 171;

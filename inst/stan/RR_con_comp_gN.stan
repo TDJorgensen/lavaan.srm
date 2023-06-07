@@ -1,5 +1,5 @@
 // Terrence D. Jorgensen
-// Last updated: 6 June 2023
+// Last updated: 7 June 2023
 
 // Program to estimate covariance matrices for multivariate SRM components
 // - standard round-robin design (indistinguishable subjects)
@@ -195,7 +195,11 @@ generated quantities{
   // calculate person-level correlation matrix
   Rp = multiply_lower_tri_self_transpose(chol_r_p);
   // calculate group-level covariance matrix
-  pSigma = multiply_lower_tri_self_transpose(chol_p);
+  {
+    matrix[allKp, allKp] chol_p_all;
+    chol_p_all = diag_pre_multiply(S_p, chol_r_p);
+    pSigma = multiply_lower_tri_self_transpose(chol_p_all);
+  }
   // calculate dyad-level covariance matrix
   dSigma = multiply_lower_tri_self_transpose(chol_d);
 }
