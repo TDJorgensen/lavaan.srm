@@ -462,7 +462,7 @@ as.matrix.mvSRM <- function(x, component, srm.param, posterior.est = "mean",
       PARS <- "r_d2"
       NAMES <- c(names(x@varNames$RR), x@varNames$dyad)
     } else if (srm.param == "cov") {
-      PARS <- "gSigma"
+      PARS <- "dSigma"
       ## extended names for covariance matrix
       NAMES <- c(c(x@varNames$RR, recursive = TRUE, use.names = FALSE),
                  x@varNames$dyad)
