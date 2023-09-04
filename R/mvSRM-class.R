@@ -1,5 +1,5 @@
 ### Terrence D. Jorgensen
-### Last updated: 7 June 2023
+### Last updated: 4 September 2023
 ### Class and Methods for mvSRM object
 
 
@@ -39,6 +39,10 @@
 ##'     correlation matrices among relationship-level and case-level components
 ##'     of round-robin variables (and correlations with covariates at those
 ##'     levels), as well as group-level components when relevant.
+##'     The dyad-level correlations are stored in a compact way to assist
+##'     evaluating nonredundant elements: each variable's dyadic reciprocity is
+##'     stored, and for each pair of variables, the inter/intra-personal
+##'     correlations are above/below the diagonal, respectively.
 ##'   - `$derived` contains `"Rsq"`: a matrix with 3-4 columns and 1 row per
 ##'     round-robin variable listed in `object@varNames$RR`. When group-level
 ##'     variances are estimated, the first of 4 columns contains the proportion
