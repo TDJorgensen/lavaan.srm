@@ -6,7 +6,14 @@
 \alias{sem.srm}
 \title{Fit a \code{lavaan} Model to Multivariate SRM Results}
 \usage{
-lavaan.srm(model, data, component, posterior.est = "mean", ...)
+lavaan.srm(
+  model,
+  data,
+  component,
+  posterior.est = "mean",
+  ...,
+  sumArgs = list(method = "shorth")
+)
 
 cfa.srm(model, data, posterior.est = "EAP", ...)
 
@@ -27,6 +34,10 @@ estimate.  Must be \verb{\%in\% c("mean", "median", "mode")}, or \code{"EAP"}
 (synonymous with \code{"mean"}) or \code{"MAP"} (synonymous with \code{"mode"}).}
 
 \item{...}{Arguments and \code{\link[lavaan:lavOptions]{lavaan::lavOptions()}} passed to \code{\link[lavaan:lavaan]{lavaan::lavaan()}}}
+
+\item{sumArgs}{A \code{list} of arguments passed to the \code{summary()} method for
+\code{\linkS4class{mvSRM}} objects. The default is used when
+\code{posterior.est="mode"}, so is ignored by default (\code{posterior.est="mean"}).}
 }
 \value{
 An object of \code{class?lavaan}.

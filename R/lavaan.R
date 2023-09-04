@@ -1,5 +1,5 @@
 ### Terrence D. Jorgensen
-### Last updated: 24 May 2023
+### Last updated: 1 September 2023
 ### pass model, lavMoments, and other arguments to lavaan()
 
 
@@ -31,6 +31,9 @@
 ##'   estimate.  Must be `%in% c("mean", "median", "mode")`, or `"EAP"`
 ##'   (synonymous with `"mean"`) or `"MAP"` (synonymous with `"mode"`).
 ##' @param ... Arguments and [lavaan::lavOptions()] passed to [lavaan::lavaan()]
+##' @param sumArgs A `list` of arguments passed to the `summary()` method for
+##'   \code{\linkS4class{mvSRM}} objects. The default is used when
+##'   `posterior.est="mode"`, so is ignored by default (`posterior.est="mean"`).
 ##'
 ##' @return An object of `class?lavaan`.
 ##'
@@ -178,7 +181,8 @@
 ##'
 ##' @importFrom lavaan lavaan lavParseModelString lavInspect lavOptions
 ##' @export
-lavaan.srm <- function(model, data, component, posterior.est = "mean", ...) {
+lavaan.srm <- function(model, data, component, posterior.est = "mean",
+                       ..., sumArgs = list(method = "shorth")) {
   stopifnot(all(component %in% c("group","case","dyad")),
             posterior.est %in% c("mean","median","mode","EAP","MAP"))
 
@@ -302,6 +306,8 @@ lavaan.srm <- function(model, data, component, posterior.est = "mean", ...) {
       srm2lavArgs <- list(srm2lavData, object = data, component = component[b],
                           posterior.est = posterior.est, keep = ov.names[[b]])
       if (b > 1L) srm2lavArgs$lavData <- srmMoments
+      stopifnot(is.list(sumArgs)) #TODO: more informative message?
+      srm2lavArgs <- c(srm2lavArgs, sumArgs)
 
       ## determine whether to include mean structure
       if (component[b] != "group") {

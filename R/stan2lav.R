@@ -1,5 +1,5 @@
 ### Terrence D. Jorgensen
-### Last updated: 24 May 2023
+### Last updated: 1 September 2023
 ### (currently hidden) function to create a lavMoments-class object
 ### from a mvSRM-class object (inherits from stanfit-class)
 
@@ -31,12 +31,13 @@
 ##   specific components, which include `c("out","in")` suffixes for case-level
 ##   components or `c("ij","ji")` suffixes for dyad/relationship-level
 ##   components.
+## @param ... arguments passed to `summary.mvSRM()`, e.g., to avoid warnings
+##   about default `method=` when `posterior.est = "mode"`
 
 #TODO (if this becomes public): create a syntax example, verify blocks work
 
-
 srm2lavData <- function(object, component, posterior.est = "mean", keep, drop,
-                        meanstructure = FALSE, lavData = NULL) {
+                        meanstructure = FALSE, lavData = NULL, ...) {
   stopifnot(inherits(object, "mvSRM"))
   categorical <- FALSE #TODO: specify threshold model in Stan
   component <- tolower(component[1]) # one at a time
@@ -44,13 +45,13 @@ srm2lavData <- function(object, component, posterior.est = "mean", keep, drop,
 
 
   COV <- summary.mvSRM(object, component = component, srm.param = "cov",
-                       posterior.est = posterior.est,
+                       posterior.est = posterior.est, ...,
                        interval = NULL)[[component]]$cov[[posterior.est]]
   COV <- setNames(list(COV), nm = component)
 
   if (meanstructure && component == "group") {
     M <- summary.mvSRM(object, srm.param = "mean", posterior.est = posterior.est,
-                       interval = NULL)$group$mean[[posterior.est]]
+                       interval = NULL, ...)$group$mean[[posterior.est]]
     M <- setNames(list(M), nm = component)
   } else M <- NULL
 
