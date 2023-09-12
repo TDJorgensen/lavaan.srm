@@ -1,5 +1,5 @@
 ### Terrence D. Jorgensen
-### Last updated: 7 June 2023
+### Last updated: 12 September 2023
 ### function to implement Stage-1 of 2-stage SR-SEM estimator
 
 
@@ -53,8 +53,8 @@
 ##'   or all the same `dimnames(data)[1:2]` when `data=` is a matrix/array (or
 ##'   all `dimnames()` when `data=` is a list of arrays).
 ##' @param block Optional `character` indicating the name of a case-level
-##'   grouping variable in `data` that distinguishes between multiple
-##'   round-robin groups.
+##'   grouping variable in `data` that distinguishes between groups of people
+##'   within the same round-robin group.
 ##'   Not used yet.
 ##'
 #TODO: single format in a named list?  Or write a function with arguments

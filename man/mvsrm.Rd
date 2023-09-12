@@ -65,8 +65,8 @@ or all the same \code{dimnames(data)[1:2]} when \verb{data=} is a matrix/array (
 all \code{dimnames()} when \verb{data=} is a list of arrays).}
 
 \item{block}{Optional \code{character} indicating the name of a case-level
-grouping variable in \code{data} that distinguishes between multiple
-round-robin groups.
+grouping variable in \code{data} that distinguishes between groups of people
+within the same round-robin group.
 Not used yet.}
 
 \item{return_stan_data}{\code{logical}. Set \code{TRUE} to return the list passed to
