@@ -13,8 +13,8 @@
 ##'        However, the data sets should contain **only** modeled variables (no
 ##'        ID variables), and `data=` must contain round-robin variables in long
 ##'        format (one column per variable, 2 rows per dyad).
-#TODO: @param cov_d dyad-constant covariates
-#      separate data.frame or names in `data`?  Could infer from rr.vars=
+  #TODO: @param cov_d dyad-constant covariates
+  #      separate data.frame or names in `data`?  Could infer from rr.vars=
 ##' @param modelG `logical` indicating whether to estimate group-level (co)variances
 ##' @param modelM `logical` indicating whether to estimate means. Setting `TRUE`
 ##'        presupposes either that there is only 1 round-robin group
@@ -80,6 +80,7 @@ srm_priors <- function(data, group_data, case_data, # cov_d or rr.vars = NULL,
   #TODO: When Stan model is ready, separate cov_d from data[rr.vars]
   rr.data <- data#[rr.vars]
   # cov_d <- data[ setdiff(names(data), rr.vars) ]
+  cov_d <- NULL
 
   if (inherits(decomp, "list")) {
     ## as many decompositions as variables?
@@ -95,7 +96,7 @@ srm_priors <- function(data, group_data, case_data, # cov_d or rr.vars = NULL,
   } else {
 
     stopifnot(inherits(decomp, "numeric"))
-    stopifnot(length(decomp) == 3L + modelG)
+    stopifnot(length(decomp) >= 3L + modelG)
     if (is.null(names(decomp))) {
       names(decomp)[1:3] <- c("dyad","out","in")
       if (modelG) names(decomp)[4] <- "group"
@@ -143,7 +144,7 @@ srm_priors <- function(data, group_data, case_data, # cov_d or rr.vars = NULL,
     #TODO:  theta parameterization (fix dyad SD=1). How to set case/group SDs?
     rrSD <- sapply(rr.data, sd, na.rm = TRUE)
 
-    if (         !missing(cov_d)     ) dSD <- sapply(cov_d     , sd, na.rm = TRUE)
+    if (         !is.null(cov_d)     ) dSD <- sapply(cov_d     , sd, na.rm = TRUE)
     if (         !missing(case_data) ) cSD <- sapply(case_data , sd, na.rm = TRUE)
     if (modelG & !missing(group_data)) gSD <- sapply(group_data, sd, na.rm = TRUE)
 
@@ -154,7 +155,7 @@ srm_priors <- function(data, group_data, case_data, # cov_d or rr.vars = NULL,
     propRange <- 1 / 2
     rrSD <- maxPossibleSD * propRange
 
-    if (!missing(cov_d)) {
+    if (!is.null(cov_d)) {
       maxPossibleSD_d <- sapply(cov_d, function(v) diff(range(v, na.rm = TRUE)) / 2)
       propRange_d <- 1 / 2
       dSD <- maxPossibleSD_d * maxPossibleSD_d
@@ -183,7 +184,7 @@ srm_priors <- function(data, group_data, case_data, # cov_d or rr.vars = NULL,
     priors$rr_group_t$m <- priors$rr_group_t$sd <- sqrt(rrSD^2 * decomp["group",])
   }
 
-  if (!missing(cov_d)) {
+  if (!is.null(cov_d)) {
     ## heuristic decomposition below assumes negligible case/group-level variance
     priors$d1_dyad_t <- data.frame(df = 4,
                                    m  = sqrt(dSD^2 * .8),
@@ -214,7 +215,7 @@ srm_priors <- function(data, group_data, case_data, # cov_d or rr.vars = NULL,
   ## LKJ priors for intact correlation matrices
   priors$case_lkj <- 2
   if (modelG) priors$group_lkj <- 2
-  if (!missing(cov_d)) {
+  if (!is.null(cov_d)) {
     if (ncol(cov_d) > 1L) priors$d1_lkj <- 2 # correlations among cov_d
   }
 
@@ -222,7 +223,7 @@ srm_priors <- function(data, group_data, case_data, # cov_d or rr.vars = NULL,
   priors$rr_beta_a <- matrix(1.5, nrow = length(rr.data), ncol = length(rr.data),
                              dimnames = list(names(rr.data), names(rr.data)))
   priors$rr_beta_b <- priors$rr_beta_a
-  if (!missing(cov_d)) {
+  if (!is.null(cov_d)) {
     ## correlations between cov_d and rr.data
     priors$d12_beta_a <- matrix(1.5, nrow = length(cov_d), ncol = length(rr.data),
                                 dimnames = list(names(cov_d), names(rr.data)))
