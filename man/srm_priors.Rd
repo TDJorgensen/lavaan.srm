@@ -10,7 +10,7 @@ srm_priors(
   case_data,
   modelG = FALSE,
   modelM = FALSE,
-  SDby = "sampstat",
+  SDby = "sd",
   decomp = c(dyad = 0.5, out = 0.2, `in` = 0.2, group = 0.1),
   decomp_c = c(case = 0.9, group = 0.1)
 )
@@ -31,7 +31,7 @@ out as fixed effects (\code{fixed.groups=FALSE} when \code{\link[=mvsrm]{mvsrm()
 \item{SDby}{\code{character} indicating how to choose priors for \emph{SD}s of each
 round-robin variable component (i.e., dyad- and case-level, and
 potentially group-level if \code{modelG=TRUE}). Options include
-\code{"sampstat"} to base it on the (total) sample \emph{SD}, or \code{"range"} to
+\code{"sd"} to base it on the (total) sample \emph{SD}, or \code{"range"} to
 base it on the empirical minimum and maximum observation. The latter
 is likely to overestimate the actual \emph{SD}, and it might only be a
 sensible heuristic when using Likert-type data, due to their
@@ -65,10 +65,15 @@ Stan (Carpenter et al., \href{https://doi.org/10.18637/jss.v076.i01}{2017}) soft
 }
 \examples{
 
-## on their way
+## ignoring group-level variance, not estimating means
+## (i.e., mvsrm() called with fixed.groups = TRUE)
+srm_priors(data.srm01[5:7])
 
+## include group-level variance and means (fixed.groups = FALSE)
+srm_priors(data.srm01[5:7], modelG = TRUE, modelM = TRUE)
 
-
+## base SD hyperparameters on observed range instead of observed SD
+srm_priors(data.srm01[5:7], SDby = "range")
 
 }
 \references{

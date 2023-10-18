@@ -23,7 +23,7 @@
 ##' @param SDby `character` indicating how to choose priors for *SD*s of each
 ##'        round-robin variable component (i.e., dyad- and case-level, and
 ##'        potentially group-level if `modelG=TRUE`). Options include
-##'        `"sampstat"` to base it on the (total) sample *SD*, or `"range"` to
+##'        `"sd"` to base it on the (total) sample *SD*, or `"range"` to
 ##'        base it on the empirical minimum and maximum observation. The latter
 ##'        is likely to overestimate the actual *SD*, and it might only be a
 ##'        sensible heuristic when using Likert-type data, due to their
@@ -61,15 +61,20 @@
 ##'
 ##' @examples
 ##'
-##' ## on their way
+##' ## ignoring group-level variance, not estimating means
+##' ## (i.e., mvsrm() called with fixed.groups = TRUE)
+##' srm_priors(data.srm01[5:7])
 ##'
+##' ## include group-level variance and means (fixed.groups = FALSE)
+##' srm_priors(data.srm01[5:7], modelG = TRUE, modelM = TRUE)
 ##'
-##'
+##' ## base SD hyperparameters on observed range instead of observed SD
+##' srm_priors(data.srm01[5:7], SDby = "range")
 ##'
 ##' @importFrom stats sd
 ##' @export
 srm_priors <- function(data, group_data, case_data, # cov_d or rr.vars = NULL,
-                       modelG = FALSE, modelM = FALSE, SDby = "sampstat",
+                       modelG = FALSE, modelM = FALSE, SDby = "sd",
                        decomp = c(dyad = .5, out = .2, `in` = .2, group = .1),
                        decomp_c = c(case = .9, group = .1)) {
   ## - t_df, t_m, t_sd: matrix[Kd2, 3] for 3 RR-components, vector[K] for covariate SDs
@@ -139,7 +144,7 @@ srm_priors <- function(data, group_data, case_data, # cov_d or rr.vars = NULL,
 
   priors <- list()
 
-  if (SDby == "sampstat") {
+  if (SDby == "sd") {
     #FIXME: only applicable for continuous variables
     #TODO:  theta parameterization (fix dyad SD=1). How to set case/group SDs?
     rrSD <- sapply(rr.data, sd, na.rm = TRUE)
