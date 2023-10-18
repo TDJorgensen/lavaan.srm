@@ -486,11 +486,12 @@ mvsrm <- function(data, rr.vars = NULL, IDout, IDin, #TODO: na.code = -9999L,
   ## set common names for round-robin variables
   names(dat_ij) <- rr.vars
   names(dat_ji) <- rr.vars
-  priorCall$rr.data <- rbind(dat_ij, dat_ji)
+  priorCall$data <- rbind(dat_ij, dat_ji)
 
   if (length(dyad_constant_vars)) {
     #TODO: knowns$Yd1 <- as.matrix(Yd1[, -1:ifelse(is.null(IDgroup), -2, -3)])
     #TODO: priorCall$cov_d <- Yd1[, -1:ifelse(is.null(IDgroup), -2, -3), drop = FALSE]
+    #FIXME: or is cov_d inferred from argument rr.vars= argument?
   }
 
   ## case IDs and data
@@ -499,7 +500,9 @@ mvsrm <- function(data, rr.vars = NULL, IDout, IDin, #TODO: na.code = -9999L,
     knowns$Kp <-      ncol(case_data)   -  ifelse(is.null(IDgroup), 1L, 2L)
     knowns$Yp <- as.matrix(case_data[ , -1:ifelse(is.null(IDgroup), -1, -2)])
     knowns$IDpp <- case_data$ID
-    priorCall$cov_p <- case_data[ , -1:ifelse(is.null(IDgroup), -1, -2), drop = FALSE]
+    priorCall$case_data <- case_data[ , -1:ifelse(is.null(IDgroup), -1, -2), drop = FALSE]
+    #TODO: use aggregate() or anova() to decompose case vs. group variance,
+    #      then assign to priorCall$decomp_c
   }
 
   ## group IDs and data
@@ -509,7 +512,7 @@ mvsrm <- function(data, rr.vars = NULL, IDout, IDin, #TODO: na.code = -9999L,
     if (!is.null(group_data)) {
       #TODO: knowns$Kg <-      ncol(group_data) - 1L
       #TODO: knowns$Yg <- as.matrix(group_data[, -1])
-      #TODO: priorCall$cov_g <- group_data[, -1, drop = FALSE]
+      #TODO: priorCall$group_data <- group_data[, -1, drop = FALSE]
       SRMname["design"] <- paste0(SRMname["design"], "g")
     }
     if (!is.null(case_data)) {
