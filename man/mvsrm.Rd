@@ -156,7 +156,7 @@ summary(g1out, srm.param = "mean") # available unless fixed.groups = TRUE
 }
 \references{
 Carpenter, B., Gelman, A., Hoffman, M. D., Lee, D., Goodrich, B.,
-Betancourt, M., ... & Riddell, A. (2017).
+Betancourt, M., Brubaker, M., Guo, J., Li, P., & Riddell, A. (2017).
 Stan: A probabilistic programming language.
 \emph{Journal of Statistical Software, 76}(1).
 \url{https://doi.org/10.18637/jss.v076.i01}

@@ -1,5 +1,5 @@
 ### Terrence D. Jorgensen
-### Last updated: 12 September 2023
+### Last updated: 18 October 2023
 ### function to implement Stage-1 of 2-stage SR-SEM estimator
 
 
@@ -80,7 +80,7 @@
 ##'
 ##' @references
 ##'   Carpenter, B., Gelman, A., Hoffman, M. D., Lee, D., Goodrich, B.,
-##'   Betancourt, M., ... & Riddell, A. (2017).
+##'   Betancourt, M., Brubaker, M., Guo, J., Li, P., & Riddell, A. (2017).
 ##'   Stan: A probabilistic programming language.
 ##'   *Journal of Statistical Software, 76*(1).
 ##'   <https://doi.org/10.18637/jss.v076.i01>
