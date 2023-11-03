@@ -64,6 +64,8 @@ Priors used during MCMC estimation of a multivariate social relations model
 Stan (Carpenter et al., \href{https://doi.org/10.18637/jss.v076.i01}{2017}) software.
 }
 \examples{
+## use example data from the ?srm::srm help page
+data(data.srm01, package="srm")
 
 ## ignoring group-level variance, not estimating means
 ## (i.e., mvsrm() called with fixed.groups = TRUE)

@@ -60,6 +60,8 @@
 ##'  387--406. <https://doi.org/10.3102/1076998617741106>
 ##'
 ##' @examples
+##' ## use example data from the ?srm::srm help page
+##' data(data.srm01, package="srm")
 ##'
 ##' ## ignoring group-level variance, not estimating means
 ##' ## (i.e., mvsrm() called with fixed.groups = TRUE)
@@ -77,10 +79,22 @@ srm_priors <- function(data, group_data, case_data, # cov_d or rr.vars = NULL,
                        modelG = FALSE, modelM = FALSE, SDby = "sd",
                        decomp = c(dyad = .5, out = .2, `in` = .2, group = .1),
                        decomp_c = c(case = .9, group = .1)) {
-  ## - t_df, t_m, t_sd: matrix[Kd2, 3] for 3 RR-components, vector[K] for covariate SDs
+  ## Priors for Means:
+  ## - normal priors, use M(edian) and SD of each RR variable
+  ## TODO: also for covariate means
+
+  ## Priors for SDs:
+  ## - t_df, t_m, t_sd: matrix[Kd2, 3] for 3 RR-components
+  ## TODO: also for covariate SDs
+
+  ## Priors for group/case-level correlations:
   ## - lkj_p(d) prior parameter for cor_p (cor_g when relevant)
   ## - beta_a, beta_b: matrix[Kd2,Kd2] for dyadic reciprocity (diagonal),
   ##                   intra/inter correlations above/below diagonal
+  ## TODO: Enable Wishart prior: df and a target matrix.
+  ##       Use cor(data) for target?  Need to expand to out/in components.
+  ##       Add argument to specify expected generalized reciprocities, set
+  ##       other out--in correlations (between variables) to 0?
 
   #TODO: When Stan model is ready, separate cov_d from data[rr.vars]
   rr.data <- data#[rr.vars]
