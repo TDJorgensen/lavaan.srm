@@ -1,5 +1,5 @@
 ### Terrence D. Jorgensen
-### Last updated: 18 October 2023
+### Last updated: 3 November 2023
 ### function to set default priors for mvsrm()
 
 
@@ -181,12 +181,12 @@ srm_priors <- function(data, group_data, case_data, # cov_d or rr.vars = NULL,
   ## SDs for each RR component (out, in, rel)
   priors$rr_rel_t <- priors$rr_out_t <- priors$rr_in_t <- data.frame(df = rep(4, ncol(rr.data)))
 
-  priors$rr_rel_t$m <- priors$rr_rel_t$sd <- sqrt(rrSD^2 * decomp["dyad",])
-  priors$rr_out_t$m <- priors$rr_out_t$sd <- sqrt(rrSD^2 * decomp["out" ,])
-  priors$rr_in_t$m  <- priors$rr_in_t$sd  <- sqrt(rrSD^2 * decomp["in"  ,])
+  priors$rr_rel_t$sd <- priors$rr_rel_t$m <- sqrt(rrSD^2 * decomp["dyad",])
+  priors$rr_out_t$sd <- priors$rr_out_t$m <- sqrt(rrSD^2 * decomp["out" ,])
+  priors$rr_in_t$sd  <- priors$rr_in_t$m  <- sqrt(rrSD^2 * decomp["in"  ,])
   if (modelG) {
     priors$rr_group_t <- data.frame(df = rep(4, length(rrSD)))
-    priors$rr_group_t$m <- priors$rr_group_t$sd <- sqrt(rrSD^2 * decomp["group",])
+    priors$rr_group_t$sd <- priors$rr_group_t$m <- sqrt(rrSD^2 * decomp["group",])
   }
 
   if (!is.null(cov_d)) {
