@@ -258,5 +258,8 @@ srm_priors <- function(data, group_data, case_data, # cov_d or rr.vars = NULL,
   priors
 }
 
+# Set uninformative Wishart prior as identity with df = dim + 2?
+# hist(as.numeric(apply(rWishart(n = 1000, df = 5, Sigma = diag(3)), MARGIN = 3,
+#                       function(x) cov2cor(x)[lower.tri(diag(3), diag = FALSE)])))
 
 

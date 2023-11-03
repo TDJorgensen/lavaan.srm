@@ -14,6 +14,7 @@ mvsrm(
   group_data = NULL,
   case_data = NULL,
   block = NULL,
+  priors,
   return_stan_data = FALSE,
   return_stanfit = FALSE,
   saveComp = FALSE,
@@ -68,6 +69,10 @@ all \code{dimnames()} when \verb{data=} is a list of arrays).}
 grouping variable in \code{data} that distinguishes between groups of people
 within the same round-robin group.
 Not used yet.}
+
+\item{priors}{A named \code{list} of hyperparameters for prior distributions
+The \code{\link[=srm_priors]{srm_priors()}} function provides default priors, and users can edit
+its output to substitute more informative hyperparameters.}
 
 \item{return_stan_data}{\code{logical}. Set \code{TRUE} to return the list passed to
 \code{rstan::sampling(data=)}. Helpful for creating reprex when Stan fails.}

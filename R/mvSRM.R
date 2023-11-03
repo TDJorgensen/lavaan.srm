@@ -1,5 +1,5 @@
 ### Terrence D. Jorgensen
-### Last updated: 18 October 2023
+### Last updated: 3 November 2023
 ### function to implement Stage-1 of 2-stage SR-SEM estimator
 
 
@@ -56,15 +56,9 @@
 ##'   grouping variable in `data` that distinguishes between groups of people
 ##'   within the same round-robin group.
 ##'   Not used yet.
-##'
-#TODO: single format in a named list?  Or write a function with arguments
-#      for modeled-variable names:   srm_priors(rr.vars, cov_p, cov_d, cov_g)
-#       - t_df, t_m, t_sd: matrix[Kd2, 3] for 3 RR-components, vector[K] for covariate SDs
-#       - lkj_p(d) prior parameter for cor_p (cor_g when relevant)
-#       - beta_a, beta_b: matrix[Kd2,Kd2] for dyadic reciprocity (diagonal),
-#                         intra/inter correlations above/below diagonal
-## @param priors
-##'
+##' @param priors A named `list` of hyperparameters for prior distributions
+##'   The [srm_priors()] function provides default priors, and users can edit
+##'   its output to substitute more informative hyperparameters.
 ##' @param return_stan_data `logical`. Set `TRUE` to return the list passed to
 ##'   `rstan::sampling(data=)`. Helpful for creating reprex when Stan fails.
 ##' @param return_stanfit `logical`. Set `TRUE` to return the
@@ -154,9 +148,9 @@
 ##' @importFrom rstan sampling
 ##' @importFrom methods as
 ##' @export
-mvsrm <- function(data, rr.vars = NULL, IDout, IDin, #TODO: na.code = -9999L,
-                  IDgroup = NULL, fixed.groups = FALSE, group_data = NULL,
-                  case_data = NULL, block = NULL, return_stan_data = FALSE,
+mvsrm <- function(data, rr.vars = NULL, IDout, IDin, IDgroup = NULL,
+                  fixed.groups = FALSE, group_data = NULL,  case_data = NULL,
+                  block = NULL, priors, return_stan_data = FALSE,
                   return_stanfit = FALSE, saveComp = FALSE, ...) {
   MC <- match.call(expand.dots = TRUE) # to store in mvSRM-class slot
 
@@ -478,7 +472,7 @@ mvsrm <- function(data, rr.vars = NULL, IDout, IDin, #TODO: na.code = -9999L,
   ## observed-data: Yd2, Yd1, Yp, Yg
   knowns$Yd2 <- as.matrix(Yd2[, -1:ifelse(is.null(IDgroup), -2, -3)])
 
-  ## assemble call for default hyperparameters
+  ## begin assembling a call for default hyperparameters (in case not provided)
   priorCall <- list(quote(srm_priors))
   ## in order to call srm_priors() below, make sure "data" is long-uni format
   dat_ij <- Yd2[paste0(rr.vars, "_ij")]
@@ -537,10 +531,55 @@ mvsrm <- function(data, rr.vars = NULL, IDout, IDin, #TODO: na.code = -9999L,
     priorCall$modelM <- TRUE
   }
 
-  # priors <- eval(as.call(priorCall))
-  #TODO: Allow users to specify their own via priors= argument.
-  #      Check which defaults to replace?
-  knowns <- c(knowns, eval(as.call(priorCall)))
+  default_priors <- eval(as.call(priorCall))
+  ## any user-specified hyperparameters?
+  if (!missing(priors)) {
+    stopifnot(is.list(priors))
+
+    ## check that each replacement matches the expected format
+    names2replace <- intersect(names(priors), names(default_priors))
+    for (n in names2replace) {
+
+      ## verify classes match
+      if (!isTRUE(all.equal(class(priors[[n]]), class(default_priors[[n]])))) {
+        stop('User-specified priors= element ', dQuote(n), ' has class ',
+             paste(dQuote(class(priors[[n]])), collapse = ","), 'rather than ',
+             'expected class: ', dQuote(class(priors[[n]])))
+      }
+
+      ## verify dimensions match
+      if (inherits(priors[[n]], c("data.frame","matrix"))) {
+        user_dim <- dim(        priors[[n]])
+        exp_dim  <- dim(default_priors[[n]])
+        if (!isTRUE(all.equal(user_dim, exp_dim))) {
+          stop('User-specified priors= element ', dQuote(n), ' has ',
+               paste(user_dim, c("rows","columns"), collapse = " and "),
+               'rather than expected dimensions: [',
+               paste(exp_dim, collapse = ","), ']')
+        }
+
+      } else if (inherits(priors[[n]], c("integer","numeric"))) {
+        user_len <- length(        priors[[n]])
+        exp_len  <- length(default_priors[[n]])
+        if (user_len != exp_len) {
+          stop('User-specified priors= vector ', dQuote(n), ' has ', user_len,
+               ' values, but requires ', exp_len, 'values')
+        }
+
+      } else stop('Invalid class for priors= element ', dQuote(n))
+    }
+
+    ## any required hyperparameters not specified by user?
+    names2add <- setdiff(names(default_priors), names(priors))
+    if (length(names2add)) {
+      ## Use default values
+      for (n in names2add)  priors[[n]] <- default_priors[[n]]
+    }
+
+    # else, priors is missing, so use defaults:
+  } else priors <- default_priors
+
+  knowns <- c(knowns, priors)
 
   #TODO: after priors are chosen, then replace NAs in knowns$Y* with missCode=
 
