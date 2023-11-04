@@ -1,5 +1,5 @@
 ### Terrence D. Jorgensen
-### Last updated: 3 November 2023
+### Last updated: 4 November 2023
 ### function to set default priors for mvsrm()
 
 
@@ -239,9 +239,9 @@ srm_priors <- function(data, group_data, case_data, # cov_d or rr.vars = NULL,
   }
 
   ## beta priors for constrained dyad-level correlations
-  priors$rr_beta_a <- matrix(1.5, nrow = length(rr.data), ncol = length(rr.data),
-                             dimnames = list(names(rr.data), names(rr.data)))
-  priors$rr_beta_b <- priors$rr_beta_a
+  priors$rrD_beta_a <- matrix(1.5, nrow = length(rr.data), ncol = length(rr.data),
+                              dimnames = list(names(rr.data), names(rr.data)))
+  priors$rrD_beta_b <- priors$rrD_beta_a
   if (!is.null(cov_d)) {
     ## correlations between cov_d and rr.data
     priors$d12_beta_a <- matrix(1.5, nrow = length(cov_d), ncol = length(rr.data),

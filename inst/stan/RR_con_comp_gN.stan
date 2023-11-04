@@ -1,5 +1,5 @@
 // Terrence D. Jorgensen
-// Last updated: 7 June 2023
+// Last updated: 4 November 2023
 
 // Program to estimate covariance matrices for multivariate SRM components
 // - standard round-robin design (indistinguishable subjects)
@@ -31,8 +31,8 @@ data {
   // LKJ parameter for case-level correlations
   real case_lkj;
   // beta parameters (a and b) for dyad-level correlations
-  matrix[Kd2, Kd2] rr_beta_a;   // (dyadic reciprocity on diagonal,
-  matrix[Kd2, Kd2] rr_beta_b;   // intra/inter correlations above/below diagonal)
+  matrix[Kd2, Kd2] rrD_beta_a;   // (dyadic reciprocity on diagonal,
+  matrix[Kd2, Kd2] rrD_beta_b;   // intra/inter correlations above/below diagonal)
 }
 transformed data {
 #include /vanilla/tdata_allKd.stan
@@ -166,11 +166,11 @@ model {
   chol_r_p ~ lkj_corr_cholesky(case_lkj);
   for (k in 1:Kd2) {
     // dyadic correlations (priors on diagonal)
-    r_d2[k,k] ~ beta(rr_beta_a[k,k], rr_beta_b[k,k]);
+    r_d2[k,k] ~ beta(rrD_beta_a[k,k], rrD_beta_b[k,k]);
     // between-variable correlations
     if (k < Kd2) { for (kk in (k+1):Kd2) {
-      r_d2[kk, k ] ~ beta(rr_beta_a[kk, k ], rr_beta_b[kk, k ]); // intra = BELOW
-      r_d2[k , kk] ~ beta(rr_beta_a[k , kk], rr_beta_b[k , kk]); // inter = ABOVE
+      r_d2[kk, k ] ~ beta(rrD_beta_a[kk, k ], rrD_beta_b[kk, k ]); // intra = BELOW
+      r_d2[k , kk] ~ beta(rrD_beta_a[k , kk], rrD_beta_b[k , kk]); // inter = ABOVE
     }}
   }
 
