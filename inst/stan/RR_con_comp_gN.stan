@@ -31,8 +31,8 @@ data {
   // LKJ parameter for case-level correlations
   real case_lkj;
   // beta parameters (a and b) for dyad-level correlations
-  matrix[Kd2, Kd2] rrD_beta_a;   // (dyadic reciprocity on diagonal,
-  matrix[Kd2, Kd2] rrD_beta_b;   // intra/inter correlations above/below diagonal)
+  matrix<lower=0>[Kd2, Kd2] rrD_beta_a;   // (dyadic reciprocity on diagonal,
+  matrix<lower=0>[Kd2, Kd2] rrD_beta_b;   // intra/inter correlations above/below diagonal)
 }
 transformed data {
 #include /vanilla/tdata_allKd.stan
