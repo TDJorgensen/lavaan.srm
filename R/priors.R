@@ -1,5 +1,5 @@
 ### Terrence D. Jorgensen
-### Last updated: 4 November 2023
+### Last updated: 5 November 2023
 ### function to set default priors for mvsrm()
 
 
@@ -28,8 +28,8 @@
 ##'        is likely to overestimate the actual *SD*, and it might only be a
 ##'        sensible heuristic when using Likert-type data, due to their
 ##'        limited response options that determine the maximum possible *SD*.
-##' @param decomp `numeric` vector that sums to 1 (or will be rescaled to do so)
-##'        indicating the hypothesized proportion of total variance attributable
+##' @param decomp_rr `numeric` vector of weights (internally rescaled so sum ==
+##'        1) indicating hypothesized proportions of total variance attributable
 ##'        to each round-robin component. The vector should therefore have the
 ##'        following [base::names()]: `c("dyad","out","in")`, as well as
 ##'        `"group"` when `modelG=TRUE`. Note that the name `"in"` must be in
@@ -44,7 +44,7 @@
 ##'        apply to each round-robin variable. A list of vectors can have names
 ##'        that correspond to those in `data=`, but will otherwise be assumed to
 ##'        follow the same order.
-##' @param decomp_c `numeric` vector (or list of vectors) similar to `decomp`
+##' @param decomp_c `numeric` vector (or list of vectors) similar to `decomp_rr`
 ##'        argument, but for the decomposition of `case_data` into case- and
 ##'        group-level variance components.  Ignored unless `modelG=TRUE`.
 ##'
@@ -61,7 +61,7 @@
 ##'
 ##' @examples
 ##' ## use example data from the ?srm::srm help page
-##' data(data.srm01, package="srm")
+##' data(data.srm01, package = "srm")
 ##'
 ##' ## ignoring group-level variance, not estimating means
 ##' ## (i.e., mvsrm() called with fixed.groups = TRUE)
@@ -77,7 +77,7 @@
 ##' @export
 srm_priors <- function(data, group_data, case_data, # cov_d or rr.vars = NULL,
                        modelG = FALSE, modelM = FALSE, SDby = "sd",
-                       decomp = c(dyad = .5, out = .2, `in` = .2, group = .1),
+                       decomp_rr = c(dyad = .5, out = .2, `in` = .2, group = .1),
                        decomp_c = c(case = .9, group = .1)) {
   ## Priors for Means:
   ## - normal priors, use M(edian) and SD of each RR variable
@@ -91,39 +91,46 @@ srm_priors <- function(data, group_data, case_data, # cov_d or rr.vars = NULL,
   ## - lkj_p(d) prior parameter for cor_p (cor_g when relevant)
   ## - beta_a, beta_b: matrix[Kd2,Kd2] for dyadic reciprocity (diagonal),
   ##                   intra/inter correlations above/below diagonal
-  ## TODO: Enable Wishart prior: df and a target matrix.
-  ##       Use cor(data) for target?  Need to expand to out/in components.
-  ##       Add argument to specify expected generalized reciprocities, set
-  ##       other out--in correlations (between variables) to 0?
+  ## TODO: Switch to beta priors for case and group levels
 
   #TODO: When Stan model is ready, separate cov_d from data[rr.vars]
   rr.data <- data#[rr.vars]
   # cov_d <- data[ setdiff(names(data), rr.vars) ]
   cov_d <- NULL
 
-  if (inherits(decomp, "list")) {
+  if (inherits(decomp_rr, "list")) {
     ## as many decompositions as variables?
-    stopifnot(length(decomp) == ncol(rr.data))
+    stopifnot(length(decomp_rr) == ncol(rr.data))
     ## all decompositions have the same length?
-    stopifnot(length(unique(sapply(decomp, length)) > 1L))
+    stopifnot(length(unique(sapply(decomp_rr, length)) > 1L))
 
     ## should all have the same names
-    if (is.null(names(decomp))) names(decomp) <- names(rr.data)
+    if (is.null(names(decomp_rr))) names(decomp_rr) <- names(rr.data)
     ## convert to a matrix
-    decomp <- sapply(decomp, function(v) v[c("dyad","out","in","group")])
+    decomp_rr <- sapply(decomp_rr, function(v) {
+      components <- c("dyad","out","in")
+      if (modelG) components <- c(components, "group")
+      V <- v[components]
+      V / sum(V) # rescale so sum(V) == 1
+    })
 
   } else {
 
-    stopifnot(inherits(decomp, "numeric"))
-    stopifnot(length(decomp) >= 3L + modelG)
-    if (is.null(names(decomp))) {
-      names(decomp)[1:3] <- c("dyad","out","in")
-      if (modelG) names(decomp)[4] <- "group"
+    stopifnot(inherits(decomp_rr, "numeric"))
+    stopifnot(length(decomp_rr) >= 3L + modelG)
+    if (is.null(names(decomp_rr))) {
+      names(decomp_rr)[1:3] <- c("dyad","out","in")
+      if (modelG) names(decomp_rr)[4] <- "group"
     } else {
-      stopifnot(all(names(decomp) %in% c("dyad","out","in","group")))
+      stopifnot(all(names(decomp_rr) %in% c("dyad","out","in","group")))
     }
     ## repeat values (in a matrix) per RR variable
-    decomp <- sapply(names(rr.data), function(v) decomp[c("dyad","out","in","group")])
+    decomp_rr <- sapply(names(rr.data), function(v) {
+      components <- c("dyad","out","in")
+      if (modelG) components <- c(components, "group")
+      V <- decomp_rr[components]
+      V / sum(V) # rescale so sum(V) == 1
+    })
   }
 
   ## will case-level covariates be decomposed?
@@ -138,7 +145,10 @@ srm_priors <- function(data, group_data, case_data, # cov_d or rr.vars = NULL,
       ## should all have the same names
       if (is.null(names(decomp_c))) names(decomp_c) <- names(case_data)
       ## convert to a matrix
-      decomp_c <- sapply(decomp_c, function(v) v[c("case","group")])
+      decomp_c <- sapply(decomp_c, function(v) {
+        V <- v[c("case","group")]
+        V / sum(V) # rescale so sum(V) == 1
+      })
 
     } else {
 
@@ -150,7 +160,10 @@ srm_priors <- function(data, group_data, case_data, # cov_d or rr.vars = NULL,
         stopifnot(all(names(decomp_c) %in% c("case","group")))
       }
       ## repeat values (in a matrix) per RR variable
-      decomp_c <- sapply(names(case_data), function(v) decomp_c[c("case","group")])
+      decomp_c <- sapply(names(case_data), function(v) {
+        V <- decomp_c[c("case","group")]
+        V / sum(V) # rescale so sum(V) == 1
+      })
     }
   }
   #TODO: also for dyadic and group-level covariates, when implemented
@@ -195,12 +208,12 @@ srm_priors <- function(data, group_data, case_data, # cov_d or rr.vars = NULL,
   ## SDs for each RR component (out, in, rel)
   priors$rr_rel_t <- priors$rr_out_t <- priors$rr_in_t <- data.frame(df = rep(4, ncol(rr.data)))
 
-  priors$rr_rel_t$sd <- priors$rr_rel_t$m <- sqrt(rrSD^2 * decomp["dyad",])
-  priors$rr_out_t$sd <- priors$rr_out_t$m <- sqrt(rrSD^2 * decomp["out" ,])
-  priors$rr_in_t$sd  <- priors$rr_in_t$m  <- sqrt(rrSD^2 * decomp["in"  ,])
+  priors$rr_rel_t$sd <- priors$rr_rel_t$m <- sqrt(rrSD^2 * decomp_rr["dyad",])
+  priors$rr_out_t$sd <- priors$rr_out_t$m <- sqrt(rrSD^2 * decomp_rr["out" ,])
+  priors$rr_in_t$sd  <- priors$rr_in_t$m  <- sqrt(rrSD^2 * decomp_rr["in"  ,])
   if (modelG) {
     priors$rr_group_t <- data.frame(df = rep(4, length(rrSD)))
-    priors$rr_group_t$sd <- priors$rr_group_t$m <- sqrt(rrSD^2 * decomp["group",])
+    priors$rr_group_t$sd <- priors$rr_group_t$m <- sqrt(rrSD^2 * decomp_rr["group",])
   }
 
   if (!is.null(cov_d)) {

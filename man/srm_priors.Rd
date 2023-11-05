@@ -11,7 +11,7 @@ srm_priors(
   modelG = FALSE,
   modelM = FALSE,
   SDby = "sd",
-  decomp = c(dyad = 0.5, out = 0.2, `in` = 0.2, group = 0.1),
+  decomp_rr = c(dyad = 0.5, out = 0.2, `in` = 0.2, group = 0.1),
   decomp_c = c(case = 0.9, group = 0.1)
 )
 }
@@ -37,8 +37,8 @@ is likely to overestimate the actual \emph{SD}, and it might only be a
 sensible heuristic when using Likert-type data, due to their
 limited response options that determine the maximum possible \emph{SD}.}
 
-\item{decomp}{\code{numeric} vector that sums to 1 (or will be rescaled to do so)
-indicating the hypothesized proportion of total variance attributable
+\item{decomp_rr}{\code{numeric} vector of weights (internally rescaled so sum ==
+1) indicating hypothesized proportions of total variance attributable
 to each round-robin component. The vector should therefore have the
 following \code{\link[base:names]{base::names()}}: \code{c("dyad","out","in")}, as well as
 \code{"group"} when \code{modelG=TRUE}. Note that the name \code{"in"} must be in
@@ -54,7 +54,7 @@ apply to each round-robin variable. A list of vectors can have names
 that correspond to those in \verb{data=}, but will otherwise be assumed to
 follow the same order.}
 
-\item{decomp_c}{\code{numeric} vector (or list of vectors) similar to \code{decomp}
+\item{decomp_c}{\code{numeric} vector (or list of vectors) similar to \code{decomp_rr}
 argument, but for the decomposition of \code{case_data} into case- and
 group-level variance components.  Ignored unless \code{modelG=TRUE}.}
 }
@@ -65,7 +65,7 @@ Stan (Carpenter et al., \href{https://doi.org/10.18637/jss.v076.i01}{2017}) soft
 }
 \examples{
 ## use example data from the ?srm::srm help page
-data(data.srm01, package="srm")
+data(data.srm01, package = "srm")
 
 ## ignoring group-level variance, not estimating means
 ## (i.e., mvsrm() called with fixed.groups = TRUE)
