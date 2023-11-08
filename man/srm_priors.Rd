@@ -58,6 +58,12 @@ follow the same order.}
 argument, but for the decomposition of \code{case_data} into case- and
 group-level variance components.  Ignored unless \code{modelG=TRUE}.}
 }
+\value{
+A \code{list} of hyperparameters, with an \code{attr(,"Nvars")} indicating
+the number of (components of) variables modeled at each level (e.g.,
+the \code{case} level includes 2 components per round-robing variable
+plus the number of variables in \verb{case_data=}).
+}
 \description{
 Priors used during MCMC estimation of a multivariate social relations model
 (mvSRM; Nestler, \href{https://doi.org/10.3102/1076998617741106}{2018}) using the

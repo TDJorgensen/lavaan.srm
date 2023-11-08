@@ -1,5 +1,5 @@
 ### Terrence D. Jorgensen
-### Last updated: 5 November 2023
+### Last updated: 8 November 2023
 ### function to set default priors for mvsrm()
 
 
@@ -48,6 +48,12 @@
 ##'        argument, but for the decomposition of `case_data` into case- and
 ##'        group-level variance components.  Ignored unless `modelG=TRUE`.
 ##'
+##' @return A `list` of hyperparameters, with an `attr(,"Nvars")` indicating
+##'         the number of (components of) variables modeled at each level (e.g.,
+##'         the `case` level includes 2 components per round-robing variable
+##'         plus the number of variables in `case_data=`).
+##'
+##'
 ##' @references
 ##'   Carpenter, B., Gelman, A., Hoffman, M. D., Lee, D., Goodrich, B.,
 ##'   Betancourt, M., Brubaker, M., Guo, J., Li, P., & Riddell, A. (2017).
@@ -87,17 +93,34 @@ srm_priors <- function(data, group_data, case_data, # cov_d or rr.vars = NULL,
   ## - t_df, t_m, t_sd: matrix[Kd2, 3] for 3 RR-components
   ## TODO: also for covariate SDs
 
-  ## Priors for group/case-level correlations:
-  ## - lkj_p(d) prior parameter for cor_p (cor_g when relevant)
-  ## - beta_a, beta_b: matrix[Kd2,Kd2] for dyadic reciprocity (diagonal),
-  ##                   intra/inter correlations above/below diagonal
+  ## Priors for dyad-level correlations:
+  ## - rrD_beta_a, rrD_beta_b: matrix[Kd2,Kd2] for dyadic reciprocity (on diag),
+  ##                           intra/inter correlations (above/below the diag)
+  ## - d1_beta: matrix[Kd1,Kd1] with shapes a (above) and b (below) the diag
+  ## - d21_beta_a, d21_beta_b: matrix[Kd2,Kd1] equality-constrained correlations
+  ##                           between each RR and each symmetric (d1) variable
   ## TODO: Switch to beta priors for case and group levels
+  ## -  case_beta: matrix[Kc,Kc] with shapes a (above) and b (below) the diag
+  ## - group_beta: matrix[Kg,Kg] with shapes a (above) and b (below) the diag
 
   #TODO: When Stan model is ready, separate cov_d from data[rr.vars]
   rr.data <- data#[rr.vars]
   # cov_d <- data[ setdiff(names(data), rr.vars) ]
   cov_d <- NULL
 
+  ## Count number of variables/components at each level
+  ## (used to define dimensions for correlation priors)
+  Nvars <- list(rr = ncol(rr.data), d1 = max(ncol(cov_d), 0),
+                case = 2*ncol(rr.data) + max(ncol(cov_d), 0))
+  if (!missing(case_data)) Nvars$case  <- Nvars$case + ncol(case_data)
+  if (modelG) {
+    Nvars$group <- ncol(rr.data) + max(ncol(cov_d), 0)
+    if (!missing( case_data)) Nvars$group <- Nvars$group + ncol(case_data)
+    if (!missing(group_data)) Nvars$group <- Nvars$group + ncol(group_data)
+  }
+
+
+  ## decomposition of round-robin variables
   if (inherits(decomp_rr, "list")) {
     ## as many decompositions as variables?
     stopifnot(length(decomp_rr) == ncol(rr.data))
@@ -170,6 +193,7 @@ srm_priors <- function(data, group_data, case_data, # cov_d or rr.vars = NULL,
 
 
   priors <- list()
+  attr(priors, "Nvars") <- Nvars # for mvsrm() to pass as data= to stan()
 
   if (SDby == "sd") {
     #FIXME: only applicable for continuous variables
@@ -205,6 +229,8 @@ srm_priors <- function(data, group_data, case_data, # cov_d or rr.vars = NULL,
 
   } else stop("Invalid choice for 'SDby=' argument")
 
+  ## STANDARD DEVIATIONS
+
   ## SDs for each RR component (out, in, rel)
   priors$rr_rel_t <- priors$rr_out_t <- priors$rr_in_t <- data.frame(df = rep(4, ncol(rr.data)))
 
@@ -215,6 +241,8 @@ srm_priors <- function(data, group_data, case_data, # cov_d or rr.vars = NULL,
     priors$rr_group_t <- data.frame(df = rep(4, length(rrSD)))
     priors$rr_group_t$sd <- priors$rr_group_t$m <- sqrt(rrSD^2 * decomp_rr["group",])
   }
+
+  ## SDs for covariates at each level
 
   if (!is.null(cov_d)) {
     ## heuristic decomposition below assumes negligible case/group-level variance
@@ -244,14 +272,16 @@ srm_priors <- function(data, group_data, case_data, # cov_d or rr.vars = NULL,
     priors$group_cov_t <- data.frame(df = 4, m = gSD, sd = gSD)
   }
 
-  ## LKJ priors for intact correlation matrices
+
+  ## CORRELATIONS using beta priors
+
   priors$case_lkj <- 2
   if (modelG) priors$group_lkj <- 2
   if (!is.null(cov_d)) {
     if (ncol(cov_d) > 1L) priors$d1_lkj <- 2 # correlations among cov_d
   }
 
-  ## beta priors for constrained dyad-level correlations
+  ## equality-constrained dyad-level correlations
   priors$rrD_beta_a <- matrix(1.5, nrow = length(rr.data), ncol = length(rr.data),
                               dimnames = list(names(rr.data), names(rr.data)))
   priors$rrD_beta_b <- priors$rrD_beta_a
