@@ -1,5 +1,5 @@
 ### Terrence D. Jorgensen
-### Last updated: 8 November 2023
+### Last updated: 9 November 2023
 ### function to set default priors for mvsrm()
 
 
@@ -50,7 +50,7 @@
 ##'
 ##' @return A `list` of hyperparameters, with an `attr(,"Nvars")` indicating
 ##'         the number of (components of) variables modeled at each level (e.g.,
-##'         the `case` level includes 2 components per round-robing variable
+##'         the `case` level includes 2 components per round-robin variable
 ##'         plus the number of variables in `case_data=`).
 ##'
 ##'
@@ -94,8 +94,8 @@ srm_priors <- function(data, group_data, case_data, # cov_d or rr.vars = NULL,
   ## TODO: also for covariate SDs
 
   ## Priors for dyad-level correlations:
-  ## - rrD_beta_a, rrD_beta_b: matrix[Kd2,Kd2] for dyadic reciprocity (on diag),
-  ##                           intra/inter correlations (above/below the diag)
+  ## - rr_beta_a, rr_beta_b: matrix[Kd2,Kd2] for dyadic reciprocity (on diag),
+  ##                         intra/inter correlations (above/below the diag)
   ## - d1_beta: matrix[Kd1,Kd1] with shapes a (above) and b (below) the diag
   ## - d21_beta_a, d21_beta_b: matrix[Kd2,Kd1] equality-constrained correlations
   ##                           between each RR and each symmetric (d1) variable
@@ -107,6 +107,7 @@ srm_priors <- function(data, group_data, case_data, # cov_d or rr.vars = NULL,
   rr.data <- data#[rr.vars]
   # cov_d <- data[ setdiff(names(data), rr.vars) ]
   cov_d <- NULL
+
 
   ## Count number of variables/components at each level
   ## (used to define dimensions for correlation priors)
@@ -275,22 +276,127 @@ srm_priors <- function(data, group_data, case_data, # cov_d or rr.vars = NULL,
 
   ## CORRELATIONS using beta priors
 
-  priors$case_lkj <- 2
-  if (modelG) priors$group_lkj <- 2
-  if (!is.null(cov_d)) {
-    if (ncol(cov_d) > 1L) priors$d1_lkj <- 2 # correlations among cov_d
-  }
+  # priors$case_lkj <- 2
+  # if (modelG) priors$group_lkj <- 2
+  # if (!is.null(cov_d)) {
+  #   if (ncol(cov_d) > 1L) priors$d1_lkj <- 2 # correlations among cov_d
+  # }
 
-  ## equality-constrained dyad-level correlations
-  priors$rrD_beta_a <- matrix(1.5, nrow = length(rr.data), ncol = length(rr.data),
-                              dimnames = list(names(rr.data), names(rr.data)))
-  priors$rrD_beta_b <- priors$rrD_beta_a
+  ## DYAD-level correlations
+  priors$rr_beta_a <- matrix(1.5, nrow = Nvars$rr, ncol = Nvars$rr,
+                             dimnames = list(names(rr.data), names(rr.data)))
+  class(priors$rr_beta_a) <- append(class(priors$rr_beta_a),
+                                    values = "lavaan.matrix", after = 0)
+  priors$rr_beta_b <- priors$rr_beta_a
+  ## add description to guide users
+  rr_header <- paste('The matrix below contains shape hyperparameters "alpha" for the',
+                     'beta-distribution priors of each round-robin variable\'s dyadic',
+                     'reciprocity (on the diagonal), as well as for intra-personal',
+                     '(lower triangle) and inter-personal (upper triangle) correlations.')
+  attr(priors$rr_beta_a, "header") <- rr_header
+  attr(priors$rr_beta_b, "header") <- gsub(x = rr_header, pattern = "alpha",
+                                           replacement = "beta")
   if (!is.null(cov_d)) {
     ## correlations between cov_d and rr.data
-    priors$d12_beta_a <- matrix(1.5, nrow = length(cov_d), ncol = length(rr.data),
+    priors$d12_beta_a <- matrix(1.5, nrow = Nvars$d1, ncol = Nvars$rr,
                                 dimnames = list(names(cov_d), names(rr.data)))
+    class(priors$d12_beta_a) <- c("lavaan.matrix", class(priors$d12_beta_a))
     priors$d12_beta_b <- priors$d12_beta_a
+    d12_header <- paste('The matrix below contains shape hyperparameters "alpha"',
+                        'for the beta-distribution priors of correlations between',
+                        'each dyad-level covariate (see rownames) and each',
+                        'round-robin variable (see colnames).')
+    attr(priors$d12_beta_a, "header") <- d12_header
+    attr(priors$d12_beta_b, "header") <- gsub(x = d12_header, pattern = "alpha",
+                                              replacement = "beta")
+
+    ## correlations among multiple cov_d?
+    if (Nvars$d1 > 1L) {
+      priors$d1_beta <- matrix(1.5, nrow = Nvars$d1, ncol = Nvars$d1,
+                               dimnames = list(names(cov_d), names(rr.data)))
+      diag(priors$d1_beta) <- 1 # ignored
+      class(priors$d1_beta) <- c("lavaan.matrix", class(priors$d1_beta))
+      d1_header <- paste('The matrix below contains shape hyperparameters',
+                         '"alpha" (lower triangle) and "beta" (upper triangle)',
+                         'for the beta-distribution priors of correlations among',
+                         'dyad-level covariates. Diagonal values are ignored.')
+      attr(priors$d1_beta, "header") <- d1_header
+    }
   }
+
+  ## CASE-level correlations
+  cNames <- paste0(rep(names(rr.data), each = 2), c("_out", "_in"))
+  if (!is.null(cov_d)    ) cNames <- c(cNames, names(cov_d))
+  if (!missing(case_data)) cNames <- c(cNames, names(case_data))
+
+  priors$case_beta <- matrix(1.5, nrow = Nvars$case, ncol = Nvars$case,
+                             dimnames = list(cNames, cNames))
+  diag(priors$case_beta) <- 1 # ignored
+  class(priors$case_beta) <- c("lavaan.matrix", class(priors$case_beta))
+
+  ## conditionally list variables/components in case-level matrix
+  c_header <- paste('The matrix below contains shape hyperparameters',
+                    '"alpha" (lower triangle) and "beta" (upper triangle)',
+                    'for the beta-distribution priors of correlations among',
+                    'case-level components of each round-robin variable')
+  if (length(Nvars$case) > 2*Nvars$rr) {
+    c_header <- paste0(c_header, ", followed by")
+    if (!is.null(cov_d)) {
+      c_plus <- "case-level components of dyad-level covariates"
+    } else c_plus <- character(0)
+    if (!missing(case_data)) {
+      c_plus <- c(c_plus,
+                  paste0(ifelse(modelG, yes = "case-level components of ", no = ""),
+                         "case-level covariates"))
+    }
+    c_header <- paste(c_header, paste(c_plus, collapse = " and "))
+  }
+  attr(priors$case_beta, "header") <- paste0(c_header,
+                                             '. Diagonal values are ignored.')
+
+  ## GROUP-level correlations
+  if (modelG) {
+    gNames <- names(rr.data)
+    if (!is.null(cov_d)     ) gNames <- c(gNames, names(cov_d))
+    if (!missing(case_data) ) gNames <- c(gNames, names(case_data))
+    if (!missing(group_data)) gNames <- c(gNames, names(group_data))
+
+    priors$group_beta <- matrix(1.5, nrow = Nvars$group, ncol = Nvars$group,
+                                dimnames = list(gNames, gNames))
+    diag(priors$group_beta) <- 1 # ignored
+    class(priors$group_beta) <- c("lavaan.matrix", class(priors$group_beta))
+
+    ## conditionally list variables/components in group-level matrix
+    g_header <- paste('The matrix below contains shape hyperparameters',
+                      '"alpha" (lower triangle) and "beta" (upper triangle)',
+                      'for the beta-distribution priors of correlations among',
+                      'group-level components of each round-robin variable')
+    if (length(Nvars$group) > Nvars$rr) {
+      g_header <- paste0(g_header, ", followed by")
+      ## check each level
+      if (!is.null(cov_d)) {
+        g_plus <- "group-level components of dyad-level covariates"
+      } else g_plus <- character(0)
+      if (!missing(case_data)) {
+        g_plus <- c(g_plus, "group-level components of case-level covariates")
+      }
+      if (!missing(group_data)) {
+        g_plus <- c(g_plus, "group-level covariates")
+      }
+      ## add "and"?
+      if (length(g_plus) > 1L) {
+        g_plus[length(g_plus)] <- paste("and", g_plus[length(g_plus)])
+      }
+      ## add commas?
+      if (length(g_plus) > 2L) {
+        g_plus <- paste(g_plus, collapse = ", ")
+      }
+      g_header <- paste(g_header, g_plus)
+    }
+    attr(priors$group_beta, "header") <- paste0(g_header,
+                                                '. Diagonal values are ignored.')
+  }
+
 
   if (modelM) {
     priors$rr_Mvec_m  <- sapply(rr.data, median, na.rm = TRUE)
@@ -301,8 +407,6 @@ srm_priors <- function(data, group_data, case_data, # cov_d or rr.vars = NULL,
   priors
 }
 
-# Set uninformative Wishart prior as identity with df = dim + 2?
-# hist(as.numeric(apply(rWishart(n = 1000, df = 5, Sigma = diag(3)), MARGIN = 3,
-#                       function(x) cov2cor(x)[lower.tri(diag(3), diag = FALSE)])))
+
 
 

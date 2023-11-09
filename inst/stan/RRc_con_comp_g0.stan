@@ -1,5 +1,5 @@
 // Terrence D. Jorgensen
-// Last updated: 4 November 2023
+// Last updated: 9 November 2023
 
 // Program to estimate covariance matrices for multivariate SRM components
 // - standard round-robin design (indistinguishable subjects)
@@ -25,7 +25,7 @@ data {
 
   // (hyper)priors for model{}
 
-  // df,m,sd for SDs of round-robin variable components
+  // t(df,m,sd) for SDs of round-robin variable components
   matrix[Kd2, 3] rr_rel_t;  // dyad (relationship)
   matrix[Kd2, 3] rr_out_t;  // out-going (actor / perceiver)
   matrix[Kd2, 3] rr_in_t ;  // in-coming (partner / target)
@@ -33,7 +33,7 @@ data {
   real case_lkj;
   // beta parameters (a and b) for dyad-level correlations
   matrix<lower=0>[Kd2, Kd2] rrD_beta_a;   // (dyadic reciprocity on diagonal,
-  matrix<lower=0>[Kd2, Kd2] rrD_beta_b;   // intra/inter correlations above/below diagonal)
+  matrix<lower=0>[Kd2, Kd2] rrD_beta_b;   // intra/inter correlations below/above diagonal)
 }
 transformed data {
 #include /vanilla/tdata_allKd.stan

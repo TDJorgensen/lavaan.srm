@@ -61,7 +61,7 @@ group-level variance components.  Ignored unless \code{modelG=TRUE}.}
 \value{
 A \code{list} of hyperparameters, with an \code{attr(,"Nvars")} indicating
 the number of (components of) variables modeled at each level (e.g.,
-the \code{case} level includes 2 components per round-robing variable
+the \code{case} level includes 2 components per round-robin variable
 plus the number of variables in \verb{case_data=}).
 }
 \description{
