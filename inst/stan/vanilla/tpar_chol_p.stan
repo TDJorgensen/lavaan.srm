@@ -1,1 +1,1 @@
-  chol_p = chol_r_p;
+  chol_p = cholesky_decompose(Rp);
