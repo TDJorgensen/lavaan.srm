@@ -1,5 +1,5 @@
 ### Terrence D. Jorgensen
-### Last updated: 3 November 2023
+### Last updated: 10 November 2023
 ### function to implement Stage-1 of 2-stage SR-SEM estimator
 
 
@@ -466,7 +466,7 @@ mvsrm <- function(data, rr.vars = NULL, IDout, IDin, IDgroup = NULL,
   knowns <- list(Nd = nrow(Yd2),
                  Np = length(pID_levels),
                  ## number of observed measures
-                 #TODO: Kd1 = length(dyad_constant_vars),
+                 Kd1 = length(dyad_constant_vars),
                  Kd2 = length(rr.vars))
 
   ## observed-data: Yd2, Yd1, Yp, Yg
@@ -491,27 +491,30 @@ mvsrm <- function(data, rr.vars = NULL, IDout, IDin, IDgroup = NULL,
   ## case IDs and data
   knowns$IDp <- as.matrix(Yd2[, c("ID_i", "ID_j")])
   if (!is.null(case_data)) {
-    knowns$Kp <-      ncol(case_data)   -  ifelse(is.null(IDgroup), 1L, 2L)
+    knowns$Kp <-      ncol(case_data)   -  ifelse(is.null(IDgroup), 1L, 2L) # minus 1 or 2 ID variables
     knowns$Yp <- as.matrix(case_data[ , -1:ifelse(is.null(IDgroup), -1, -2)])
     knowns$IDpp <- case_data$ID
     priorCall$case_data <- case_data[ , -1:ifelse(is.null(IDgroup), -1, -2), drop = FALSE]
     #TODO: use aggregate() or anova() to decompose case vs. group variance,
     #      then assign to priorCall$decomp_c
-  }
+  } else knowns$Kp <- 0L
 
   ## group IDs and data
   if (!is.null(IDgroup) && !fixed.groups) {
     knowns$Ng <- length(gID_levels)
     knowns$IDg <- as.array(Yd2[, IDgroup]) # 1 dimension (not a matrix)
     if (!is.null(group_data)) {
-      #TODO: knowns$Kg <-      ncol(group_data) - 1L
+      knowns$Kg <-      ncol(group_data) - 1L
       #TODO: knowns$Yg <- as.matrix(group_data[, -1])
       #TODO: priorCall$group_data <- group_data[, -1, drop = FALSE]
       SRMname["design"] <- paste0(SRMname["design"], "g")
-    }
+    } else knowns$Kg <- 0L
+
+    ## group ID per case
     if (!is.null(case_data)) {
       #TODO: knowns$IDgp <- case_data[[IDgroup]]
     }
+
     SRMname["groups"] <- "gN"
 
     ## model both group-level effects and means
@@ -580,6 +583,12 @@ mvsrm <- function(data, rr.vars = NULL, IDout, IDin, IDgroup = NULL,
   } else priors <- default_priors
 
   knowns <- c(knowns, priors)
+
+  ## add number of components (allKd, allKp, and maybe allKg)
+  Nvars <- attr(default_priors, "Nvars")
+  knowns$allKd <- knowns$Kd2*2 + knowns$Kd1
+  knowns$allKp <- Nvars$case
+  if (!is.null(IDgroup) && !fixed.groups) knowns$allKg <- Nvars$group
 
   #TODO: after priors are chosen, then replace NAs in knowns$Y* with missCode=
 

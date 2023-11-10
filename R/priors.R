@@ -1,5 +1,5 @@
 ### Terrence D. Jorgensen
-### Last updated: 9 November 2023
+### Last updated: 10 November 2023
 ### function to set default priors for mvsrm()
 
 
@@ -230,7 +230,8 @@ srm_priors <- function(data, group_data, case_data, # cov_d or rr.vars = NULL,
 
   } else stop("Invalid choice for 'SDby=' argument")
 
-  ## STANDARD DEVIATIONS
+
+  ## begin STANDARD DEVIATIONS
 
   ## SDs for each RR component (out, in, rel)
   priors$rr_rel_t <- priors$rr_out_t <- priors$rr_in_t <- data.frame(df = rep(4, ncol(rr.data)))
@@ -273,8 +274,10 @@ srm_priors <- function(data, group_data, case_data, # cov_d or rr.vars = NULL,
     priors$group_cov_t <- data.frame(df = 4, m = gSD, sd = gSD)
   }
 
+  ## end priors for STANDARD DEVIATIONS
 
-  ## CORRELATIONS using beta priors
+
+  ## begin CORRELATIONS using beta priors
 
   # priors$case_lkj <- 2
   # if (modelG) priors$group_lkj <- 2
@@ -398,6 +401,10 @@ srm_priors <- function(data, group_data, case_data, # cov_d or rr.vars = NULL,
   }
 
 
+  ## end CORRELATIONS
+
+
+  ## priors for MEANS
   if (modelM) {
     priors$rr_Mvec_m  <- sapply(rr.data, median, na.rm = TRUE)
     priors$rr_Mvec_sd <- rrSD

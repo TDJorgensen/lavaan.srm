@@ -14,8 +14,17 @@ data {
   // sample sizes
   int<lower=0> Nd;        // number of dyads   (Level 1)
   int<lower=0> Np;        // number of persons (Level 2, cross-classified)
+
   // number of observed measures (half the number of columns)
-  int<lower=0> Kd2;       // number of dyad-level observations (vary within dyad)
+  int<lower=0> Kd2;   // number of dyad-level    measures (    vary within dyad)
+  int<lower=0> Kd1;   // number of dyad-level  covariates (constant within dyad)
+  int<lower=0> Kp ;   // number of case-level  covariates
+  int<lower=0> Kg ;   // number of group-level covariates
+  // number of modeled components at each level
+  int<lower=0> allKd; // number of  dyad-level components (ij, ji, and d1)
+  int<lower=0> allKp; // number of  case-level components (of d2, d1, and c)
+  int<lower=0> allKg; // number of group-level components (of d2, d1, c and g)
+
   // observed data
   matrix[Nd, 2*Kd2] Yd2;  // observed round-robin variables
   // ID variables
@@ -36,7 +45,6 @@ data {
   matrix<lower=0>[Kd2, Kd2] rrD_beta_b;   // intra/inter correlations below/above diagonal)
 }
 transformed data {
-#include /vanilla/tdata_allKd.stan
 #include /covariates/case_tdata_declare.stan
 #include /covariates/case_tdata_calc.stan
 }
