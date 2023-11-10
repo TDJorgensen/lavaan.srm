@@ -118,7 +118,7 @@ srm_priors <- function(data, group_data, case_data, # cov_d or rr.vars = NULL,
     Nvars$group <- ncol(rr.data) + max(ncol(cov_d), 0)
     if (!missing( case_data)) Nvars$group <- Nvars$group + ncol(case_data)
     if (!missing(group_data)) Nvars$group <- Nvars$group + ncol(group_data)
-  }
+  } else Nvars$group <- 0L
 
 
   ## decomposition of round-robin variables

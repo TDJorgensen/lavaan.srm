@@ -522,12 +522,14 @@ mvsrm <- function(data, rr.vars = NULL, IDout, IDin, IDgroup = NULL,
     priorCall$modelM <- TRUE
 
   } else if (fixed.groups) {
+    knowns$Kg <- 0L # group-mean centered, so no group-level covariates
     SRMname["groups"] <- "g0"
     ## model neither group-level effects nor means
     priorCall$modelG <- FALSE
     priorCall$modelM <- FALSE
 
   } else {
+    knowns$Kg <- 0L # single group, so no group-level covariates
     SRMname["groups"] <- "g1" # must be is.null(IDgroup)
     ## model means, but not group-level effects
     priorCall$modelG <- FALSE
@@ -588,7 +590,7 @@ mvsrm <- function(data, rr.vars = NULL, IDout, IDin, IDgroup = NULL,
   Nvars <- attr(default_priors, "Nvars")
   knowns$allKd <- knowns$Kd2*2 + knowns$Kd1
   knowns$allKp <- Nvars$case
-  if (!is.null(IDgroup) && !fixed.groups) knowns$allKg <- Nvars$group
+  knowns$allKg <- Nvars$group
 
   #TODO: after priors are chosen, then replace NAs in knowns$Y* with missCode=
 
