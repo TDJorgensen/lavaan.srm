@@ -75,124 +75,142 @@ using stan::math::pow;
 stan::math::profile_map profiles__;
 static int current_statement__= 0;
 static const std::vector<string> locations_array__ = {" (found before start of program)",
-                                                      " (in 'RRc_con_comp_g0', line 56, column 2 to column 29)",
                                                       " (in 'RRc_con_comp_g0', line 57, column 2 to column 29)",
-                                                      " (in 'RRc_con_comp_g0', line 59, column 2 to column 39)",
-                                                      " (in 'RRc_con_comp_g0', line 64, column 2 to column 41)",
-                                                      " (in 'RRc_con_comp_g0', line 66, column 2 to column 23)",
-                                                      " (in 'RRc_con_comp_g0', line 70, column 2 to column 27)",
-                                                      " (in 'RRc_con_comp_g0', line 72, column 2 to column 20)",
-                                                      " (in 'RRc_con_comp_g0', line 73, column 2 to column 27)",
-                                                      " (in 'RRc_con_comp_g0', line 75, column 2 to column 30)",
-                                                      " (in 'RRc_con_comp_g0', line 76, column 2 to column 30)",
-                                                      " (in 'RRc_con_comp_g0', line 79, column 2 to column 26)",
-                                                      " (in 'RRc_con_comp_g0', line 80, column 2 to column 26)",
-                                                      " (in 'RRc_con_comp_g0', line 83, column 4 to column 13)",
-                                                      " (in 'RRc_con_comp_g0', line 84, column 4 to column 13)",
-                                                      " (in 'RRc_con_comp_g0', line 85, column 4 to column 13)",
+                                                      " (in 'RRc_con_comp_g0', line 58, column 2 to column 29)",
+                                                      " (in 'RRc_con_comp_g0', line 60, column 2 to column 61)",
+                                                      " (in 'RRc_con_comp_g0', line 65, column 2 to column 41)",
+                                                      " (in 'RRc_con_comp_g0', line 67, column 2 to column 23)",
+                                                      " (in 'RRc_con_comp_g0', line 71, column 2 to column 27)",
+                                                      " (in 'RRc_con_comp_g0', line 73, column 2 to column 20)",
+                                                      " (in 'RRc_con_comp_g0', line 74, column 2 to column 27)",
+                                                      " (in 'RRc_con_comp_g0', line 76, column 2 to column 26)",
+                                                      " (in 'RRc_con_comp_g0', line 78, column 2 to column 30)",
+                                                      " (in 'RRc_con_comp_g0', line 79, column 2 to column 30)",
+                                                      " (in 'RRc_con_comp_g0', line 82, column 2 to column 26)",
+                                                      " (in 'RRc_con_comp_g0', line 83, column 2 to column 26)",
                                                       " (in 'RRc_con_comp_g0', line 86, column 4 to column 13)",
-                                                      " (in 'RRc_con_comp_g0', line 88, column 6 to column 21)",
-                                                      " (in 'RRc_con_comp_g0', line 89, column 6 to column 17)",
-                                                      " (in 'RRc_con_comp_g0', line 91, column 6 to column 26)",
-                                                      " (in 'RRc_con_comp_g0', line 92, column 6 to column 26)",
-                                                      " (in 'RRc_con_comp_g0', line 93, column 6 to column 26)",
+                                                      " (in 'RRc_con_comp_g0', line 87, column 4 to column 13)",
+                                                      " (in 'RRc_con_comp_g0', line 88, column 4 to column 13)",
+                                                      " (in 'RRc_con_comp_g0', line 89, column 4 to column 13)",
+                                                      " (in 'RRc_con_comp_g0', line 91, column 6 to column 21)",
+                                                      " (in 'RRc_con_comp_g0', line 92, column 6 to column 17)",
                                                       " (in 'RRc_con_comp_g0', line 94, column 6 to column 26)",
-                                                      " (in 'RRc_con_comp_g0', line 95, column 6 to column 41)",
-                                                      " (in 'RRc_con_comp_g0', line 96, column 6 to column 41)",
-                                                      " (in 'RRc_con_comp_g0', line 99, column 8 to column 24)",
-                                                      " (in 'RRc_con_comp_g0', line 100, column 8 to column 20)",
-                                                      " (in 'RRc_con_comp_g0', line 101, column 8 to column 46)",
-                                                      " (in 'RRc_con_comp_g0', line 102, column 8 to column 46)",
-                                                      " (in 'RRc_con_comp_g0', line 103, column 8 to column 46)",
+                                                      " (in 'RRc_con_comp_g0', line 95, column 6 to column 26)",
+                                                      " (in 'RRc_con_comp_g0', line 96, column 6 to column 26)",
+                                                      " (in 'RRc_con_comp_g0', line 97, column 6 to column 26)",
+                                                      " (in 'RRc_con_comp_g0', line 98, column 6 to column 41)",
+                                                      " (in 'RRc_con_comp_g0', line 99, column 6 to column 41)",
+                                                      " (in 'RRc_con_comp_g0', line 102, column 8 to column 24)",
+                                                      " (in 'RRc_con_comp_g0', line 103, column 8 to column 20)",
                                                       " (in 'RRc_con_comp_g0', line 104, column 8 to column 46)",
                                                       " (in 'RRc_con_comp_g0', line 105, column 8 to column 46)",
                                                       " (in 'RRc_con_comp_g0', line 106, column 8 to column 46)",
                                                       " (in 'RRc_con_comp_g0', line 107, column 8 to column 46)",
                                                       " (in 'RRc_con_comp_g0', line 108, column 8 to column 46)",
-                                                      " (in 'RRc_con_comp_g0', line 98, column 43 to line 109, column 7)",
-                                                      " (in 'RRc_con_comp_g0', line 98, column 21 to line 109, column 7)",
-                                                      " (in 'RRc_con_comp_g0', line 98, column 19 to line 109, column 8)",
-                                                      " (in 'RRc_con_comp_g0', line 98, column 6 to line 109, column 8)",
-                                                      " (in 'RRc_con_comp_g0', line 87, column 21 to line 110, column 5)",
-                                                      " (in 'RRc_con_comp_g0', line 87, column 4 to line 110, column 5)",
-                                                      " (in 'RRc_con_comp_g0', line 82, column 2 to line 112, column 3)",
-                                                      " (in 'RRc_con_comp_g0', line 114, column 2 to column 59)",
-                                                      " (in 'RRc_con_comp_g0', line 118, column 11 to column 16)",
-                                                      " (in 'RRc_con_comp_g0', line 118, column 4 to column 49)",
-                                                      " (in 'RRc_con_comp_g0', line 119, column 31 to column 51)",
-                                                      " (in 'RRc_con_comp_g0', line 119, column 4 to column 51)",
-                                                      " (in 'RRc_con_comp_g0', line 120, column 4 to column 50)",
-                                                      " (in 'RRc_con_comp_g0', line 117, column 2 to line 121, column 3)",
-                                                      " (in 'RRc_con_comp_g0', line 125, column 4 to column 13)",
-                                                      " (in 'RRc_con_comp_g0', line 126, column 4 to column 13)",
-                                                      " (in 'RRc_con_comp_g0', line 128, column 6 to column 21)",
-                                                      " (in 'RRc_con_comp_g0', line 129, column 6 to column 17)",
-                                                      " (in 'RRc_con_comp_g0', line 132, column 8 to column 88)",
-                                                      " (in 'RRc_con_comp_g0', line 133, column 8 to column 88)",
-                                                      " (in 'RRc_con_comp_g0', line 130, column 22 to line 134, column 7)",
-                                                      " (in 'RRc_con_comp_g0', line 130, column 6 to line 134, column 7)",
-                                                      " (in 'RRc_con_comp_g0', line 127, column 21 to line 135, column 5)",
-                                                      " (in 'RRc_con_comp_g0', line 127, column 4 to line 135, column 5)",
-                                                      " (in 'RRc_con_comp_g0', line 124, column 2 to line 136, column 3)",
-                                                      " (in 'RRc_con_comp_g0', line 141, column 2 to column 14)",
-                                                      " (in 'RRc_con_comp_g0', line 146, column 4 to column 34)",
-                                                      " (in 'RRc_con_comp_g0', line 149, column 6 to column 44)",
-                                                      " (in 'RRc_con_comp_g0', line 147, column 20 to line 150, column 5)",
-                                                      " (in 'RRc_con_comp_g0', line 147, column 4 to line 150, column 5)",
-                                                      " (in 'RRc_con_comp_g0', line 144, column 18 to line 151, column 3)",
-                                                      " (in 'RRc_con_comp_g0', line 144, column 2 to line 151, column 3)",
-                                                      " (in 'RRc_con_comp_g0', line 184, column 2 to column 25)",
-                                                      " (in 'RRc_con_comp_g0', line 185, column 2 to column 26)",
-                                                      " (in 'RRc_con_comp_g0', line 186, column 2 to column 30)",
-                                                      " (in 'RRc_con_comp_g0', line 187, column 2 to column 30)",
-                                                      " (in 'RRc_con_comp_g0', line 191, column 0 to column 19)",
-                                                      " (in 'RRc_con_comp_g0', line 195, column 9 to column 12)",
-                                                      " (in 'RRc_con_comp_g0', line 195, column 2 to column 22)",
-                                                      " (in 'RRc_con_comp_g0', line 196, column 9 to column 12)",
-                                                      " (in 'RRc_con_comp_g0', line 196, column 2 to column 21)",
-                                                      " (in 'RRc_con_comp_g0', line 199, column 4 to column 37)",
-                                                      " (in 'RRc_con_comp_g0', line 200, column 4 to column 33)",
-                                                      " (in 'RRc_con_comp_g0', line 201, column 4 to column 32)",
-                                                      " (in 'RRc_con_comp_g0', line 203, column 4 to column 31)",
-                                                      " (in 'RRc_con_comp_g0', line 204, column 4 to column 36)",
-                                                      " (in 'RRc_con_comp_g0', line 198, column 19 to line 205, column 3)",
-                                                      " (in 'RRc_con_comp_g0', line 198, column 2 to line 205, column 3)",
-                                                      " (in 'RRc_con_comp_g0', line 194, column 0 to line 207, column 1)",
-                                                      " (in 'RRc_con_comp_g0', line 210, column 2 to column 24)",
-                                                      " (in 'RRc_con_comp_g0', line 212, column 2 to column 51)",
-                                                      " (in 'RRc_con_comp_g0', line 215, column 11 to column 16)",
-                                                      " (in 'RRc_con_comp_g0', line 215, column 18 to column 23)",
-                                                      " (in 'RRc_con_comp_g0', line 215, column 4 to column 36)",
-                                                      " (in 'RRc_con_comp_g0', line 216, column 4 to column 50)",
-                                                      " (in 'RRc_con_comp_g0', line 217, column 4 to column 59)",
-                                                      " (in 'RRc_con_comp_g0', line 214, column 2 to line 218, column 3)",
-                                                      " (in 'RRc_con_comp_g0', line 220, column 2 to column 53)",
-                                                      " (in 'RRc_con_comp_g0', line 157, column 76 to column 77)",
-                                                      " (in 'RRc_con_comp_g0', line 157, column 4 to column 81)",
-                                                      " (in 'RRc_con_comp_g0', line 159, column 76 to column 77)",
-                                                      " (in 'RRc_con_comp_g0', line 159, column 4 to column 81)",
-                                                      " (in 'RRc_con_comp_g0', line 161, column 76 to column 77)",
-                                                      " (in 'RRc_con_comp_g0', line 161, column 4 to column 81)",
-                                                      " (in 'RRc_con_comp_g0', line 155, column 19 to line 162, column 3)",
-                                                      " (in 'RRc_con_comp_g0', line 155, column 2 to line 162, column 3)",
-                                                      " (in 'RRc_con_comp_g0', line 166, column 70 to column 71)",
-                                                      " (in 'RRc_con_comp_g0', line 166, column 4 to column 75)",
-                                                      " (in 'RRc_con_comp_g0', line 165, column 18 to line 167, column 3)",
-                                                      " (in 'RRc_con_comp_g0', line 165, column 2 to line 167, column 3)",
-                                                      " (in 'RRc_con_comp_g0', line 169, column 2 to column 34)",
-                                                      " (in 'RRc_con_comp_g0', line 172, column 4 to column 55)",
-                                                      " (in 'RRc_con_comp_g0', line 175, column 6 to column 66)",
-                                                      " (in 'RRc_con_comp_g0', line 176, column 6 to column 66)",
-                                                      " (in 'RRc_con_comp_g0', line 174, column 41 to line 177, column 5)",
-                                                      " (in 'RRc_con_comp_g0', line 174, column 19 to line 177, column 5)",
-                                                      " (in 'RRc_con_comp_g0', line 174, column 17 to line 177, column 6)",
-                                                      " (in 'RRc_con_comp_g0', line 174, column 4 to line 177, column 6)",
-                                                      " (in 'RRc_con_comp_g0', line 170, column 19 to line 178, column 3)",
-                                                      " (in 'RRc_con_comp_g0', line 170, column 2 to line 178, column 3)",
-                                                      " (in 'RRc_con_comp_g0', line 180, column 18 to column 72)",
-                                                      " (in 'RRc_con_comp_g0', line 180, column 2 to column 72)",
-                                                      " (in 'RRc_con_comp_g0', line 181, column 18 to column 86)",
-                                                      " (in 'RRc_con_comp_g0', line 181, column 2 to column 86)",
+                                                      " (in 'RRc_con_comp_g0', line 109, column 8 to column 46)",
+                                                      " (in 'RRc_con_comp_g0', line 110, column 8 to column 46)",
+                                                      " (in 'RRc_con_comp_g0', line 111, column 8 to column 46)",
+                                                      " (in 'RRc_con_comp_g0', line 101, column 43 to line 112, column 7)",
+                                                      " (in 'RRc_con_comp_g0', line 101, column 21 to line 112, column 7)",
+                                                      " (in 'RRc_con_comp_g0', line 101, column 19 to line 112, column 8)",
+                                                      " (in 'RRc_con_comp_g0', line 101, column 6 to line 112, column 8)",
+                                                      " (in 'RRc_con_comp_g0', line 90, column 21 to line 113, column 5)",
+                                                      " (in 'RRc_con_comp_g0', line 90, column 4 to line 113, column 5)",
+                                                      " (in 'RRc_con_comp_g0', line 85, column 2 to line 115, column 3)",
+                                                      " (in 'RRc_con_comp_g0', line 117, column 2 to column 59)",
+                                                      " (in 'RRc_con_comp_g0', line 120, column 4 to column 20)",
+                                                      " (in 'RRc_con_comp_g0', line 122, column 6 to column 18)",
+                                                      " (in 'RRc_con_comp_g0', line 126, column 8 to column 44)",
+                                                      " (in 'RRc_con_comp_g0', line 127, column 8 to column 44)",
+                                                      " (in 'RRc_con_comp_g0', line 128, column 8 to column 21)",
+                                                      " (in 'RRc_con_comp_g0', line 125, column 47 to line 129, column 7)",
+                                                      " (in 'RRc_con_comp_g0', line 125, column 23 to line 129, column 7)",
+                                                      " (in 'RRc_con_comp_g0', line 125, column 21 to line 129, column 8)",
+                                                      " (in 'RRc_con_comp_g0', line 125, column 6 to line 129, column 8)",
+                                                      " (in 'RRc_con_comp_g0', line 121, column 23 to line 130, column 5)",
+                                                      " (in 'RRc_con_comp_g0', line 121, column 4 to line 130, column 5)",
+                                                      " (in 'RRc_con_comp_g0', line 119, column 2 to line 132, column 3)",
+                                                      " (in 'RRc_con_comp_g0', line 136, column 11 to column 16)",
+                                                      " (in 'RRc_con_comp_g0', line 136, column 4 to column 57)",
+                                                      " (in 'RRc_con_comp_g0', line 137, column 11 to column 16)",
+                                                      " (in 'RRc_con_comp_g0', line 137, column 18 to column 23)",
+                                                      " (in 'RRc_con_comp_g0', line 137, column 4 to column 59)",
+                                                      " (in 'RRc_con_comp_g0', line 139, column 31 to column 51)",
+                                                      " (in 'RRc_con_comp_g0', line 139, column 4 to column 51)",
+                                                      " (in 'RRc_con_comp_g0', line 140, column 4 to column 50)",
+                                                      " (in 'RRc_con_comp_g0', line 135, column 2 to line 141, column 3)",
+                                                      " (in 'RRc_con_comp_g0', line 144, column 4 to column 13)",
+                                                      " (in 'RRc_con_comp_g0', line 145, column 4 to column 13)",
+                                                      " (in 'RRc_con_comp_g0', line 147, column 6 to column 21)",
+                                                      " (in 'RRc_con_comp_g0', line 148, column 6 to column 17)",
+                                                      " (in 'RRc_con_comp_g0', line 151, column 8 to column 88)",
+                                                      " (in 'RRc_con_comp_g0', line 152, column 8 to column 88)",
+                                                      " (in 'RRc_con_comp_g0', line 149, column 22 to line 153, column 7)",
+                                                      " (in 'RRc_con_comp_g0', line 149, column 6 to line 153, column 7)",
+                                                      " (in 'RRc_con_comp_g0', line 146, column 21 to line 154, column 5)",
+                                                      " (in 'RRc_con_comp_g0', line 146, column 4 to line 154, column 5)",
+                                                      " (in 'RRc_con_comp_g0', line 143, column 2 to line 155, column 3)",
+                                                      " (in 'RRc_con_comp_g0', line 160, column 2 to column 14)",
+                                                      " (in 'RRc_con_comp_g0', line 165, column 4 to column 34)",
+                                                      " (in 'RRc_con_comp_g0', line 168, column 6 to column 44)",
+                                                      " (in 'RRc_con_comp_g0', line 166, column 20 to line 169, column 5)",
+                                                      " (in 'RRc_con_comp_g0', line 166, column 4 to line 169, column 5)",
+                                                      " (in 'RRc_con_comp_g0', line 163, column 18 to line 170, column 3)",
+                                                      " (in 'RRc_con_comp_g0', line 163, column 2 to line 170, column 3)",
+                                                      " (in 'RRc_con_comp_g0', line 217, column 2 to column 25)",
+                                                      " (in 'RRc_con_comp_g0', line 218, column 2 to column 30)",
+                                                      " (in 'RRc_con_comp_g0', line 219, column 2 to column 30)",
+                                                      " (in 'RRc_con_comp_g0', line 223, column 0 to column 19)",
+                                                      " (in 'RRc_con_comp_g0', line 227, column 9 to column 12)",
+                                                      " (in 'RRc_con_comp_g0', line 227, column 2 to column 22)",
+                                                      " (in 'RRc_con_comp_g0', line 228, column 9 to column 12)",
+                                                      " (in 'RRc_con_comp_g0', line 228, column 2 to column 21)",
+                                                      " (in 'RRc_con_comp_g0', line 231, column 4 to column 37)",
+                                                      " (in 'RRc_con_comp_g0', line 232, column 4 to column 33)",
+                                                      " (in 'RRc_con_comp_g0', line 233, column 4 to column 32)",
+                                                      " (in 'RRc_con_comp_g0', line 235, column 4 to column 31)",
+                                                      " (in 'RRc_con_comp_g0', line 236, column 4 to column 36)",
+                                                      " (in 'RRc_con_comp_g0', line 230, column 19 to line 237, column 3)",
+                                                      " (in 'RRc_con_comp_g0', line 230, column 2 to line 237, column 3)",
+                                                      " (in 'RRc_con_comp_g0', line 226, column 0 to line 239, column 1)",
+                                                      " (in 'RRc_con_comp_g0', line 242, column 2 to column 24)",
+                                                      " (in 'RRc_con_comp_g0', line 244, column 2 to column 36)",
+                                                      " (in 'RRc_con_comp_g0', line 245, column 2 to column 36)",
+                                                      " (in 'RRc_con_comp_g0', line 176, column 76 to column 77)",
+                                                      " (in 'RRc_con_comp_g0', line 176, column 4 to column 81)",
+                                                      " (in 'RRc_con_comp_g0', line 178, column 76 to column 77)",
+                                                      " (in 'RRc_con_comp_g0', line 178, column 4 to column 81)",
+                                                      " (in 'RRc_con_comp_g0', line 180, column 76 to column 77)",
+                                                      " (in 'RRc_con_comp_g0', line 180, column 4 to column 81)",
+                                                      " (in 'RRc_con_comp_g0', line 174, column 19 to line 181, column 3)",
+                                                      " (in 'RRc_con_comp_g0', line 174, column 2 to line 181, column 3)",
+                                                      " (in 'RRc_con_comp_g0', line 185, column 70 to column 71)",
+                                                      " (in 'RRc_con_comp_g0', line 185, column 4 to column 75)",
+                                                      " (in 'RRc_con_comp_g0', line 184, column 18 to line 186, column 3)",
+                                                      " (in 'RRc_con_comp_g0', line 184, column 2 to line 186, column 3)",
+                                                      " (in 'RRc_con_comp_g0', line 190, column 4 to column 53)",
+                                                      " (in 'RRc_con_comp_g0', line 194, column 6 to column 64)",
+                                                      " (in 'RRc_con_comp_g0', line 195, column 6 to column 64)",
+                                                      " (in 'RRc_con_comp_g0', line 192, column 41 to line 196, column 5)",
+                                                      " (in 'RRc_con_comp_g0', line 192, column 19 to line 196, column 5)",
+                                                      " (in 'RRc_con_comp_g0', line 192, column 17 to line 196, column 6)",
+                                                      " (in 'RRc_con_comp_g0', line 192, column 4 to line 196, column 6)",
+                                                      " (in 'RRc_con_comp_g0', line 188, column 19 to line 197, column 3)",
+                                                      " (in 'RRc_con_comp_g0', line 188, column 2 to line 197, column 3)",
+                                                      " (in 'RRc_con_comp_g0', line 200, column 4 to column 20)",
+                                                      " (in 'RRc_con_comp_g0', line 206, column 8 to column 73)",
+                                                      " (in 'RRc_con_comp_g0', line 207, column 8 to column 21)",
+                                                      " (in 'RRc_con_comp_g0', line 204, column 47 to line 208, column 7)",
+                                                      " (in 'RRc_con_comp_g0', line 204, column 23 to line 208, column 7)",
+                                                      " (in 'RRc_con_comp_g0', line 204, column 21 to line 208, column 8)",
+                                                      " (in 'RRc_con_comp_g0', line 204, column 6 to line 208, column 8)",
+                                                      " (in 'RRc_con_comp_g0', line 201, column 23 to line 209, column 5)",
+                                                      " (in 'RRc_con_comp_g0', line 201, column 4 to line 209, column 5)",
+                                                      " (in 'RRc_con_comp_g0', line 199, column 2 to line 211, column 3)",
+                                                      " (in 'RRc_con_comp_g0', line 213, column 18 to column 72)",
+                                                      " (in 'RRc_con_comp_g0', line 213, column 2 to column 72)",
+                                                      " (in 'RRc_con_comp_g0', line 214, column 18 to column 86)",
+                                                      " (in 'RRc_con_comp_g0', line 214, column 2 to column 86)",
                                                       " (in 'RRc_con_comp_g0', line 12, column 2 to column 18)",
                                                       " (in 'RRc_con_comp_g0', line 13, column 2 to column 18)",
                                                       " (in 'RRc_con_comp_g0', line 15, column 2 to column 19)",
@@ -218,51 +236,53 @@ static const std::vector<string> locations_array__ = {" (found before start of p
                                                       " (in 'RRc_con_comp_g0', line 33, column 2 to column 26)",
                                                       " (in 'RRc_con_comp_g0', line 34, column 9 to column 12)",
                                                       " (in 'RRc_con_comp_g0', line 34, column 2 to column 26)",
-                                                      " (in 'RRc_con_comp_g0', line 36, column 2 to column 16)",
-                                                      " (in 'RRc_con_comp_g0', line 38, column 18 to column 21)",
-                                                      " (in 'RRc_con_comp_g0', line 38, column 23 to column 26)",
-                                                      " (in 'RRc_con_comp_g0', line 38, column 2 to column 39)",
-                                                      " (in 'RRc_con_comp_g0', line 39, column 18 to column 21)",
-                                                      " (in 'RRc_con_comp_g0', line 39, column 23 to column 26)",
-                                                      " (in 'RRc_con_comp_g0', line 39, column 2 to column 39)",
-                                                      " (in 'RRc_con_comp_g0', line 44, column 9 to column 11)",
-                                                      " (in 'RRc_con_comp_g0', line 44, column 2 to column 22)",
+                                                      " (in 'RRc_con_comp_g0', line 36, column 18 to column 21)",
+                                                      " (in 'RRc_con_comp_g0', line 36, column 23 to column 26)",
+                                                      " (in 'RRc_con_comp_g0', line 36, column 2 to column 38)",
+                                                      " (in 'RRc_con_comp_g0', line 37, column 18 to column 21)",
+                                                      " (in 'RRc_con_comp_g0', line 37, column 23 to column 26)",
+                                                      " (in 'RRc_con_comp_g0', line 37, column 2 to column 38)",
+                                                      " (in 'RRc_con_comp_g0', line 40, column 18 to column 23)",
+                                                      " (in 'RRc_con_comp_g0', line 40, column 25 to column 30)",
+                                                      " (in 'RRc_con_comp_g0', line 40, column 2 to column 42)",
                                                       " (in 'RRc_con_comp_g0', line 45, column 9 to column 11)",
-                                                      " (in 'RRc_con_comp_g0', line 45, column 2 to column 25)",
-                                                      " (in 'RRc_con_comp_g0', line 49, column 4 to column 34)",
+                                                      " (in 'RRc_con_comp_g0', line 45, column 2 to column 22)",
+                                                      " (in 'RRc_con_comp_g0', line 46, column 9 to column 11)",
+                                                      " (in 'RRc_con_comp_g0', line 46, column 2 to column 25)",
                                                       " (in 'RRc_con_comp_g0', line 50, column 4 to column 34)",
-                                                      " (in 'RRc_con_comp_g0', line 51, column 4 to column 51)",
-                                                      " (in 'RRc_con_comp_g0', line 48, column 18 to line 52, column 3)",
-                                                      " (in 'RRc_con_comp_g0', line 48, column 2 to line 52, column 3)",
-                                                      " (in 'RRc_con_comp_g0', line 56, column 18 to column 21)",
-                                                      " (in 'RRc_con_comp_g0', line 57, column 18 to column 23)",
-                                                      " (in 'RRc_con_comp_g0', line 59, column 23 to column 28)",
-                                                      " (in 'RRc_con_comp_g0', line 64, column 26 to column 29)",
-                                                      " (in 'RRc_con_comp_g0', line 64, column 31 to column 34)",
-                                                      " (in 'RRc_con_comp_g0', line 66, column 9 to column 11)",
-                                                      " (in 'RRc_con_comp_g0', line 66, column 13 to column 18)",
-                                                      " (in 'RRc_con_comp_g0', line 70, column 9 to column 11)",
-                                                      " (in 'RRc_con_comp_g0', line 70, column 13 to column 18)",
-                                                      " (in 'RRc_con_comp_g0', line 72, column 9 to column 14)",
+                                                      " (in 'RRc_con_comp_g0', line 51, column 4 to column 34)",
+                                                      " (in 'RRc_con_comp_g0', line 52, column 4 to column 51)",
+                                                      " (in 'RRc_con_comp_g0', line 49, column 18 to line 53, column 3)",
+                                                      " (in 'RRc_con_comp_g0', line 49, column 2 to line 53, column 3)",
+                                                      " (in 'RRc_con_comp_g0', line 57, column 18 to column 21)",
+                                                      " (in 'RRc_con_comp_g0', line 58, column 18 to column 23)",
+                                                      " (in 'RRc_con_comp_g0', line 60, column 27 to column 52)",
+                                                      " (in 'RRc_con_comp_g0', line 65, column 26 to column 29)",
+                                                      " (in 'RRc_con_comp_g0', line 65, column 31 to column 34)",
+                                                      " (in 'RRc_con_comp_g0', line 67, column 9 to column 11)",
+                                                      " (in 'RRc_con_comp_g0', line 67, column 13 to column 18)",
+                                                      " (in 'RRc_con_comp_g0', line 71, column 9 to column 11)",
+                                                      " (in 'RRc_con_comp_g0', line 71, column 13 to column 18)",
                                                       " (in 'RRc_con_comp_g0', line 73, column 9 to column 14)",
-                                                      " (in 'RRc_con_comp_g0', line 73, column 16 to column 21)",
-                                                      " (in 'RRc_con_comp_g0', line 75, column 9 to column 14)",
-                                                      " (in 'RRc_con_comp_g0', line 75, column 16 to column 21)",
+                                                      " (in 'RRc_con_comp_g0', line 74, column 9 to column 14)",
+                                                      " (in 'RRc_con_comp_g0', line 74, column 16 to column 21)",
                                                       " (in 'RRc_con_comp_g0', line 76, column 9 to column 14)",
                                                       " (in 'RRc_con_comp_g0', line 76, column 16 to column 21)",
-                                                      " (in 'RRc_con_comp_g0', line 79, column 9 to column 11)",
-                                                      " (in 'RRc_con_comp_g0', line 79, column 13 to column 18)",
-                                                      " (in 'RRc_con_comp_g0', line 80, column 9 to column 11)",
-                                                      " (in 'RRc_con_comp_g0', line 80, column 13 to column 18)",
-                                                      " (in 'RRc_con_comp_g0', line 184, column 9 to column 11)",
-                                                      " (in 'RRc_con_comp_g0', line 184, column 13 to column 18)",
-                                                      " (in 'RRc_con_comp_g0', line 185, column 9 to column 14)",
-                                                      " (in 'RRc_con_comp_g0', line 185, column 16 to column 21)",
-                                                      " (in 'RRc_con_comp_g0', line 186, column 9 to column 14)",
-                                                      " (in 'RRc_con_comp_g0', line 186, column 16 to column 21)",
-                                                      " (in 'RRc_con_comp_g0', line 187, column 9 to column 14)",
-                                                      " (in 'RRc_con_comp_g0', line 187, column 16 to column 21)",
-                                                      " (in 'RRc_con_comp_g0', line 191, column 7 to column 10)"};
+                                                      " (in 'RRc_con_comp_g0', line 78, column 9 to column 14)",
+                                                      " (in 'RRc_con_comp_g0', line 78, column 16 to column 21)",
+                                                      " (in 'RRc_con_comp_g0', line 79, column 9 to column 14)",
+                                                      " (in 'RRc_con_comp_g0', line 79, column 16 to column 21)",
+                                                      " (in 'RRc_con_comp_g0', line 82, column 9 to column 11)",
+                                                      " (in 'RRc_con_comp_g0', line 82, column 13 to column 18)",
+                                                      " (in 'RRc_con_comp_g0', line 83, column 9 to column 11)",
+                                                      " (in 'RRc_con_comp_g0', line 83, column 13 to column 18)",
+                                                      " (in 'RRc_con_comp_g0', line 217, column 9 to column 11)",
+                                                      " (in 'RRc_con_comp_g0', line 217, column 13 to column 18)",
+                                                      " (in 'RRc_con_comp_g0', line 218, column 9 to column 14)",
+                                                      " (in 'RRc_con_comp_g0', line 218, column 16 to column 21)",
+                                                      " (in 'RRc_con_comp_g0', line 219, column 9 to column 14)",
+                                                      " (in 'RRc_con_comp_g0', line 219, column 16 to column 21)",
+                                                      " (in 'RRc_con_comp_g0', line 223, column 7 to column 10)"};
 #include <stan_meta_header.hpp>
 class model_RRc_con_comp_g0 final : public model_base_crtp<model_RRc_con_comp_g0> {
 private:
@@ -282,11 +302,12 @@ private:
   Eigen::Matrix<double, -1, -1> rr_rel_t;
   Eigen::Matrix<double, -1, -1> rr_out_t;
   Eigen::Matrix<double, -1, -1> rr_in_t;
-  double case_lkj;
-  Eigen::Matrix<double, -1, -1> rrD_beta_a;
-  Eigen::Matrix<double, -1, -1> rrD_beta_b;
+  Eigen::Matrix<double, -1, -1> rr_beta_a;
+  Eigen::Matrix<double, -1, -1> rr_beta_b;
+  Eigen::Matrix<double, -1, -1> case_beta;
   Eigen::Matrix<double, -1, -1> limKp;
   Eigen::Matrix<double, -1, 1> halfRangeKp;
+  int Rp_vec_1dim__;
   int AP_2dim__;
  
 public:
@@ -315,101 +336,101 @@ public:
       pos__ = std::numeric_limits<int>::min();
       
       pos__ = 1;
-      current_statement__ = 119;
+      current_statement__ = 137;
       context__.validate_dims("data initialization","Nd","int",
           context__.to_vec());
       Nd = std::numeric_limits<int>::min();
       
-      current_statement__ = 119;
+      current_statement__ = 137;
       Nd = context__.vals_i("Nd")[(1 - 1)];
-      current_statement__ = 119;
-      current_statement__ = 119;
+      current_statement__ = 137;
+      current_statement__ = 137;
       check_greater_or_equal(function__, "Nd", Nd, 0);
-      current_statement__ = 120;
+      current_statement__ = 138;
       context__.validate_dims("data initialization","Np","int",
           context__.to_vec());
       Np = std::numeric_limits<int>::min();
       
-      current_statement__ = 120;
+      current_statement__ = 138;
       Np = context__.vals_i("Np")[(1 - 1)];
-      current_statement__ = 120;
-      current_statement__ = 120;
+      current_statement__ = 138;
+      current_statement__ = 138;
       check_greater_or_equal(function__, "Np", Np, 0);
-      current_statement__ = 121;
+      current_statement__ = 139;
       context__.validate_dims("data initialization","Kd2","int",
           context__.to_vec());
       Kd2 = std::numeric_limits<int>::min();
       
-      current_statement__ = 121;
+      current_statement__ = 139;
       Kd2 = context__.vals_i("Kd2")[(1 - 1)];
-      current_statement__ = 121;
-      current_statement__ = 121;
+      current_statement__ = 139;
+      current_statement__ = 139;
       check_greater_or_equal(function__, "Kd2", Kd2, 0);
-      current_statement__ = 122;
+      current_statement__ = 140;
       context__.validate_dims("data initialization","Kd1","int",
           context__.to_vec());
       Kd1 = std::numeric_limits<int>::min();
       
-      current_statement__ = 122;
+      current_statement__ = 140;
       Kd1 = context__.vals_i("Kd1")[(1 - 1)];
-      current_statement__ = 122;
-      current_statement__ = 122;
+      current_statement__ = 140;
+      current_statement__ = 140;
       check_greater_or_equal(function__, "Kd1", Kd1, 0);
-      current_statement__ = 123;
+      current_statement__ = 141;
       context__.validate_dims("data initialization","Kp","int",
           context__.to_vec());
       Kp = std::numeric_limits<int>::min();
       
-      current_statement__ = 123;
+      current_statement__ = 141;
       Kp = context__.vals_i("Kp")[(1 - 1)];
-      current_statement__ = 123;
-      current_statement__ = 123;
+      current_statement__ = 141;
+      current_statement__ = 141;
       check_greater_or_equal(function__, "Kp", Kp, 0);
-      current_statement__ = 124;
+      current_statement__ = 142;
       context__.validate_dims("data initialization","Kg","int",
           context__.to_vec());
       Kg = std::numeric_limits<int>::min();
       
-      current_statement__ = 124;
+      current_statement__ = 142;
       Kg = context__.vals_i("Kg")[(1 - 1)];
-      current_statement__ = 124;
-      current_statement__ = 124;
+      current_statement__ = 142;
+      current_statement__ = 142;
       check_greater_or_equal(function__, "Kg", Kg, 0);
-      current_statement__ = 125;
+      current_statement__ = 143;
       context__.validate_dims("data initialization","allKd","int",
           context__.to_vec());
       allKd = std::numeric_limits<int>::min();
       
-      current_statement__ = 125;
+      current_statement__ = 143;
       allKd = context__.vals_i("allKd")[(1 - 1)];
-      current_statement__ = 125;
-      current_statement__ = 125;
+      current_statement__ = 143;
+      current_statement__ = 143;
       check_greater_or_equal(function__, "allKd", allKd, 0);
-      current_statement__ = 126;
+      current_statement__ = 144;
       context__.validate_dims("data initialization","allKp","int",
           context__.to_vec());
       allKp = std::numeric_limits<int>::min();
       
-      current_statement__ = 126;
+      current_statement__ = 144;
       allKp = context__.vals_i("allKp")[(1 - 1)];
-      current_statement__ = 126;
-      current_statement__ = 126;
+      current_statement__ = 144;
+      current_statement__ = 144;
       check_greater_or_equal(function__, "allKp", allKp, 0);
-      current_statement__ = 127;
+      current_statement__ = 145;
       context__.validate_dims("data initialization","allKg","int",
           context__.to_vec());
       allKg = std::numeric_limits<int>::min();
       
-      current_statement__ = 127;
+      current_statement__ = 145;
       allKg = context__.vals_i("allKg")[(1 - 1)];
-      current_statement__ = 127;
-      current_statement__ = 127;
+      current_statement__ = 145;
+      current_statement__ = 145;
       check_greater_or_equal(function__, "allKg", allKg, 0);
-      current_statement__ = 128;
+      current_statement__ = 146;
       validate_non_negative_index("Yd2", "Nd", Nd);
-      current_statement__ = 129;
+      current_statement__ = 147;
       validate_non_negative_index("Yd2", "2 * Kd2", (2 * Kd2));
-      current_statement__ = 130;
+      current_statement__ = 148;
       context__.validate_dims("data initialization","Yd2","double",
           context__.to_vec(Nd, (2 * Kd2)));
       Yd2 = Eigen::Matrix<double, -1, -1>(Nd, (2 * Kd2));
@@ -417,54 +438,54 @@ public:
       
       {
         std::vector<local_scalar_t__> Yd2_flat__;
-        current_statement__ = 130;
+        current_statement__ = 148;
         assign(Yd2_flat__, nil_index_list(), context__.vals_r("Yd2"),
           "assigning variable Yd2_flat__");
-        current_statement__ = 130;
+        current_statement__ = 148;
         pos__ = 1;
-        current_statement__ = 130;
+        current_statement__ = 148;
         for (int sym1__ = 1; sym1__ <= (2 * Kd2); ++sym1__) {
-          current_statement__ = 130;
+          current_statement__ = 148;
           for (int sym2__ = 1; sym2__ <= Nd; ++sym2__) {
-            current_statement__ = 130;
+            current_statement__ = 148;
             assign(Yd2,
               cons_list(index_uni(sym2__),
                 cons_list(index_uni(sym1__), nil_index_list())),
               Yd2_flat__[(pos__ - 1)], "assigning variable Yd2");
-            current_statement__ = 130;
+            current_statement__ = 148;
             pos__ = (pos__ + 1);}}
       }
-      current_statement__ = 131;
+      current_statement__ = 149;
       validate_non_negative_index("IDp", "Nd", Nd);
-      current_statement__ = 132;
+      current_statement__ = 150;
       context__.validate_dims("data initialization","IDp","int",
           context__.to_vec(Nd, 2));
       IDp = std::vector<std::vector<int>>(Nd, std::vector<int>(2, std::numeric_limits<int>::min()));
       
       {
         std::vector<int> IDp_flat__;
-        current_statement__ = 132;
+        current_statement__ = 150;
         assign(IDp_flat__, nil_index_list(), context__.vals_i("IDp"),
           "assigning variable IDp_flat__");
-        current_statement__ = 132;
+        current_statement__ = 150;
         pos__ = 1;
-        current_statement__ = 132;
+        current_statement__ = 150;
         for (int sym1__ = 1; sym1__ <= 2; ++sym1__) {
-          current_statement__ = 132;
+          current_statement__ = 150;
           for (int sym2__ = 1; sym2__ <= Nd; ++sym2__) {
-            current_statement__ = 132;
+            current_statement__ = 150;
             assign(IDp,
               cons_list(index_uni(sym2__),
                 cons_list(index_uni(sym1__), nil_index_list())),
               IDp_flat__[(pos__ - 1)], "assigning variable IDp");
-            current_statement__ = 132;
+            current_statement__ = 150;
             pos__ = (pos__ + 1);}}
       }
-      current_statement__ = 133;
+      current_statement__ = 151;
       validate_non_negative_index("Yp", "Np", Np);
-      current_statement__ = 134;
+      current_statement__ = 152;
       validate_non_negative_index("Yp", "Kp", Kp);
-      current_statement__ = 135;
+      current_statement__ = 153;
       context__.validate_dims("data initialization","Yp","double",
           context__.to_vec(Np, Kp));
       Yp = Eigen::Matrix<double, -1, -1>(Np, Kp);
@@ -472,36 +493,36 @@ public:
       
       {
         std::vector<local_scalar_t__> Yp_flat__;
-        current_statement__ = 135;
+        current_statement__ = 153;
         assign(Yp_flat__, nil_index_list(), context__.vals_r("Yp"),
           "assigning variable Yp_flat__");
-        current_statement__ = 135;
+        current_statement__ = 153;
         pos__ = 1;
-        current_statement__ = 135;
+        current_statement__ = 153;
         for (int sym1__ = 1; sym1__ <= Kp; ++sym1__) {
-          current_statement__ = 135;
+          current_statement__ = 153;
           for (int sym2__ = 1; sym2__ <= Np; ++sym2__) {
-            current_statement__ = 135;
+            current_statement__ = 153;
             assign(Yp,
               cons_list(index_uni(sym2__),
                 cons_list(index_uni(sym1__), nil_index_list())),
               Yp_flat__[(pos__ - 1)], "assigning variable Yp");
-            current_statement__ = 135;
+            current_statement__ = 153;
             pos__ = (pos__ + 1);}}
       }
-      current_statement__ = 136;
+      current_statement__ = 154;
       validate_non_negative_index("IDpp", "Np", Np);
-      current_statement__ = 137;
+      current_statement__ = 155;
       context__.validate_dims("data initialization","IDpp","int",
           context__.to_vec(Np));
       IDpp = std::vector<int>(Np, std::numeric_limits<int>::min());
       
-      current_statement__ = 137;
+      current_statement__ = 155;
       assign(IDpp, nil_index_list(), context__.vals_i("IDpp"),
         "assigning variable IDpp");
-      current_statement__ = 138;
+      current_statement__ = 156;
       validate_non_negative_index("rr_rel_t", "Kd2", Kd2);
-      current_statement__ = 139;
+      current_statement__ = 157;
       context__.validate_dims("data initialization","rr_rel_t","double",
           context__.to_vec(Kd2, 3));
       rr_rel_t = Eigen::Matrix<double, -1, -1>(Kd2, 3);
@@ -509,26 +530,26 @@ public:
       
       {
         std::vector<local_scalar_t__> rr_rel_t_flat__;
-        current_statement__ = 139;
+        current_statement__ = 157;
         assign(rr_rel_t_flat__, nil_index_list(),
           context__.vals_r("rr_rel_t"), "assigning variable rr_rel_t_flat__");
-        current_statement__ = 139;
+        current_statement__ = 157;
         pos__ = 1;
-        current_statement__ = 139;
+        current_statement__ = 157;
         for (int sym1__ = 1; sym1__ <= 3; ++sym1__) {
-          current_statement__ = 139;
+          current_statement__ = 157;
           for (int sym2__ = 1; sym2__ <= Kd2; ++sym2__) {
-            current_statement__ = 139;
+            current_statement__ = 157;
             assign(rr_rel_t,
               cons_list(index_uni(sym2__),
                 cons_list(index_uni(sym1__), nil_index_list())),
               rr_rel_t_flat__[(pos__ - 1)], "assigning variable rr_rel_t");
-            current_statement__ = 139;
+            current_statement__ = 157;
             pos__ = (pos__ + 1);}}
       }
-      current_statement__ = 140;
+      current_statement__ = 158;
       validate_non_negative_index("rr_out_t", "Kd2", Kd2);
-      current_statement__ = 141;
+      current_statement__ = 159;
       context__.validate_dims("data initialization","rr_out_t","double",
           context__.to_vec(Kd2, 3));
       rr_out_t = Eigen::Matrix<double, -1, -1>(Kd2, 3);
@@ -536,26 +557,26 @@ public:
       
       {
         std::vector<local_scalar_t__> rr_out_t_flat__;
-        current_statement__ = 141;
+        current_statement__ = 159;
         assign(rr_out_t_flat__, nil_index_list(),
           context__.vals_r("rr_out_t"), "assigning variable rr_out_t_flat__");
-        current_statement__ = 141;
+        current_statement__ = 159;
         pos__ = 1;
-        current_statement__ = 141;
+        current_statement__ = 159;
         for (int sym1__ = 1; sym1__ <= 3; ++sym1__) {
-          current_statement__ = 141;
+          current_statement__ = 159;
           for (int sym2__ = 1; sym2__ <= Kd2; ++sym2__) {
-            current_statement__ = 141;
+            current_statement__ = 159;
             assign(rr_out_t,
               cons_list(index_uni(sym2__),
                 cons_list(index_uni(sym1__), nil_index_list())),
               rr_out_t_flat__[(pos__ - 1)], "assigning variable rr_out_t");
-            current_statement__ = 141;
+            current_statement__ = 159;
             pos__ = (pos__ + 1);}}
       }
-      current_statement__ = 142;
+      current_statement__ = 160;
       validate_non_negative_index("rr_in_t", "Kd2", Kd2);
-      current_statement__ = 143;
+      current_statement__ = 161;
       context__.validate_dims("data initialization","rr_in_t","double",
           context__.to_vec(Kd2, 3));
       rr_in_t = Eigen::Matrix<double, -1, -1>(Kd2, 3);
@@ -563,129 +584,164 @@ public:
       
       {
         std::vector<local_scalar_t__> rr_in_t_flat__;
-        current_statement__ = 143;
+        current_statement__ = 161;
         assign(rr_in_t_flat__, nil_index_list(), context__.vals_r("rr_in_t"),
           "assigning variable rr_in_t_flat__");
-        current_statement__ = 143;
+        current_statement__ = 161;
         pos__ = 1;
-        current_statement__ = 143;
+        current_statement__ = 161;
         for (int sym1__ = 1; sym1__ <= 3; ++sym1__) {
-          current_statement__ = 143;
+          current_statement__ = 161;
           for (int sym2__ = 1; sym2__ <= Kd2; ++sym2__) {
-            current_statement__ = 143;
+            current_statement__ = 161;
             assign(rr_in_t,
               cons_list(index_uni(sym2__),
                 cons_list(index_uni(sym1__), nil_index_list())),
               rr_in_t_flat__[(pos__ - 1)], "assigning variable rr_in_t");
-            current_statement__ = 143;
+            current_statement__ = 161;
             pos__ = (pos__ + 1);}}
       }
-      current_statement__ = 144;
-      context__.validate_dims("data initialization","case_lkj","double",
-          context__.to_vec());
-      case_lkj = std::numeric_limits<double>::quiet_NaN();
-      
-      current_statement__ = 144;
-      case_lkj = context__.vals_r("case_lkj")[(1 - 1)];
-      current_statement__ = 145;
-      validate_non_negative_index("rrD_beta_a", "Kd2", Kd2);
-      current_statement__ = 146;
-      validate_non_negative_index("rrD_beta_a", "Kd2", Kd2);
-      current_statement__ = 147;
-      context__.validate_dims("data initialization","rrD_beta_a","double",
+      current_statement__ = 162;
+      validate_non_negative_index("rr_beta_a", "Kd2", Kd2);
+      current_statement__ = 163;
+      validate_non_negative_index("rr_beta_a", "Kd2", Kd2);
+      current_statement__ = 164;
+      context__.validate_dims("data initialization","rr_beta_a","double",
           context__.to_vec(Kd2, Kd2));
-      rrD_beta_a = Eigen::Matrix<double, -1, -1>(Kd2, Kd2);
-      stan::math::fill(rrD_beta_a, std::numeric_limits<double>::quiet_NaN());
+      rr_beta_a = Eigen::Matrix<double, -1, -1>(Kd2, Kd2);
+      stan::math::fill(rr_beta_a, std::numeric_limits<double>::quiet_NaN());
       
       {
-        std::vector<local_scalar_t__> rrD_beta_a_flat__;
-        current_statement__ = 147;
-        assign(rrD_beta_a_flat__, nil_index_list(),
-          context__.vals_r("rrD_beta_a"),
-          "assigning variable rrD_beta_a_flat__");
-        current_statement__ = 147;
+        std::vector<local_scalar_t__> rr_beta_a_flat__;
+        current_statement__ = 164;
+        assign(rr_beta_a_flat__, nil_index_list(),
+          context__.vals_r("rr_beta_a"),
+          "assigning variable rr_beta_a_flat__");
+        current_statement__ = 164;
         pos__ = 1;
-        current_statement__ = 147;
+        current_statement__ = 164;
         for (int sym1__ = 1; sym1__ <= Kd2; ++sym1__) {
-          current_statement__ = 147;
+          current_statement__ = 164;
           for (int sym2__ = 1; sym2__ <= Kd2; ++sym2__) {
-            current_statement__ = 147;
-            assign(rrD_beta_a,
+            current_statement__ = 164;
+            assign(rr_beta_a,
               cons_list(index_uni(sym2__),
                 cons_list(index_uni(sym1__), nil_index_list())),
-              rrD_beta_a_flat__[(pos__ - 1)], "assigning variable rrD_beta_a");
-            current_statement__ = 147;
+              rr_beta_a_flat__[(pos__ - 1)], "assigning variable rr_beta_a");
+            current_statement__ = 164;
             pos__ = (pos__ + 1);}}
       }
-      current_statement__ = 147;
+      current_statement__ = 164;
       for (int sym1__ = 1; sym1__ <= Kd2; ++sym1__) {
-        current_statement__ = 147;
+        current_statement__ = 164;
         for (int sym2__ = 1; sym2__ <= Kd2; ++sym2__) {
-          current_statement__ = 147;
-          current_statement__ = 147;
-          check_greater_or_equal(function__, "rrD_beta_a[sym1__, sym2__]",
-                                 rvalue(rrD_beta_a,
+          current_statement__ = 164;
+          current_statement__ = 164;
+          check_greater_or_equal(function__, "rr_beta_a[sym1__, sym2__]",
+                                 rvalue(rr_beta_a,
                                    cons_list(index_uni(sym1__),
                                      cons_list(index_uni(sym2__),
-                                       nil_index_list())), "rrD_beta_a"), 0);
-        }}
-      current_statement__ = 148;
-      validate_non_negative_index("rrD_beta_b", "Kd2", Kd2);
-      current_statement__ = 149;
-      validate_non_negative_index("rrD_beta_b", "Kd2", Kd2);
-      current_statement__ = 150;
-      context__.validate_dims("data initialization","rrD_beta_b","double",
+                                       nil_index_list())), "rr_beta_a"), 0);}
+      }
+      current_statement__ = 165;
+      validate_non_negative_index("rr_beta_b", "Kd2", Kd2);
+      current_statement__ = 166;
+      validate_non_negative_index("rr_beta_b", "Kd2", Kd2);
+      current_statement__ = 167;
+      context__.validate_dims("data initialization","rr_beta_b","double",
           context__.to_vec(Kd2, Kd2));
-      rrD_beta_b = Eigen::Matrix<double, -1, -1>(Kd2, Kd2);
-      stan::math::fill(rrD_beta_b, std::numeric_limits<double>::quiet_NaN());
+      rr_beta_b = Eigen::Matrix<double, -1, -1>(Kd2, Kd2);
+      stan::math::fill(rr_beta_b, std::numeric_limits<double>::quiet_NaN());
       
       {
-        std::vector<local_scalar_t__> rrD_beta_b_flat__;
-        current_statement__ = 150;
-        assign(rrD_beta_b_flat__, nil_index_list(),
-          context__.vals_r("rrD_beta_b"),
-          "assigning variable rrD_beta_b_flat__");
-        current_statement__ = 150;
+        std::vector<local_scalar_t__> rr_beta_b_flat__;
+        current_statement__ = 167;
+        assign(rr_beta_b_flat__, nil_index_list(),
+          context__.vals_r("rr_beta_b"),
+          "assigning variable rr_beta_b_flat__");
+        current_statement__ = 167;
         pos__ = 1;
-        current_statement__ = 150;
+        current_statement__ = 167;
         for (int sym1__ = 1; sym1__ <= Kd2; ++sym1__) {
-          current_statement__ = 150;
+          current_statement__ = 167;
           for (int sym2__ = 1; sym2__ <= Kd2; ++sym2__) {
-            current_statement__ = 150;
-            assign(rrD_beta_b,
+            current_statement__ = 167;
+            assign(rr_beta_b,
               cons_list(index_uni(sym2__),
                 cons_list(index_uni(sym1__), nil_index_list())),
-              rrD_beta_b_flat__[(pos__ - 1)], "assigning variable rrD_beta_b");
-            current_statement__ = 150;
+              rr_beta_b_flat__[(pos__ - 1)], "assigning variable rr_beta_b");
+            current_statement__ = 167;
             pos__ = (pos__ + 1);}}
       }
-      current_statement__ = 150;
+      current_statement__ = 167;
       for (int sym1__ = 1; sym1__ <= Kd2; ++sym1__) {
-        current_statement__ = 150;
+        current_statement__ = 167;
         for (int sym2__ = 1; sym2__ <= Kd2; ++sym2__) {
-          current_statement__ = 150;
-          current_statement__ = 150;
-          check_greater_or_equal(function__, "rrD_beta_b[sym1__, sym2__]",
-                                 rvalue(rrD_beta_b,
+          current_statement__ = 167;
+          current_statement__ = 167;
+          check_greater_or_equal(function__, "rr_beta_b[sym1__, sym2__]",
+                                 rvalue(rr_beta_b,
                                    cons_list(index_uni(sym1__),
                                      cons_list(index_uni(sym2__),
-                                       nil_index_list())), "rrD_beta_b"), 0);
-        }}
-      current_statement__ = 151;
+                                       nil_index_list())), "rr_beta_b"), 0);}
+      }
+      current_statement__ = 168;
+      validate_non_negative_index("case_beta", "allKp", allKp);
+      current_statement__ = 169;
+      validate_non_negative_index("case_beta", "allKp", allKp);
+      current_statement__ = 170;
+      context__.validate_dims("data initialization","case_beta","double",
+          context__.to_vec(allKp, allKp));
+      case_beta = Eigen::Matrix<double, -1, -1>(allKp, allKp);
+      stan::math::fill(case_beta, std::numeric_limits<double>::quiet_NaN());
+      
+      {
+        std::vector<local_scalar_t__> case_beta_flat__;
+        current_statement__ = 170;
+        assign(case_beta_flat__, nil_index_list(),
+          context__.vals_r("case_beta"),
+          "assigning variable case_beta_flat__");
+        current_statement__ = 170;
+        pos__ = 1;
+        current_statement__ = 170;
+        for (int sym1__ = 1; sym1__ <= allKp; ++sym1__) {
+          current_statement__ = 170;
+          for (int sym2__ = 1; sym2__ <= allKp; ++sym2__) {
+            current_statement__ = 170;
+            assign(case_beta,
+              cons_list(index_uni(sym2__),
+                cons_list(index_uni(sym1__), nil_index_list())),
+              case_beta_flat__[(pos__ - 1)], "assigning variable case_beta");
+            current_statement__ = 170;
+            pos__ = (pos__ + 1);}}
+      }
+      current_statement__ = 170;
+      for (int sym1__ = 1; sym1__ <= allKp; ++sym1__) {
+        current_statement__ = 170;
+        for (int sym2__ = 1; sym2__ <= allKp; ++sym2__) {
+          current_statement__ = 170;
+          current_statement__ = 170;
+          check_greater_or_equal(function__, "case_beta[sym1__, sym2__]",
+                                 rvalue(case_beta,
+                                   cons_list(index_uni(sym1__),
+                                     cons_list(index_uni(sym2__),
+                                       nil_index_list())), "case_beta"), 0);}
+      }
+      current_statement__ = 171;
       validate_non_negative_index("limKp", "Kp", Kp);
-      current_statement__ = 152;
+      current_statement__ = 172;
       limKp = Eigen::Matrix<double, -1, -1>(Kp, 2);
       stan::math::fill(limKp, std::numeric_limits<double>::quiet_NaN());
       
-      current_statement__ = 153;
+      current_statement__ = 173;
       validate_non_negative_index("halfRangeKp", "Kp", Kp);
-      current_statement__ = 154;
+      current_statement__ = 174;
       halfRangeKp = Eigen::Matrix<double, -1, 1>(Kp);
       stan::math::fill(halfRangeKp, std::numeric_limits<double>::quiet_NaN());
       
-      current_statement__ = 159;
+      current_statement__ = 179;
       for (int k = 1; k <= Kp; ++k) {
-        current_statement__ = 155;
+        current_statement__ = 175;
         assign(limKp,
           cons_list(index_uni(k), cons_list(index_uni(1), nil_index_list())),
           min(
@@ -693,7 +749,7 @@ public:
               cons_list(index_omni(),
                 cons_list(index_uni(k), nil_index_list())), "Yp")),
           "assigning variable limKp");
-        current_statement__ = 156;
+        current_statement__ = 176;
         assign(limKp,
           cons_list(index_uni(k), cons_list(index_uni(2), nil_index_list())),
           max(
@@ -701,7 +757,7 @@ public:
               cons_list(index_omni(),
                 cons_list(index_uni(k), nil_index_list())), "Yp")),
           "assigning variable limKp");
-        current_statement__ = 157;
+        current_statement__ = 177;
         assign(halfRangeKp, cons_list(index_uni(k), nil_index_list()),
           ((rvalue(limKp,
               cons_list(index_uni(k),
@@ -710,70 +766,74 @@ public:
                cons_list(index_uni(k),
                  cons_list(index_uni(1), nil_index_list())), "limKp")) / 2),
           "assigning variable halfRangeKp");}
-      current_statement__ = 160;
+      current_statement__ = 180;
       validate_non_negative_index("s_rr", "Kd2", Kd2);
-      current_statement__ = 161;
+      current_statement__ = 181;
       validate_non_negative_index("S_p", "allKp", allKp);
-      current_statement__ = 162;
-      validate_non_negative_index("chol_r_p", "allKp", allKp);
-      current_statement__ = 162;
-      validate_non_negative_index("chol_r_p", "allKp", allKp);
-      current_statement__ = 163;
+      current_statement__ = 182;
+      Rp_vec_1dim__ = std::numeric_limits<int>::min();
+      
+      current_statement__ = 182;
+      Rp_vec_1dim__ = ((allKp * (allKp - 1)) / 2);
+      current_statement__ = 182;
+      validate_non_negative_index("Rp_vec", "(allKp * (allKp - 1)) %/% 2",
+                                  Rp_vec_1dim__);
+      current_statement__ = 183;
       validate_non_negative_index("r_d2", "Kd2", Kd2);
-      current_statement__ = 164;
+      current_statement__ = 184;
       validate_non_negative_index("r_d2", "Kd2", Kd2);
-      current_statement__ = 165;
+      current_statement__ = 185;
       validate_non_negative_index("AP", "Np", Np);
-      current_statement__ = 166;
+      current_statement__ = 186;
       AP_2dim__ = std::numeric_limits<int>::min();
       
-      current_statement__ = 166;
-      AP_2dim__ = (2 * Kd2);
-      current_statement__ = 166;
-      validate_non_negative_index("AP", "2 * Kd2", AP_2dim__);
-      current_statement__ = 167;
-      validate_non_negative_index("Yd2hat", "Nd", Nd);
-      current_statement__ = 168;
-      validate_non_negative_index("Yd2hat", "allKd", allKd);
-      current_statement__ = 169;
-      validate_non_negative_index("S_d", "allKd", allKd);
-      current_statement__ = 170;
-      validate_non_negative_index("Rd2", "allKd", allKd);
-      current_statement__ = 171;
-      validate_non_negative_index("Rd2", "allKd", allKd);
-      current_statement__ = 172;
-      validate_non_negative_index("chol_d", "allKd", allKd);
-      current_statement__ = 173;
-      validate_non_negative_index("chol_d", "allKd", allKd);
-      current_statement__ = 174;
-      validate_non_negative_index("chol_p", "allKp", allKp);
-      current_statement__ = 175;
-      validate_non_negative_index("chol_p", "allKp", allKp);
-      current_statement__ = 176;
-      validate_non_negative_index("augYd", "Nd", Nd);
-      current_statement__ = 177;
-      validate_non_negative_index("augYd", "allKd", allKd);
-      current_statement__ = 178;
-      validate_non_negative_index("augYp", "Np", Np);
-      current_statement__ = 179;
-      validate_non_negative_index("augYp", "allKp", allKp);
-      current_statement__ = 180;
-      validate_non_negative_index("Yd2e", "Nd", Nd);
-      current_statement__ = 181;
-      validate_non_negative_index("Yd2e", "allKd", allKd);
-      current_statement__ = 182;
-      validate_non_negative_index("Rp", "allKp", allKp);
-      current_statement__ = 183;
-      validate_non_negative_index("Rp", "allKp", allKp);
-      current_statement__ = 184;
-      validate_non_negative_index("pSigma", "allKp", allKp);
-      current_statement__ = 185;
-      validate_non_negative_index("pSigma", "allKp", allKp);
       current_statement__ = 186;
-      validate_non_negative_index("dSigma", "allKd", allKd);
+      AP_2dim__ = (2 * Kd2);
+      current_statement__ = 186;
+      validate_non_negative_index("AP", "2 * Kd2", AP_2dim__);
       current_statement__ = 187;
-      validate_non_negative_index("dSigma", "allKd", allKd);
+      validate_non_negative_index("Yd2hat", "Nd", Nd);
       current_statement__ = 188;
+      validate_non_negative_index("Yd2hat", "allKd", allKd);
+      current_statement__ = 189;
+      validate_non_negative_index("S_d", "allKd", allKd);
+      current_statement__ = 190;
+      validate_non_negative_index("Rd2", "allKd", allKd);
+      current_statement__ = 191;
+      validate_non_negative_index("Rd2", "allKd", allKd);
+      current_statement__ = 192;
+      validate_non_negative_index("Rp", "allKp", allKp);
+      current_statement__ = 193;
+      validate_non_negative_index("Rp", "allKp", allKp);
+      current_statement__ = 194;
+      validate_non_negative_index("chol_d", "allKd", allKd);
+      current_statement__ = 195;
+      validate_non_negative_index("chol_d", "allKd", allKd);
+      current_statement__ = 196;
+      validate_non_negative_index("chol_p", "allKp", allKp);
+      current_statement__ = 197;
+      validate_non_negative_index("chol_p", "allKp", allKp);
+      current_statement__ = 198;
+      validate_non_negative_index("augYd", "Nd", Nd);
+      current_statement__ = 199;
+      validate_non_negative_index("augYd", "allKd", allKd);
+      current_statement__ = 200;
+      validate_non_negative_index("augYp", "Np", Np);
+      current_statement__ = 201;
+      validate_non_negative_index("augYp", "allKp", allKp);
+      current_statement__ = 202;
+      validate_non_negative_index("Yd2e", "Nd", Nd);
+      current_statement__ = 203;
+      validate_non_negative_index("Yd2e", "allKd", allKd);
+      current_statement__ = 204;
+      validate_non_negative_index("pSigma", "allKp", allKp);
+      current_statement__ = 205;
+      validate_non_negative_index("pSigma", "allKp", allKp);
+      current_statement__ = 206;
+      validate_non_negative_index("dSigma", "allKd", allKd);
+      current_statement__ = 207;
+      validate_non_negative_index("dSigma", "allKd", allKd);
+      current_statement__ = 208;
       validate_non_negative_index("Rsq", "Kd2", Kd2);
     } catch (const std::exception& e) {
       stan::lang::rethrow_located(e, locations_array__[current_statement__]);
@@ -785,7 +845,7 @@ public:
     try {
       num_params_r__ += Kd2;
       num_params_r__ += allKp;
-      num_params_r__ += ((allKp * (allKp - 1)) / 2);
+      num_params_r__ += Rp_vec_1dim__;
       num_params_r__ += Kd2 * Kd2;
       num_params_r__ += Np * AP_2dim__;
     } catch (const std::exception& e) {
@@ -849,30 +909,26 @@ public:
             stan::math::lb_constrain(S_p[(sym1__ - 1)], 0),
             "assigning variable S_p");
         }}
-      Eigen::Matrix<local_scalar_t__, -1, -1> chol_r_p;
-      chol_r_p = Eigen::Matrix<local_scalar_t__, -1, -1>(allKp, allKp);
-      stan::math::fill(chol_r_p, DUMMY_VAR__);
-      
-      Eigen::Matrix<local_scalar_t__, -1, 1> chol_r_p_in__;
-      chol_r_p_in__ = Eigen::Matrix<local_scalar_t__, -1, 1>(((allKp *
-                                                                (allKp - 1))
-                                                               / 2));
-      stan::math::fill(chol_r_p_in__, DUMMY_VAR__);
+      Eigen::Matrix<local_scalar_t__, -1, 1> Rp_vec;
+      Rp_vec = Eigen::Matrix<local_scalar_t__, -1, 1>(Rp_vec_1dim__);
+      stan::math::fill(Rp_vec, DUMMY_VAR__);
       
       current_statement__ = 3;
-      chol_r_p_in__ = in__.vector(((allKp * (allKp - 1)) / 2));
+      Rp_vec = in__.vector(Rp_vec_1dim__);
       current_statement__ = 3;
-      if (jacobian__) {
+      for (int sym1__ = 1; sym1__ <= Rp_vec_1dim__; ++sym1__) {
         current_statement__ = 3;
-        assign(chol_r_p, nil_index_list(),
-          stan::math::cholesky_corr_constrain(chol_r_p_in__, allKp, lp__),
-          "assigning variable chol_r_p");
-      } else {
-        current_statement__ = 3;
-        assign(chol_r_p, nil_index_list(),
-          stan::math::cholesky_corr_constrain(chol_r_p_in__, allKp),
-          "assigning variable chol_r_p");
-      }
+        if (jacobian__) {
+          current_statement__ = 3;
+          assign(Rp_vec, cons_list(index_uni(sym1__), nil_index_list()),
+            stan::math::lub_constrain(Rp_vec[(sym1__ - 1)], 0, 1, lp__),
+            "assigning variable Rp_vec");
+        } else {
+          current_statement__ = 3;
+          assign(Rp_vec, cons_list(index_uni(sym1__), nil_index_list()),
+            stan::math::lub_constrain(Rp_vec[(sym1__ - 1)], 0, 1),
+            "assigning variable Rp_vec");
+        }}
       Eigen::Matrix<local_scalar_t__, -1, -1> r_d2;
       r_d2 = Eigen::Matrix<local_scalar_t__, -1, -1>(Kd2, Kd2);
       stan::math::fill(r_d2, DUMMY_VAR__);
@@ -923,6 +979,10 @@ public:
       Rd2 = Eigen::Matrix<local_scalar_t__, -1, -1>(allKd, allKd);
       stan::math::fill(Rd2, DUMMY_VAR__);
       
+      Eigen::Matrix<local_scalar_t__, -1, -1> Rp;
+      Rp = Eigen::Matrix<local_scalar_t__, -1, -1>(allKp, allKp);
+      stan::math::fill(Rp, DUMMY_VAR__);
+      
       Eigen::Matrix<local_scalar_t__, -1, -1> chol_d;
       chol_d = Eigen::Matrix<local_scalar_t__, -1, -1>(allKd, allKd);
       stan::math::fill(chol_d, DUMMY_VAR__);
@@ -952,29 +1012,29 @@ public:
         int idp2;
         idp2 = std::numeric_limits<int>::min();
         
-        current_statement__ = 40;
+        current_statement__ = 41;
         for (int k = 1; k <= Kd2; ++k) {
-          current_statement__ = 17;
-          idx1 = ((k * 2) - 1);
           current_statement__ = 18;
-          idx2 = (k * 2);
+          idx1 = ((k * 2) - 1);
           current_statement__ = 19;
+          idx2 = (k * 2);
+          current_statement__ = 20;
           assign(S_d, cons_list(index_uni(idx1), nil_index_list()),
             s_rr[(k - 1)], "assigning variable S_d");
-          current_statement__ = 20;
+          current_statement__ = 21;
           assign(S_d, cons_list(index_uni(idx2), nil_index_list()),
             s_rr[(k - 1)], "assigning variable S_d");
-          current_statement__ = 21;
+          current_statement__ = 22;
           assign(Rd2,
             cons_list(index_uni(idx1),
               cons_list(index_uni(idx1), nil_index_list())), 1,
             "assigning variable Rd2");
-          current_statement__ = 22;
+          current_statement__ = 23;
           assign(Rd2,
             cons_list(index_uni(idx2),
               cons_list(index_uni(idx2), nil_index_list())), 1,
             "assigning variable Rd2");
-          current_statement__ = 23;
+          current_statement__ = 24;
           assign(Rd2,
             cons_list(index_uni(idx1),
               cons_list(index_uni(idx2), nil_index_list())),
@@ -984,7 +1044,7 @@ public:
                   cons_list(index_uni(k),
                     cons_list(index_uni(k), nil_index_list())), "r_d2"))),
             "assigning variable Rd2");
-          current_statement__ = 24;
+          current_statement__ = 25;
           assign(Rd2,
             cons_list(index_uni(idx2),
               cons_list(index_uni(idx1), nil_index_list())),
@@ -994,15 +1054,15 @@ public:
                   cons_list(index_uni(k),
                     cons_list(index_uni(k), nil_index_list())), "r_d2"))),
             "assigning variable Rd2");
-          current_statement__ = 38;
+          current_statement__ = 39;
           if (logical_lt(k, Kd2)) {
-            current_statement__ = 36;
+            current_statement__ = 37;
             for (int kk = (k + 1); kk <= Kd2; ++kk) {
-              current_statement__ = 25;
-              idp1 = ((kk * 2) - 1);
               current_statement__ = 26;
-              idp2 = (kk * 2);
+              idp1 = ((kk * 2) - 1);
               current_statement__ = 27;
+              idp2 = (kk * 2);
+              current_statement__ = 28;
               assign(Rd2,
                 cons_list(index_uni(idx1),
                   cons_list(index_uni(idp1), nil_index_list())),
@@ -1012,7 +1072,7 @@ public:
                       cons_list(index_uni(kk),
                         cons_list(index_uni(k), nil_index_list())), "r_d2"))),
                 "assigning variable Rd2");
-              current_statement__ = 28;
+              current_statement__ = 29;
               assign(Rd2,
                 cons_list(index_uni(idx2),
                   cons_list(index_uni(idp2), nil_index_list())),
@@ -1022,7 +1082,7 @@ public:
                       cons_list(index_uni(kk),
                         cons_list(index_uni(k), nil_index_list())), "r_d2"))),
                 "assigning variable Rd2");
-              current_statement__ = 29;
+              current_statement__ = 30;
               assign(Rd2,
                 cons_list(index_uni(idp1),
                   cons_list(index_uni(idx1), nil_index_list())),
@@ -1032,7 +1092,7 @@ public:
                       cons_list(index_uni(kk),
                         cons_list(index_uni(k), nil_index_list())), "r_d2"))),
                 "assigning variable Rd2");
-              current_statement__ = 30;
+              current_statement__ = 31;
               assign(Rd2,
                 cons_list(index_uni(idp2),
                   cons_list(index_uni(idx2), nil_index_list())),
@@ -1042,7 +1102,7 @@ public:
                       cons_list(index_uni(kk),
                         cons_list(index_uni(k), nil_index_list())), "r_d2"))),
                 "assigning variable Rd2");
-              current_statement__ = 31;
+              current_statement__ = 32;
               assign(Rd2,
                 cons_list(index_uni(idx1),
                   cons_list(index_uni(idp2), nil_index_list())),
@@ -1052,7 +1112,7 @@ public:
                       cons_list(index_uni(k),
                         cons_list(index_uni(kk), nil_index_list())), "r_d2"))),
                 "assigning variable Rd2");
-              current_statement__ = 32;
+              current_statement__ = 33;
               assign(Rd2,
                 cons_list(index_uni(idp2),
                   cons_list(index_uni(idx1), nil_index_list())),
@@ -1062,7 +1122,7 @@ public:
                       cons_list(index_uni(k),
                         cons_list(index_uni(kk), nil_index_list())), "r_d2"))),
                 "assigning variable Rd2");
-              current_statement__ = 33;
+              current_statement__ = 34;
               assign(Rd2,
                 cons_list(index_uni(idx2),
                   cons_list(index_uni(idp1), nil_index_list())),
@@ -1072,7 +1132,7 @@ public:
                       cons_list(index_uni(k),
                         cons_list(index_uni(kk), nil_index_list())), "r_d2"))),
                 "assigning variable Rd2");
-              current_statement__ = 34;
+              current_statement__ = 35;
               assign(Rd2,
                 cons_list(index_uni(idp1),
                   cons_list(index_uni(idx2), nil_index_list())),
@@ -1084,26 +1144,68 @@ public:
                 "assigning variable Rd2");}
           } }
       }
-      current_statement__ = 42;
+      current_statement__ = 43;
       assign(chol_d, nil_index_list(),
         diag_pre_multiply(S_d, cholesky_decompose(Rd2)),
         "assigning variable chol_d");
       {
-        current_statement__ = 43;
+        int vec_idx;
+        vec_idx = std::numeric_limits<int>::min();
+        
+        current_statement__ = 44;
+        vec_idx = 1;
+        current_statement__ = 54;
+        for (int k = 1; k <= allKp; ++k) {
+          current_statement__ = 45;
+          assign(Rp,
+            cons_list(index_uni(k),
+              cons_list(index_uni(k), nil_index_list())), 1,
+            "assigning variable Rp");
+          current_statement__ = 52;
+          if (logical_lt(k, allKp)) {
+            current_statement__ = 50;
+            for (int kk = (k + 1); kk <= allKp; ++kk) {
+              current_statement__ = 46;
+              assign(Rp,
+                cons_list(index_uni(kk),
+                  cons_list(index_uni(k), nil_index_list())),
+                (-1 + (2 * Rp_vec[(vec_idx - 1)])), "assigning variable Rp");
+              current_statement__ = 47;
+              assign(Rp,
+                cons_list(index_uni(k),
+                  cons_list(index_uni(kk), nil_index_list())),
+                (-1 + (2 * Rp_vec[(vec_idx - 1)])), "assigning variable Rp");
+              current_statement__ = 48;
+              vec_idx = (vec_idx + 1);}
+          } }
+      }
+      {
+        current_statement__ = 56;
         validate_non_negative_index("sub_S_p", "allKp", allKp);
         Eigen::Matrix<local_scalar_t__, -1, 1> sub_S_p;
         sub_S_p = Eigen::Matrix<local_scalar_t__, -1, 1>(allKp);
         stan::math::fill(sub_S_p, DUMMY_VAR__);
         
-        current_statement__ = 44;
+        current_statement__ = 57;
         assign(sub_S_p, nil_index_list(), rep_vector(1, allKp),
           "assigning variable sub_S_p");
-        current_statement__ = 46;
+        current_statement__ = 58;
+        validate_non_negative_index("chol_r_p", "allKp", allKp);
+        current_statement__ = 59;
+        validate_non_negative_index("chol_r_p", "allKp", allKp);
+        Eigen::Matrix<local_scalar_t__, -1, -1> chol_r_p;
+        chol_r_p = Eigen::Matrix<local_scalar_t__, -1, -1>(allKp, allKp);
+        stan::math::fill(chol_r_p, DUMMY_VAR__);
+        
+        current_statement__ = 60;
+        assign(chol_r_p, nil_index_list(), cholesky_decompose(Rp),
+          "assigning variable chol_r_p");
+        current_statement__ = 62;
         for (int k = ((2 * Kd2) + 1); k <= allKp; ++k) {
-          current_statement__ = 45;
+          current_statement__ = 61;
           assign(sub_S_p, cons_list(index_uni(k), nil_index_list()),
             S_p[(k - 1)], "assigning variable sub_S_p");}
-        current_statement__ = 47;
+        current_statement__ = 63;
         assign(chol_p, nil_index_list(),
           diag_pre_multiply(sub_S_p, chol_r_p), "assigning variable chol_p");
       }
@@ -1114,15 +1216,15 @@ public:
         int idx2;
         idx2 = std::numeric_limits<int>::min();
         
-        current_statement__ = 58;
+        current_statement__ = 74;
         for (int k = 1; k <= Kd2; ++k) {
-          current_statement__ = 51;
+          current_statement__ = 67;
           idx1 = ((k * 2) - 1);
-          current_statement__ = 52;
+          current_statement__ = 68;
           idx2 = (k * 2);
-          current_statement__ = 56;
+          current_statement__ = 72;
           for (int d = 1; d <= Nd; ++d) {
-            current_statement__ = 53;
+            current_statement__ = 69;
             assign(Yd2hat,
               cons_list(index_uni(d),
                 cons_list(index_uni(idx1), nil_index_list())),
@@ -1135,7 +1237,7 @@ public:
                     cons_list(index_uni(IDp[(d - 1)][(2 - 1)]),
                       cons_list(index_uni(idx2), nil_index_list())), "AP"))),
               "assigning variable Yd2hat");
-            current_statement__ = 54;
+            current_statement__ = 70;
             assign(Yd2hat,
               cons_list(index_uni(d),
                 cons_list(index_uni(idx2), nil_index_list())),
@@ -1149,11 +1251,11 @@ public:
                       cons_list(index_uni(idx2), nil_index_list())), "AP"))),
               "assigning variable Yd2hat");}}
       }
-      current_statement__ = 60;
+      current_statement__ = 76;
       assign(augYd, nil_index_list(), Yd2, "assigning variable augYd");
-      current_statement__ = 66;
+      current_statement__ = 82;
       for (int n = 1; n <= Np; ++n) {
-        current_statement__ = 61;
+        current_statement__ = 77;
         assign(augYp,
           cons_list(index_uni(n),
             cons_list(index_min_max(1, (2 * Kd2)), nil_index_list())),
@@ -1161,9 +1263,9 @@ public:
             cons_list(index_uni(n),
               cons_list(index_omni(), nil_index_list())), "AP"),
           "assigning variable augYp");
-        current_statement__ = 64;
+        current_statement__ = 80;
         for (int k = 1; k <= Kp; ++k) {
-          current_statement__ = 62;
+          current_statement__ = 78;
           assign(augYp,
             cons_list(index_uni(n),
               cons_list(index_uni(((2 * Kd2) + k)), nil_index_list())),
@@ -1172,14 +1274,14 @@ public:
                 cons_list(index_uni(k), nil_index_list())), "Yp"),
             "assigning variable augYp");}}
       {
-        current_statement__ = 100;
+        current_statement__ = 109;
         for (int k = 1; k <= Kd2; ++k) {
-          current_statement__ = 93;
+          current_statement__ = 102;
           if (logical_lt(s_rr[(k - 1)], 0)) {
-            current_statement__ = 93;
+            current_statement__ = 102;
             lp_accum__.add(stan::math::negative_infinity());
           } else {
-            current_statement__ = 93;
+            current_statement__ = 102;
             lp_accum__.add(
               -student_t_ccdf_log(0,
                  rvalue(rr_rel_t,
@@ -1192,7 +1294,7 @@ public:
                    cons_list(index_uni(k),
                      cons_list(index_uni(3), nil_index_list())), "rr_rel_t")));
           }
-          current_statement__ = 94;
+          current_statement__ = 103;
           lp_accum__.add(
             student_t_lpdf<propto__>(s_rr[(k - 1)],
               rvalue(rr_rel_t,
@@ -1204,12 +1306,12 @@ public:
               rvalue(rr_rel_t,
                 cons_list(index_uni(k),
                   cons_list(index_uni(3), nil_index_list())), "rr_rel_t")));
-          current_statement__ = 95;
+          current_statement__ = 104;
           if (logical_lt(S_p[(((2 * k) - 1) - 1)], 0)) {
-            current_statement__ = 95;
+            current_statement__ = 104;
             lp_accum__.add(stan::math::negative_infinity());
           } else {
-            current_statement__ = 95;
+            current_statement__ = 104;
             lp_accum__.add(
               -student_t_ccdf_log(0,
                  rvalue(rr_out_t,
@@ -1222,7 +1324,7 @@ public:
                    cons_list(index_uni(k),
                      cons_list(index_uni(3), nil_index_list())), "rr_out_t")));
           }
-          current_statement__ = 96;
+          current_statement__ = 105;
           lp_accum__.add(
             student_t_lpdf<propto__>(S_p[(((2 * k) - 1) - 1)],
               rvalue(rr_out_t,
@@ -1234,12 +1336,12 @@ public:
               rvalue(rr_out_t,
                 cons_list(index_uni(k),
                   cons_list(index_uni(3), nil_index_list())), "rr_out_t")));
-          current_statement__ = 97;
+          current_statement__ = 106;
           if (logical_lt(S_p[((2 * k) - 1)], 0)) {
-            current_statement__ = 97;
+            current_statement__ = 106;
             lp_accum__.add(stan::math::negative_infinity());
           } else {
-            current_statement__ = 97;
+            current_statement__ = 106;
             lp_accum__.add(
               -student_t_ccdf_log(0,
                  rvalue(rr_in_t,
@@ -1252,7 +1354,7 @@ public:
                    cons_list(index_uni(k),
                      cons_list(index_uni(3), nil_index_list())), "rr_in_t")));
           }
-          current_statement__ = 98;
+          current_statement__ = 107;
           lp_accum__.add(
             student_t_lpdf<propto__>(S_p[((2 * k) - 1)],
               rvalue(rr_in_t,
@@ -1264,74 +1366,99 @@ public:
               rvalue(rr_in_t,
                 cons_list(index_uni(k),
                   cons_list(index_uni(3), nil_index_list())), "rr_in_t")));}
-        current_statement__ = 104;
+        current_statement__ = 113;
         for (int k = 1; k <= Kp; ++k) {
-          current_statement__ = 101;
+          current_statement__ = 110;
           if (logical_lt(S_p[(((2 * Kd2) + k) - 1)], 0)) {
-            current_statement__ = 101;
+            current_statement__ = 110;
             lp_accum__.add(stan::math::negative_infinity());
           } else {
-            current_statement__ = 101;
+            current_statement__ = 110;
             lp_accum__.add(
               -normal_ccdf_log(0, (halfRangeKp[(k - 1)] / 5),
                  (halfRangeKp[(k - 1)] / 5)));
           }
-          current_statement__ = 102;
+          current_statement__ = 111;
           lp_accum__.add(
             normal_lpdf<propto__>(S_p[(((2 * Kd2) + k) - 1)],
               (halfRangeKp[(k - 1)] / 5), (halfRangeKp[(k - 1)] / 5)));}
-        current_statement__ = 105;
-        lp_accum__.add(lkj_corr_cholesky_lpdf<propto__>(chol_r_p, 2));
-        current_statement__ = 114;
+        current_statement__ = 122;
         for (int k = 1; k <= Kd2; ++k) {
-          current_statement__ = 106;
+          current_statement__ = 114;
           lp_accum__.add(
             beta_lpdf<propto__>(
               rvalue(r_d2,
                 cons_list(index_uni(k),
                   cons_list(index_uni(k), nil_index_list())), "r_d2"),
-              rvalue(rrD_beta_a,
+              rvalue(rr_beta_a,
                 cons_list(index_uni(k),
-                  cons_list(index_uni(k), nil_index_list())), "rrD_beta_a"),
-              rvalue(rrD_beta_b,
+                  cons_list(index_uni(k), nil_index_list())), "rr_beta_a"),
+              rvalue(rr_beta_b,
                 cons_list(index_uni(k),
-                  cons_list(index_uni(k), nil_index_list())), "rrD_beta_b")));
-          current_statement__ = 112;
+                  cons_list(index_uni(k), nil_index_list())), "rr_beta_b")));
+          current_statement__ = 120;
           if (logical_lt(k, Kd2)) {
-            current_statement__ = 110;
+            current_statement__ = 118;
             for (int kk = (k + 1); kk <= Kd2; ++kk) {
-              current_statement__ = 107;
+              current_statement__ = 115;
               lp_accum__.add(
                 beta_lpdf<propto__>(
                   rvalue(r_d2,
                     cons_list(index_uni(kk),
                       cons_list(index_uni(k), nil_index_list())), "r_d2"),
-                  rvalue(rrD_beta_a,
+                  rvalue(rr_beta_a,
                     cons_list(index_uni(kk),
                       cons_list(index_uni(k), nil_index_list())),
-                    "rrD_beta_a"),
-                  rvalue(rrD_beta_b,
+                    "rr_beta_a"),
+                  rvalue(rr_beta_b,
                     cons_list(index_uni(kk),
                       cons_list(index_uni(k), nil_index_list())),
-                    "rrD_beta_b")));
-              current_statement__ = 108;
+                    "rr_beta_b")));
+              current_statement__ = 116;
               lp_accum__.add(
                 beta_lpdf<propto__>(
                   rvalue(r_d2,
                     cons_list(index_uni(k),
                       cons_list(index_uni(kk), nil_index_list())), "r_d2"),
-                  rvalue(rrD_beta_a,
+                  rvalue(rr_beta_a,
                     cons_list(index_uni(k),
                       cons_list(index_uni(kk), nil_index_list())),
-                    "rrD_beta_a"),
-                  rvalue(rrD_beta_b,
+                    "rr_beta_a"),
+                  rvalue(rr_beta_b,
                     cons_list(index_uni(k),
                       cons_list(index_uni(kk), nil_index_list())),
-                    "rrD_beta_b")));}
+                    "rr_beta_b")));}
           } }
-        current_statement__ = 116;
+        {
+          int vec_idx;
+          vec_idx = std::numeric_limits<int>::min();
+          
+          current_statement__ = 123;
+          vec_idx = 1;
+          current_statement__ = 131;
+          for (int k = 1; k <= allKp; ++k) {
+            current_statement__ = 129;
+            if (logical_lt(k, allKp)) {
+              current_statement__ = 127;
+              for (int kk = (k + 1); kk <= allKp; ++kk) {
+                current_statement__ = 124;
+                lp_accum__.add(
+                  beta_lpdf<propto__>(Rp_vec[(vec_idx - 1)],
+                    rvalue(case_beta,
+                      cons_list(index_uni(kk),
+                        cons_list(index_uni(k), nil_index_list())),
+                      "case_beta"),
+                    rvalue(case_beta,
+                      cons_list(index_uni(k),
+                        cons_list(index_uni(kk), nil_index_list())),
+                      "case_beta")));
+                current_statement__ = 125;
+                vec_idx = (vec_idx + 1);}
+            } }
+        }
+        current_statement__ = 134;
         for (int n = 1; n <= Nd; ++n) {
-          current_statement__ = 115;
+          current_statement__ = 133;
           lp_accum__.add(
             multi_normal_cholesky_lpdf<propto__>(
               rvalue(augYd,
@@ -1341,9 +1468,9 @@ public:
                 cons_list(index_uni(n),
                   cons_list(index_omni(), nil_index_list())), "Yd2hat"),
               chol_d));}
-        current_statement__ = 118;
+        current_statement__ = 136;
         for (int n = 1; n <= Np; ++n) {
-          current_statement__ = 117;
+          current_statement__ = 135;
           lp_accum__.add(
             multi_normal_cholesky_lpdf<propto__>(
               rvalue(augYp,
@@ -1403,22 +1530,18 @@ public:
         assign(S_p, cons_list(index_uni(sym1__), nil_index_list()),
           stan::math::lb_constrain(S_p[(sym1__ - 1)], 0),
           "assigning variable S_p");}
-      Eigen::Matrix<double, -1, -1> chol_r_p;
-      chol_r_p = Eigen::Matrix<double, -1, -1>(allKp, allKp);
-      stan::math::fill(chol_r_p, std::numeric_limits<double>::quiet_NaN());
-      
-      Eigen::Matrix<local_scalar_t__, -1, 1> chol_r_p_in__;
-      chol_r_p_in__ = Eigen::Matrix<local_scalar_t__, -1, 1>(((allKp *
-                                                                (allKp - 1))
-                                                               / 2));
-      stan::math::fill(chol_r_p_in__, DUMMY_VAR__);
+      Eigen::Matrix<double, -1, 1> Rp_vec;
+      Rp_vec = Eigen::Matrix<double, -1, 1>(Rp_vec_1dim__);
+      stan::math::fill(Rp_vec, std::numeric_limits<double>::quiet_NaN());
       
       current_statement__ = 3;
-      chol_r_p_in__ = in__.vector(((allKp * (allKp - 1)) / 2));
+      Rp_vec = in__.vector(Rp_vec_1dim__);
       current_statement__ = 3;
-      assign(chol_r_p, nil_index_list(),
-        stan::math::cholesky_corr_constrain(chol_r_p_in__, allKp),
-        "assigning variable chol_r_p");
+      for (int sym1__ = 1; sym1__ <= Rp_vec_1dim__; ++sym1__) {
+        current_statement__ = 3;
+        assign(Rp_vec, cons_list(index_uni(sym1__), nil_index_list()),
+          stan::math::lub_constrain(Rp_vec[(sym1__ - 1)], 0, 1),
+          "assigning variable Rp_vec");}
       Eigen::Matrix<double, -1, -1> r_d2;
       r_d2 = Eigen::Matrix<double, -1, -1>(Kd2, Kd2);
       stan::math::fill(r_d2, std::numeric_limits<double>::quiet_NaN());
@@ -1456,6 +1579,10 @@ public:
       Rd2 = Eigen::Matrix<double, -1, -1>(allKd, allKd);
       stan::math::fill(Rd2, std::numeric_limits<double>::quiet_NaN());
       
+      Eigen::Matrix<double, -1, -1> Rp;
+      Rp = Eigen::Matrix<double, -1, -1>(allKp, allKp);
+      stan::math::fill(Rp, std::numeric_limits<double>::quiet_NaN());
+      
       Eigen::Matrix<double, -1, -1> chol_d;
       chol_d = Eigen::Matrix<double, -1, -1>(allKd, allKd);
       stan::math::fill(chol_d, std::numeric_limits<double>::quiet_NaN());
@@ -1476,13 +1603,8 @@ public:
         vars__.emplace_back(s_rr[(sym1__ - 1)]);}
       for (int sym1__ = 1; sym1__ <= allKp; ++sym1__) {
         vars__.emplace_back(S_p[(sym1__ - 1)]);}
-      for (int sym1__ = 1; sym1__ <= allKp; ++sym1__) {
-        for (int sym2__ = 1; sym2__ <= allKp; ++sym2__) {
-          vars__.emplace_back(
-            rvalue(chol_r_p,
-              cons_list(index_uni(sym2__),
-                cons_list(index_uni(sym1__), nil_index_list())), "chol_r_p"));
-        }}
+      for (int sym1__ = 1; sym1__ <= Rp_vec_1dim__; ++sym1__) {
+        vars__.emplace_back(Rp_vec[(sym1__ - 1)]);}
       for (int sym1__ = 1; sym1__ <= Kd2; ++sym1__) {
         for (int sym2__ = 1; sym2__ <= Kd2; ++sym2__) {
           vars__.emplace_back(
@@ -1512,29 +1634,29 @@ public:
         int idp2;
         idp2 = std::numeric_limits<int>::min();
         
-        current_statement__ = 40;
+        current_statement__ = 41;
         for (int k = 1; k <= Kd2; ++k) {
-          current_statement__ = 17;
-          idx1 = ((k * 2) - 1);
           current_statement__ = 18;
-          idx2 = (k * 2);
+          idx1 = ((k * 2) - 1);
           current_statement__ = 19;
+          idx2 = (k * 2);
+          current_statement__ = 20;
           assign(S_d, cons_list(index_uni(idx1), nil_index_list()),
             s_rr[(k - 1)], "assigning variable S_d");
-          current_statement__ = 20;
+          current_statement__ = 21;
           assign(S_d, cons_list(index_uni(idx2), nil_index_list()),
             s_rr[(k - 1)], "assigning variable S_d");
-          current_statement__ = 21;
+          current_statement__ = 22;
           assign(Rd2,
             cons_list(index_uni(idx1),
               cons_list(index_uni(idx1), nil_index_list())), 1,
             "assigning variable Rd2");
-          current_statement__ = 22;
+          current_statement__ = 23;
           assign(Rd2,
             cons_list(index_uni(idx2),
               cons_list(index_uni(idx2), nil_index_list())), 1,
             "assigning variable Rd2");
-          current_statement__ = 23;
+          current_statement__ = 24;
           assign(Rd2,
             cons_list(index_uni(idx1),
               cons_list(index_uni(idx2), nil_index_list())),
@@ -1544,7 +1666,7 @@ public:
                   cons_list(index_uni(k),
                     cons_list(index_uni(k), nil_index_list())), "r_d2"))),
             "assigning variable Rd2");
-          current_statement__ = 24;
+          current_statement__ = 25;
           assign(Rd2,
             cons_list(index_uni(idx2),
               cons_list(index_uni(idx1), nil_index_list())),
@@ -1554,15 +1676,15 @@ public:
                   cons_list(index_uni(k),
                     cons_list(index_uni(k), nil_index_list())), "r_d2"))),
             "assigning variable Rd2");
-          current_statement__ = 38;
+          current_statement__ = 39;
           if (logical_lt(k, Kd2)) {
-            current_statement__ = 36;
+            current_statement__ = 37;
             for (int kk = (k + 1); kk <= Kd2; ++kk) {
-              current_statement__ = 25;
-              idp1 = ((kk * 2) - 1);
               current_statement__ = 26;
-              idp2 = (kk * 2);
+              idp1 = ((kk * 2) - 1);
               current_statement__ = 27;
+              idp2 = (kk * 2);
+              current_statement__ = 28;
               assign(Rd2,
                 cons_list(index_uni(idx1),
                   cons_list(index_uni(idp1), nil_index_list())),
@@ -1572,7 +1694,7 @@ public:
                       cons_list(index_uni(kk),
                         cons_list(index_uni(k), nil_index_list())), "r_d2"))),
                 "assigning variable Rd2");
-              current_statement__ = 28;
+              current_statement__ = 29;
               assign(Rd2,
                 cons_list(index_uni(idx2),
                   cons_list(index_uni(idp2), nil_index_list())),
@@ -1582,7 +1704,7 @@ public:
                       cons_list(index_uni(kk),
                         cons_list(index_uni(k), nil_index_list())), "r_d2"))),
                 "assigning variable Rd2");
-              current_statement__ = 29;
+              current_statement__ = 30;
               assign(Rd2,
                 cons_list(index_uni(idp1),
                   cons_list(index_uni(idx1), nil_index_list())),
@@ -1592,7 +1714,7 @@ public:
                       cons_list(index_uni(kk),
                         cons_list(index_uni(k), nil_index_list())), "r_d2"))),
                 "assigning variable Rd2");
-              current_statement__ = 30;
+              current_statement__ = 31;
               assign(Rd2,
                 cons_list(index_uni(idp2),
                   cons_list(index_uni(idx2), nil_index_list())),
@@ -1602,7 +1724,7 @@ public:
                       cons_list(index_uni(kk),
                         cons_list(index_uni(k), nil_index_list())), "r_d2"))),
                 "assigning variable Rd2");
-              current_statement__ = 31;
+              current_statement__ = 32;
               assign(Rd2,
                 cons_list(index_uni(idx1),
                   cons_list(index_uni(idp2), nil_index_list())),
@@ -1612,7 +1734,7 @@ public:
                       cons_list(index_uni(k),
                         cons_list(index_uni(kk), nil_index_list())), "r_d2"))),
                 "assigning variable Rd2");
-              current_statement__ = 32;
+              current_statement__ = 33;
               assign(Rd2,
                 cons_list(index_uni(idp2),
                   cons_list(index_uni(idx1), nil_index_list())),
@@ -1622,7 +1744,7 @@ public:
                       cons_list(index_uni(k),
                         cons_list(index_uni(kk), nil_index_list())), "r_d2"))),
                 "assigning variable Rd2");
-              current_statement__ = 33;
+              current_statement__ = 34;
               assign(Rd2,
                 cons_list(index_uni(idx2),
                   cons_list(index_uni(idp1), nil_index_list())),
@@ -1632,7 +1754,7 @@ public:
                       cons_list(index_uni(k),
                         cons_list(index_uni(kk), nil_index_list())), "r_d2"))),
                 "assigning variable Rd2");
-              current_statement__ = 34;
+              current_statement__ = 35;
               assign(Rd2,
                 cons_list(index_uni(idp1),
                   cons_list(index_uni(idx2), nil_index_list())),
@@ -1644,26 +1766,68 @@ public:
                 "assigning variable Rd2");}
           } }
       }
-      current_statement__ = 42;
+      current_statement__ = 43;
       assign(chol_d, nil_index_list(),
         diag_pre_multiply(S_d, cholesky_decompose(Rd2)),
         "assigning variable chol_d");
       {
-        current_statement__ = 43;
+        int vec_idx;
+        vec_idx = std::numeric_limits<int>::min();
+        
+        current_statement__ = 44;
+        vec_idx = 1;
+        current_statement__ = 54;
+        for (int k = 1; k <= allKp; ++k) {
+          current_statement__ = 45;
+          assign(Rp,
+            cons_list(index_uni(k),
+              cons_list(index_uni(k), nil_index_list())), 1,
+            "assigning variable Rp");
+          current_statement__ = 52;
+          if (logical_lt(k, allKp)) {
+            current_statement__ = 50;
+            for (int kk = (k + 1); kk <= allKp; ++kk) {
+              current_statement__ = 46;
+              assign(Rp,
+                cons_list(index_uni(kk),
+                  cons_list(index_uni(k), nil_index_list())),
+                (-1 + (2 * Rp_vec[(vec_idx - 1)])), "assigning variable Rp");
+              current_statement__ = 47;
+              assign(Rp,
+                cons_list(index_uni(k),
+                  cons_list(index_uni(kk), nil_index_list())),
+                (-1 + (2 * Rp_vec[(vec_idx - 1)])), "assigning variable Rp");
+              current_statement__ = 48;
+              vec_idx = (vec_idx + 1);}
+          } }
+      }
+      {
+        current_statement__ = 56;
         validate_non_negative_index("sub_S_p", "allKp", allKp);
         Eigen::Matrix<double, -1, 1> sub_S_p;
         sub_S_p = Eigen::Matrix<double, -1, 1>(allKp);
         stan::math::fill(sub_S_p, std::numeric_limits<double>::quiet_NaN());
         
-        current_statement__ = 44;
+        current_statement__ = 57;
         assign(sub_S_p, nil_index_list(), rep_vector(1, allKp),
           "assigning variable sub_S_p");
-        current_statement__ = 46;
+        current_statement__ = 58;
+        validate_non_negative_index("chol_r_p", "allKp", allKp);
+        current_statement__ = 59;
+        validate_non_negative_index("chol_r_p", "allKp", allKp);
+        Eigen::Matrix<double, -1, -1> chol_r_p;
+        chol_r_p = Eigen::Matrix<double, -1, -1>(allKp, allKp);
+        stan::math::fill(chol_r_p, std::numeric_limits<double>::quiet_NaN());
+        
+        current_statement__ = 60;
+        assign(chol_r_p, nil_index_list(), cholesky_decompose(Rp),
+          "assigning variable chol_r_p");
+        current_statement__ = 62;
         for (int k = ((2 * Kd2) + 1); k <= allKp; ++k) {
-          current_statement__ = 45;
+          current_statement__ = 61;
           assign(sub_S_p, cons_list(index_uni(k), nil_index_list()),
             S_p[(k - 1)], "assigning variable sub_S_p");}
-        current_statement__ = 47;
+        current_statement__ = 63;
         assign(chol_p, nil_index_list(),
           diag_pre_multiply(sub_S_p, chol_r_p), "assigning variable chol_p");
       }
@@ -1674,15 +1838,15 @@ public:
         int idx2;
         idx2 = std::numeric_limits<int>::min();
         
-        current_statement__ = 58;
+        current_statement__ = 74;
         for (int k = 1; k <= Kd2; ++k) {
-          current_statement__ = 51;
+          current_statement__ = 67;
           idx1 = ((k * 2) - 1);
-          current_statement__ = 52;
+          current_statement__ = 68;
           idx2 = (k * 2);
-          current_statement__ = 56;
+          current_statement__ = 72;
           for (int d = 1; d <= Nd; ++d) {
-            current_statement__ = 53;
+            current_statement__ = 69;
             assign(Yd2hat,
               cons_list(index_uni(d),
                 cons_list(index_uni(idx1), nil_index_list())),
@@ -1695,7 +1859,7 @@ public:
                     cons_list(index_uni(IDp[(d - 1)][(2 - 1)]),
                       cons_list(index_uni(idx2), nil_index_list())), "AP"))),
               "assigning variable Yd2hat");
-            current_statement__ = 54;
+            current_statement__ = 70;
             assign(Yd2hat,
               cons_list(index_uni(d),
                 cons_list(index_uni(idx2), nil_index_list())),
@@ -1709,11 +1873,11 @@ public:
                       cons_list(index_uni(idx2), nil_index_list())), "AP"))),
               "assigning variable Yd2hat");}}
       }
-      current_statement__ = 60;
+      current_statement__ = 76;
       assign(augYd, nil_index_list(), Yd2, "assigning variable augYd");
-      current_statement__ = 66;
+      current_statement__ = 82;
       for (int n = 1; n <= Np; ++n) {
-        current_statement__ = 61;
+        current_statement__ = 77;
         assign(augYp,
           cons_list(index_uni(n),
             cons_list(index_min_max(1, (2 * Kd2)), nil_index_list())),
@@ -1721,9 +1885,9 @@ public:
             cons_list(index_uni(n),
               cons_list(index_omni(), nil_index_list())), "AP"),
           "assigning variable augYp");
-        current_statement__ = 64;
+        current_statement__ = 80;
         for (int k = 1; k <= Kp; ++k) {
-          current_statement__ = 62;
+          current_statement__ = 78;
           assign(augYp,
             cons_list(index_uni(n),
               cons_list(index_uni(((2 * Kd2) + k)), nil_index_list())),
@@ -1747,6 +1911,12 @@ public:
               rvalue(Rd2,
                 cons_list(index_uni(sym2__),
                   cons_list(index_uni(sym1__), nil_index_list())), "Rd2"));}}
+        for (int sym1__ = 1; sym1__ <= allKp; ++sym1__) {
+          for (int sym2__ = 1; sym2__ <= allKp; ++sym2__) {
+            vars__.emplace_back(
+              rvalue(Rp,
+                cons_list(index_uni(sym2__),
+                  cons_list(index_uni(sym1__), nil_index_list())), "Rp"));}}
         for (int sym1__ = 1; sym1__ <= allKd; ++sym1__) {
           for (int sym2__ = 1; sym2__ <= allKd; ++sym2__) {
             vars__.emplace_back(
@@ -1783,10 +1953,6 @@ public:
       Yd2e = Eigen::Matrix<double, -1, -1>(Nd, allKd);
       stan::math::fill(Yd2e, std::numeric_limits<double>::quiet_NaN());
       
-      Eigen::Matrix<double, -1, -1> Rp;
-      Rp = Eigen::Matrix<double, -1, -1>(allKp, allKp);
-      stan::math::fill(Rp, std::numeric_limits<double>::quiet_NaN());
-      
       Eigen::Matrix<double, -1, -1> pSigma;
       pSigma = Eigen::Matrix<double, -1, -1>(allKp, allKp);
       stan::math::fill(pSigma, std::numeric_limits<double>::quiet_NaN());
@@ -1800,43 +1966,43 @@ public:
       stan::math::fill(Rsq, std::numeric_limits<double>::quiet_NaN());
       
       {
-        current_statement__ = 72;
+        current_statement__ = 87;
         validate_non_negative_index("vars", "Kd2", Kd2);
         Eigen::Matrix<double, -1, -1> vars;
         vars = Eigen::Matrix<double, -1, -1>(Kd2, 3);
         stan::math::fill(vars, std::numeric_limits<double>::quiet_NaN());
         
-        current_statement__ = 74;
+        current_statement__ = 89;
         validate_non_negative_index("totals", "Kd2", Kd2);
         Eigen::Matrix<double, -1, 1> totals;
         totals = Eigen::Matrix<double, -1, 1>(Kd2);
         stan::math::fill(totals, std::numeric_limits<double>::quiet_NaN());
         
-        current_statement__ = 82;
+        current_statement__ = 97;
         for (int k = 1; k <= Kd2; ++k) {
-          current_statement__ = 76;
+          current_statement__ = 91;
           assign(vars,
             cons_list(index_uni(k),
               cons_list(index_uni(1), nil_index_list())),
             square(S_p[(((2 * k) - 1) - 1)]), "assigning variable vars");
-          current_statement__ = 77;
+          current_statement__ = 92;
           assign(vars,
             cons_list(index_uni(k),
               cons_list(index_uni(2), nil_index_list())),
             square(S_p[((2 * k) - 1)]), "assigning variable vars");
-          current_statement__ = 78;
+          current_statement__ = 93;
           assign(vars,
             cons_list(index_uni(k),
               cons_list(index_uni(3), nil_index_list())),
             square(s_rr[(k - 1)]), "assigning variable vars");
-          current_statement__ = 79;
+          current_statement__ = 94;
           assign(totals, cons_list(index_uni(k), nil_index_list()),
             sum(
               rvalue(vars,
                 cons_list(index_uni(k),
                   cons_list(index_omni(), nil_index_list())), "vars")),
             "assigning variable totals");
-          current_statement__ = 80;
+          current_statement__ = 95;
           assign(Rsq,
             cons_list(index_uni(k),
               cons_list(index_omni(), nil_index_list())),
@@ -1846,32 +2012,14 @@ public:
                   cons_list(index_omni(), nil_index_list())), "vars"),
               totals[(k - 1)]), "assigning variable Rsq");}
       }
-      current_statement__ = 84;
+      current_statement__ = 99;
       assign(Yd2e, nil_index_list(), subtract(augYd, Yd2hat),
         "assigning variable Yd2e");
-      current_statement__ = 85;
-      assign(Rp, nil_index_list(),
-        multiply_lower_tri_self_transpose(chol_r_p), "assigning variable Rp");
-      {
-        current_statement__ = 86;
-        validate_non_negative_index("chol_p_all", "allKp", allKp);
-        current_statement__ = 87;
-        validate_non_negative_index("chol_p_all", "allKp", allKp);
-        Eigen::Matrix<double, -1, -1> chol_p_all;
-        chol_p_all = Eigen::Matrix<double, -1, -1>(allKp, allKp);
-        stan::math::fill(chol_p_all, std::numeric_limits<double>::quiet_NaN());
-        
-        current_statement__ = 89;
-        assign(chol_p_all, nil_index_list(),
-          diag_pre_multiply(S_p, chol_r_p), "assigning variable chol_p_all");
-        current_statement__ = 90;
-        assign(pSigma, nil_index_list(),
-          multiply_lower_tri_self_transpose(chol_p_all),
-          "assigning variable pSigma");
-      }
-      current_statement__ = 92;
-      assign(dSigma, nil_index_list(),
-        multiply_lower_tri_self_transpose(chol_d),
+      current_statement__ = 100;
+      assign(pSigma, nil_index_list(), quad_form_diag(Rp, S_p),
+        "assigning variable pSigma");
+      current_statement__ = 101;
+      assign(dSigma, nil_index_list(), quad_form_diag(Rd2, S_d),
         "assigning variable dSigma");
       for (int sym1__ = 1; sym1__ <= allKd; ++sym1__) {
         for (int sym2__ = 1; sym2__ <= Nd; ++sym2__) {
@@ -1879,12 +2027,6 @@ public:
             rvalue(Yd2e,
               cons_list(index_uni(sym2__),
                 cons_list(index_uni(sym1__), nil_index_list())), "Yd2e"));}}
-      for (int sym1__ = 1; sym1__ <= allKp; ++sym1__) {
-        for (int sym2__ = 1; sym2__ <= allKp; ++sym2__) {
-          vars__.emplace_back(
-            rvalue(Rp,
-              cons_list(index_uni(sym2__),
-                cons_list(index_uni(sym1__), nil_index_list())), "Rp"));}}
       for (int sym1__ = 1; sym1__ <= allKp; ++sym1__) {
         for (int sym2__ = 1; sym2__ <= allKp; ++sym2__) {
           vars__.emplace_back(
@@ -1983,38 +2125,35 @@ public:
         assign(S_p_free__, cons_list(index_uni(sym1__), nil_index_list()),
           stan::math::lb_free(S_p[(sym1__ - 1)], 0),
           "assigning variable S_p_free__");}
-      Eigen::Matrix<double, -1, -1> chol_r_p;
-      chol_r_p = Eigen::Matrix<double, -1, -1>(allKp, allKp);
-      stan::math::fill(chol_r_p, std::numeric_limits<double>::quiet_NaN());
+      Eigen::Matrix<double, -1, 1> Rp_vec;
+      Rp_vec = Eigen::Matrix<double, -1, 1>(Rp_vec_1dim__);
+      stan::math::fill(Rp_vec, std::numeric_limits<double>::quiet_NaN());
       
       {
-        std::vector<local_scalar_t__> chol_r_p_flat__;
+        std::vector<local_scalar_t__> Rp_vec_flat__;
         current_statement__ = 3;
-        assign(chol_r_p_flat__, nil_index_list(),
-          context__.vals_r("chol_r_p"), "assigning variable chol_r_p_flat__");
+        assign(Rp_vec_flat__, nil_index_list(), context__.vals_r("Rp_vec"),
+          "assigning variable Rp_vec_flat__");
         current_statement__ = 3;
         pos__ = 1;
         current_statement__ = 3;
-        for (int sym1__ = 1; sym1__ <= allKp; ++sym1__) {
+        for (int sym1__ = 1; sym1__ <= Rp_vec_1dim__; ++sym1__) {
           current_statement__ = 3;
-          for (int sym2__ = 1; sym2__ <= allKp; ++sym2__) {
-            current_statement__ = 3;
-            assign(chol_r_p,
-              cons_list(index_uni(sym2__),
-                cons_list(index_uni(sym1__), nil_index_list())),
-              chol_r_p_flat__[(pos__ - 1)], "assigning variable chol_r_p");
-            current_statement__ = 3;
-            pos__ = (pos__ + 1);}}
+          assign(Rp_vec, cons_list(index_uni(sym1__), nil_index_list()),
+            Rp_vec_flat__[(pos__ - 1)], "assigning variable Rp_vec");
+          current_statement__ = 3;
+          pos__ = (pos__ + 1);}
       }
-      Eigen::Matrix<double, -1, 1> chol_r_p_free__;
-      chol_r_p_free__ = Eigen::Matrix<double, -1, 1>(((allKp * (allKp - 1)) /
-                                                       2));
-      stan::math::fill(chol_r_p_free__, std::numeric_limits<double>::quiet_NaN());
+      Eigen::Matrix<double, -1, 1> Rp_vec_free__;
+      Rp_vec_free__ = Eigen::Matrix<double, -1, 1>(Rp_vec_1dim__);
+      stan::math::fill(Rp_vec_free__, std::numeric_limits<double>::quiet_NaN());
       
       current_statement__ = 3;
-      assign(chol_r_p_free__, nil_index_list(),
-        stan::math::cholesky_corr_free(chol_r_p),
-        "assigning variable chol_r_p_free__");
+      for (int sym1__ = 1; sym1__ <= Rp_vec_1dim__; ++sym1__) {
+        current_statement__ = 3;
+        assign(Rp_vec_free__, cons_list(index_uni(sym1__), nil_index_list()),
+          stan::math::lub_free(Rp_vec[(sym1__ - 1)], 0, 1),
+          "assigning variable Rp_vec_free__");}
       Eigen::Matrix<double, -1, -1> r_d2;
       r_d2 = Eigen::Matrix<double, -1, -1>(Kd2, Kd2);
       stan::math::fill(r_d2, std::numeric_limits<double>::quiet_NaN());
@@ -2082,8 +2221,8 @@ public:
         vars__.emplace_back(s_rr_free__[(sym1__ - 1)]);}
       for (int sym1__ = 1; sym1__ <= allKp; ++sym1__) {
         vars__.emplace_back(S_p_free__[(sym1__ - 1)]);}
-      for (int sym1__ = 1; sym1__ <= ((allKp * (allKp - 1)) / 2); ++sym1__) {
-        vars__.emplace_back(chol_r_p_free__[(sym1__ - 1)]);}
+      for (int sym1__ = 1; sym1__ <= Rp_vec_1dim__; ++sym1__) {
+        vars__.emplace_back(Rp_vec_free__[(sym1__ - 1)]);}
       for (int sym1__ = 1; sym1__ <= Kd2; ++sym1__) {
         for (int sym2__ = 1; sym2__ <= Kd2; ++sym2__) {
           vars__.emplace_back(
@@ -2109,18 +2248,18 @@ public:
     names__.clear();
     names__.emplace_back("s_rr");
     names__.emplace_back("S_p");
-    names__.emplace_back("chol_r_p");
+    names__.emplace_back("Rp_vec");
     names__.emplace_back("r_d2");
     names__.emplace_back("AP");
     names__.emplace_back("Yd2hat");
     names__.emplace_back("S_d");
     names__.emplace_back("Rd2");
+    names__.emplace_back("Rp");
     names__.emplace_back("chol_d");
     names__.emplace_back("chol_p");
     names__.emplace_back("augYd");
     names__.emplace_back("augYp");
     names__.emplace_back("Yd2e");
-    names__.emplace_back("Rp");
     names__.emplace_back("pSigma");
     names__.emplace_back("dSigma");
     names__.emplace_back("Rsq");
@@ -2132,8 +2271,9 @@ public:
     
     dimss__.emplace_back(std::vector<size_t>{static_cast<size_t>(allKp)});
     
-    dimss__.emplace_back(std::vector<size_t>{static_cast<size_t>(allKp),
-                                             static_cast<size_t>(allKp)});
+    dimss__.emplace_back(std::vector<size_t>{
+                                             static_cast<size_t>(Rp_vec_1dim__)
+                                             });
     
     dimss__.emplace_back(std::vector<size_t>{static_cast<size_t>(Kd2),
                                              static_cast<size_t>(Kd2)});
@@ -2149,6 +2289,9 @@ public:
     dimss__.emplace_back(std::vector<size_t>{static_cast<size_t>(allKd),
                                              static_cast<size_t>(allKd)});
     
+    dimss__.emplace_back(std::vector<size_t>{static_cast<size_t>(allKp),
+                                             static_cast<size_t>(allKp)});
+    
     dimss__.emplace_back(std::vector<size_t>{static_cast<size_t>(allKd),
                                              static_cast<size_t>(allKd)});
     
@@ -2163,9 +2306,6 @@ public:
     
     dimss__.emplace_back(std::vector<size_t>{static_cast<size_t>(Nd),
                                              static_cast<size_t>(allKd)});
-    
-    dimss__.emplace_back(std::vector<size_t>{static_cast<size_t>(allKp),
-                                             static_cast<size_t>(allKp)});
     
     dimss__.emplace_back(std::vector<size_t>{static_cast<size_t>(allKp),
                                              static_cast<size_t>(allKp)});
@@ -2192,12 +2332,9 @@ public:
       {
         param_names__.emplace_back(std::string() + "S_p" + '.' + std::to_string(sym1__));
       }}
-    for (int sym1__ = 1; sym1__ <= allKp; ++sym1__) {
+    for (int sym1__ = 1; sym1__ <= Rp_vec_1dim__; ++sym1__) {
       {
-        for (int sym2__ = 1; sym2__ <= allKp; ++sym2__) {
-          {
-            param_names__.emplace_back(std::string() + "chol_r_p" + '.' + std::to_string(sym2__) + '.' + std::to_string(sym1__));
-          }}
+        param_names__.emplace_back(std::string() + "Rp_vec" + '.' + std::to_string(sym1__));
       }}
     for (int sym1__ = 1; sym1__ <= Kd2; ++sym1__) {
       {
@@ -2230,6 +2367,13 @@ public:
           for (int sym2__ = 1; sym2__ <= allKd; ++sym2__) {
             {
               param_names__.emplace_back(std::string() + "Rd2" + '.' + std::to_string(sym2__) + '.' + std::to_string(sym1__));
+            }}
+        }}
+      for (int sym1__ = 1; sym1__ <= allKp; ++sym1__) {
+        {
+          for (int sym2__ = 1; sym2__ <= allKp; ++sym2__) {
+            {
+              param_names__.emplace_back(std::string() + "Rp" + '.' + std::to_string(sym2__) + '.' + std::to_string(sym1__));
             }}
         }}
       for (int sym1__ = 1; sym1__ <= allKd; ++sym1__) {
@@ -2268,13 +2412,6 @@ public:
           for (int sym2__ = 1; sym2__ <= Nd; ++sym2__) {
             {
               param_names__.emplace_back(std::string() + "Yd2e" + '.' + std::to_string(sym2__) + '.' + std::to_string(sym1__));
-            }}
-        }}
-      for (int sym1__ = 1; sym1__ <= allKp; ++sym1__) {
-        {
-          for (int sym2__ = 1; sym2__ <= allKp; ++sym2__) {
-            {
-              param_names__.emplace_back(std::string() + "Rp" + '.' + std::to_string(sym2__) + '.' + std::to_string(sym1__));
             }}
         }}
       for (int sym1__ = 1; sym1__ <= allKp; ++sym1__) {
@@ -2316,9 +2453,9 @@ public:
       {
         param_names__.emplace_back(std::string() + "S_p" + '.' + std::to_string(sym1__));
       }}
-    for (int sym1__ = 1; sym1__ <= ((allKp * (allKp - 1)) / 2); ++sym1__) {
+    for (int sym1__ = 1; sym1__ <= Rp_vec_1dim__; ++sym1__) {
       {
-        param_names__.emplace_back(std::string() + "chol_r_p" + '.' + std::to_string(sym1__));
+        param_names__.emplace_back(std::string() + "Rp_vec" + '.' + std::to_string(sym1__));
       }}
     for (int sym1__ = 1; sym1__ <= Kd2; ++sym1__) {
       {
@@ -2351,6 +2488,13 @@ public:
           for (int sym2__ = 1; sym2__ <= allKd; ++sym2__) {
             {
               param_names__.emplace_back(std::string() + "Rd2" + '.' + std::to_string(sym2__) + '.' + std::to_string(sym1__));
+            }}
+        }}
+      for (int sym1__ = 1; sym1__ <= allKp; ++sym1__) {
+        {
+          for (int sym2__ = 1; sym2__ <= allKp; ++sym2__) {
+            {
+              param_names__.emplace_back(std::string() + "Rp" + '.' + std::to_string(sym2__) + '.' + std::to_string(sym1__));
             }}
         }}
       for (int sym1__ = 1; sym1__ <= allKd; ++sym1__) {
@@ -2395,13 +2539,6 @@ public:
         {
           for (int sym2__ = 1; sym2__ <= allKp; ++sym2__) {
             {
-              param_names__.emplace_back(std::string() + "Rp" + '.' + std::to_string(sym2__) + '.' + std::to_string(sym1__));
-            }}
-        }}
-      for (int sym1__ = 1; sym1__ <= allKp; ++sym1__) {
-        {
-          for (int sym2__ = 1; sym2__ <= allKp; ++sym2__) {
-            {
               param_names__.emplace_back(std::string() + "pSigma" + '.' + std::to_string(sym2__) + '.' + std::to_string(sym1__));
             }}
         }}
@@ -2425,13 +2562,13 @@ public:
     
   inline std::string get_constrained_sizedtypes() const {
     stringstream s__;
-    s__ << "[{\"name\":\"s_rr\",\"type\":{\"name\":\"vector\",\"length\":" << Kd2 << "},\"block\":\"parameters\"},{\"name\":\"S_p\",\"type\":{\"name\":\"vector\",\"length\":" << allKp << "},\"block\":\"parameters\"},{\"name\":\"chol_r_p\",\"type\":{\"name\":\"matrix\",\"rows\":" << allKp << ",\"cols\":" << allKp << "},\"block\":\"parameters\"},{\"name\":\"r_d2\",\"type\":{\"name\":\"matrix\",\"rows\":" << Kd2 << ",\"cols\":" << Kd2 << "},\"block\":\"parameters\"},{\"name\":\"AP\",\"type\":{\"name\":\"matrix\",\"rows\":" << Np << ",\"cols\":" << AP_2dim__ << "},\"block\":\"parameters\"},{\"name\":\"Yd2hat\",\"type\":{\"name\":\"matrix\",\"rows\":" << Nd << ",\"cols\":" << allKd << "},\"block\":\"transformed_parameters\"},{\"name\":\"S_d\",\"type\":{\"name\":\"vector\",\"length\":" << allKd << "},\"block\":\"transformed_parameters\"},{\"name\":\"Rd2\",\"type\":{\"name\":\"matrix\",\"rows\":" << allKd << ",\"cols\":" << allKd << "},\"block\":\"transformed_parameters\"},{\"name\":\"chol_d\",\"type\":{\"name\":\"matrix\",\"rows\":" << allKd << ",\"cols\":" << allKd << "},\"block\":\"transformed_parameters\"},{\"name\":\"chol_p\",\"type\":{\"name\":\"matrix\",\"rows\":" << allKp << ",\"cols\":" << allKp << "},\"block\":\"transformed_parameters\"},{\"name\":\"augYd\",\"type\":{\"name\":\"matrix\",\"rows\":" << Nd << ",\"cols\":" << allKd << "},\"block\":\"transformed_parameters\"},{\"name\":\"augYp\",\"type\":{\"name\":\"matrix\",\"rows\":" << Np << ",\"cols\":" << allKp << "},\"block\":\"transformed_parameters\"},{\"name\":\"Yd2e\",\"type\":{\"name\":\"matrix\",\"rows\":" << Nd << ",\"cols\":" << allKd << "},\"block\":\"generated_quantities\"},{\"name\":\"Rp\",\"type\":{\"name\":\"matrix\",\"rows\":" << allKp << ",\"cols\":" << allKp << "},\"block\":\"generated_quantities\"},{\"name\":\"pSigma\",\"type\":{\"name\":\"matrix\",\"rows\":" << allKp << ",\"cols\":" << allKp << "},\"block\":\"generated_quantities\"},{\"name\":\"dSigma\",\"type\":{\"name\":\"matrix\",\"rows\":" << allKd << ",\"cols\":" << allKd << "},\"block\":\"generated_quantities\"},{\"name\":\"Rsq\",\"type\":{\"name\":\"matrix\",\"rows\":" << Kd2 << ",\"cols\":" << 3 << "},\"block\":\"generated_quantities\"}]";
+    s__ << "[{\"name\":\"s_rr\",\"type\":{\"name\":\"vector\",\"length\":" << Kd2 << "},\"block\":\"parameters\"},{\"name\":\"S_p\",\"type\":{\"name\":\"vector\",\"length\":" << allKp << "},\"block\":\"parameters\"},{\"name\":\"Rp_vec\",\"type\":{\"name\":\"vector\",\"length\":" << Rp_vec_1dim__ << "},\"block\":\"parameters\"},{\"name\":\"r_d2\",\"type\":{\"name\":\"matrix\",\"rows\":" << Kd2 << ",\"cols\":" << Kd2 << "},\"block\":\"parameters\"},{\"name\":\"AP\",\"type\":{\"name\":\"matrix\",\"rows\":" << Np << ",\"cols\":" << AP_2dim__ << "},\"block\":\"parameters\"},{\"name\":\"Yd2hat\",\"type\":{\"name\":\"matrix\",\"rows\":" << Nd << ",\"cols\":" << allKd << "},\"block\":\"transformed_parameters\"},{\"name\":\"S_d\",\"type\":{\"name\":\"vector\",\"length\":" << allKd << "},\"block\":\"transformed_parameters\"},{\"name\":\"Rd2\",\"type\":{\"name\":\"matrix\",\"rows\":" << allKd << ",\"cols\":" << allKd << "},\"block\":\"transformed_parameters\"},{\"name\":\"Rp\",\"type\":{\"name\":\"matrix\",\"rows\":" << allKp << ",\"cols\":" << allKp << "},\"block\":\"transformed_parameters\"},{\"name\":\"chol_d\",\"type\":{\"name\":\"matrix\",\"rows\":" << allKd << ",\"cols\":" << allKd << "},\"block\":\"transformed_parameters\"},{\"name\":\"chol_p\",\"type\":{\"name\":\"matrix\",\"rows\":" << allKp << ",\"cols\":" << allKp << "},\"block\":\"transformed_parameters\"},{\"name\":\"augYd\",\"type\":{\"name\":\"matrix\",\"rows\":" << Nd << ",\"cols\":" << allKd << "},\"block\":\"transformed_parameters\"},{\"name\":\"augYp\",\"type\":{\"name\":\"matrix\",\"rows\":" << Np << ",\"cols\":" << allKp << "},\"block\":\"transformed_parameters\"},{\"name\":\"Yd2e\",\"type\":{\"name\":\"matrix\",\"rows\":" << Nd << ",\"cols\":" << allKd << "},\"block\":\"generated_quantities\"},{\"name\":\"pSigma\",\"type\":{\"name\":\"matrix\",\"rows\":" << allKp << ",\"cols\":" << allKp << "},\"block\":\"generated_quantities\"},{\"name\":\"dSigma\",\"type\":{\"name\":\"matrix\",\"rows\":" << allKd << ",\"cols\":" << allKd << "},\"block\":\"generated_quantities\"},{\"name\":\"Rsq\",\"type\":{\"name\":\"matrix\",\"rows\":" << Kd2 << ",\"cols\":" << 3 << "},\"block\":\"generated_quantities\"}]";
     return s__.str();
     } // get_constrained_sizedtypes() 
     
   inline std::string get_unconstrained_sizedtypes() const {
     stringstream s__;
-    s__ << "[{\"name\":\"s_rr\",\"type\":{\"name\":\"vector\",\"length\":" << Kd2 << "},\"block\":\"parameters\"},{\"name\":\"S_p\",\"type\":{\"name\":\"vector\",\"length\":" << allKp << "},\"block\":\"parameters\"},{\"name\":\"chol_r_p\",\"type\":{\"name\":\"vector\",\"length\":" << ((allKp * (allKp - 1)) / 2) << "},\"block\":\"parameters\"},{\"name\":\"r_d2\",\"type\":{\"name\":\"matrix\",\"rows\":" << Kd2 << ",\"cols\":" << Kd2 << "},\"block\":\"parameters\"},{\"name\":\"AP\",\"type\":{\"name\":\"matrix\",\"rows\":" << Np << ",\"cols\":" << AP_2dim__ << "},\"block\":\"parameters\"},{\"name\":\"Yd2hat\",\"type\":{\"name\":\"matrix\",\"rows\":" << Nd << ",\"cols\":" << allKd << "},\"block\":\"transformed_parameters\"},{\"name\":\"S_d\",\"type\":{\"name\":\"vector\",\"length\":" << allKd << "},\"block\":\"transformed_parameters\"},{\"name\":\"Rd2\",\"type\":{\"name\":\"matrix\",\"rows\":" << allKd << ",\"cols\":" << allKd << "},\"block\":\"transformed_parameters\"},{\"name\":\"chol_d\",\"type\":{\"name\":\"matrix\",\"rows\":" << allKd << ",\"cols\":" << allKd << "},\"block\":\"transformed_parameters\"},{\"name\":\"chol_p\",\"type\":{\"name\":\"matrix\",\"rows\":" << allKp << ",\"cols\":" << allKp << "},\"block\":\"transformed_parameters\"},{\"name\":\"augYd\",\"type\":{\"name\":\"matrix\",\"rows\":" << Nd << ",\"cols\":" << allKd << "},\"block\":\"transformed_parameters\"},{\"name\":\"augYp\",\"type\":{\"name\":\"matrix\",\"rows\":" << Np << ",\"cols\":" << allKp << "},\"block\":\"transformed_parameters\"},{\"name\":\"Yd2e\",\"type\":{\"name\":\"matrix\",\"rows\":" << Nd << ",\"cols\":" << allKd << "},\"block\":\"generated_quantities\"},{\"name\":\"Rp\",\"type\":{\"name\":\"matrix\",\"rows\":" << allKp << ",\"cols\":" << allKp << "},\"block\":\"generated_quantities\"},{\"name\":\"pSigma\",\"type\":{\"name\":\"matrix\",\"rows\":" << allKp << ",\"cols\":" << allKp << "},\"block\":\"generated_quantities\"},{\"name\":\"dSigma\",\"type\":{\"name\":\"matrix\",\"rows\":" << allKd << ",\"cols\":" << allKd << "},\"block\":\"generated_quantities\"},{\"name\":\"Rsq\",\"type\":{\"name\":\"matrix\",\"rows\":" << Kd2 << ",\"cols\":" << 3 << "},\"block\":\"generated_quantities\"}]";
+    s__ << "[{\"name\":\"s_rr\",\"type\":{\"name\":\"vector\",\"length\":" << Kd2 << "},\"block\":\"parameters\"},{\"name\":\"S_p\",\"type\":{\"name\":\"vector\",\"length\":" << allKp << "},\"block\":\"parameters\"},{\"name\":\"Rp_vec\",\"type\":{\"name\":\"vector\",\"length\":" << Rp_vec_1dim__ << "},\"block\":\"parameters\"},{\"name\":\"r_d2\",\"type\":{\"name\":\"matrix\",\"rows\":" << Kd2 << ",\"cols\":" << Kd2 << "},\"block\":\"parameters\"},{\"name\":\"AP\",\"type\":{\"name\":\"matrix\",\"rows\":" << Np << ",\"cols\":" << AP_2dim__ << "},\"block\":\"parameters\"},{\"name\":\"Yd2hat\",\"type\":{\"name\":\"matrix\",\"rows\":" << Nd << ",\"cols\":" << allKd << "},\"block\":\"transformed_parameters\"},{\"name\":\"S_d\",\"type\":{\"name\":\"vector\",\"length\":" << allKd << "},\"block\":\"transformed_parameters\"},{\"name\":\"Rd2\",\"type\":{\"name\":\"matrix\",\"rows\":" << allKd << ",\"cols\":" << allKd << "},\"block\":\"transformed_parameters\"},{\"name\":\"Rp\",\"type\":{\"name\":\"matrix\",\"rows\":" << allKp << ",\"cols\":" << allKp << "},\"block\":\"transformed_parameters\"},{\"name\":\"chol_d\",\"type\":{\"name\":\"matrix\",\"rows\":" << allKd << ",\"cols\":" << allKd << "},\"block\":\"transformed_parameters\"},{\"name\":\"chol_p\",\"type\":{\"name\":\"matrix\",\"rows\":" << allKp << ",\"cols\":" << allKp << "},\"block\":\"transformed_parameters\"},{\"name\":\"augYd\",\"type\":{\"name\":\"matrix\",\"rows\":" << Nd << ",\"cols\":" << allKd << "},\"block\":\"transformed_parameters\"},{\"name\":\"augYp\",\"type\":{\"name\":\"matrix\",\"rows\":" << Np << ",\"cols\":" << allKp << "},\"block\":\"transformed_parameters\"},{\"name\":\"Yd2e\",\"type\":{\"name\":\"matrix\",\"rows\":" << Nd << ",\"cols\":" << allKd << "},\"block\":\"generated_quantities\"},{\"name\":\"pSigma\",\"type\":{\"name\":\"matrix\",\"rows\":" << allKp << ",\"cols\":" << allKp << "},\"block\":\"generated_quantities\"},{\"name\":\"dSigma\",\"type\":{\"name\":\"matrix\",\"rows\":" << allKd << ",\"cols\":" << allKd << "},\"block\":\"generated_quantities\"},{\"name\":\"Rsq\",\"type\":{\"name\":\"matrix\",\"rows\":" << Kd2 << ",\"cols\":" << 3 << "},\"block\":\"generated_quantities\"}]";
     return s__.str();
     } // get_unconstrained_sizedtypes() 
     

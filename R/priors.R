@@ -267,7 +267,7 @@ srm_priors <- function(data, group_data, case_data, # cov_d or rr.vars = NULL,
       priors$case_group_t <- data.frame(df = 4,
                                         m  = sqrt(cSD^2 * decomp_c["group"]),
                                         sd = sqrt(cSD^2 * decomp_c["group"]))
-    } else priors$case_cov_t <- data.frame(df = 4, m  = cSD, sd = cSD)
+    } else priors$case_cov_t <- data.frame(df = 4, m  = cSD, sd = cSD) #TODO: update /covariates/case_tdata & _model
   }
 
   if (modelG & !missing(group_data)) {

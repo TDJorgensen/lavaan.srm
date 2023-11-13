@@ -1,5 +1,5 @@
 // Terrence D. Jorgensen
-// Last updated: 10 November 2023
+// Last updated: 13 November 2023
 
 // Program to estimate covariance matrices for multivariate SRM components
 // - standard round-robin design (indistinguishable subjects)
@@ -12,8 +12,8 @@
 functions {}
 data {
   // sample sizes
-  int<lower=0> Nd;        // number of dyads   (Level 1)
-  int<lower=0> Np;        // number of persons (Level 2, cross-classified)
+  int<lower=0> Nd;    // number of dyads   (Level 1)
+  int<lower=0> Np;    // number of persons (Level 2, cross-classified)
 
   // number of observed measures (half the number of columns)
   int<lower=0> Kd2;   // number of dyad-level    measures (    vary within dyad)
@@ -38,11 +38,14 @@ data {
   matrix[Kd2, 3] rr_rel_t;  // dyad (relationship)
   matrix[Kd2, 3] rr_out_t;  // out-going (actor / perceiver)
   matrix[Kd2, 3] rr_in_t ;  // in-coming (partner / target)
-  // LKJ parameter for case-level correlations
-  real case_lkj;
+
   // beta parameters (a and b) for dyad-level correlations
-  matrix<lower=0>[Kd2, Kd2] rrD_beta_a;   // (dyadic reciprocity on diagonal,
-  matrix<lower=0>[Kd2, Kd2] rrD_beta_b;   // intra/inter correlations below/above diagonal)
+  matrix<lower=0>[Kd2, Kd2] rr_beta_a;   // (dyadic reciprocity on diagonal,
+  matrix<lower=0>[Kd2, Kd2] rr_beta_b;   // intra/inter correlations below/above diagonal)
+
+  // beta hyperparameters for case-level correlations
+  // alpha below diagonal, beta above diagonal (ignore diagonal)
+  matrix<lower=0>[allKp, allKp] case_beta;
 }
 transformed data {
 #include /covariates/case_tdata_declare.stan
@@ -51,10 +54,11 @@ transformed data {
 parameters {
   // SDs
   vector<lower=0>[Kd2]  s_rr;  // round-robin residuals
-  vector<lower=0>[allKp] S_p;  // person-level covariates + AP effects
+  vector<lower=0>[allKp] S_p;  // person-level AP effects (+ covariates)
 
-  // correlations among observed variables and random effects
-  cholesky_factor_corr[allKp] chol_r_p;   // all person-level correlations (random-effects + covariates)
+  // correlations among person-level random effects (+ covariates)
+  vector<lower=0,upper=1>[ ( allKp*(allKp-1) ) %/% 2] Rp_vec;
+
   // correlations among round-robin residuals
   //  - dyadic reciprocity (within variable) on diagonal
   //  - intrapersonal correlations (between variable, within  case) below diagonal
@@ -67,9 +71,11 @@ parameters {
 transformed parameters {
   // expected values, given random effects
   matrix[Nd, allKd] Yd2hat;   // dyad-level \hat{y}s
-  // combined dyad-level SDs and correlations
+  // assembled dyad-level SDs and correlations
   vector[allKd] S_d;
   matrix[allKd, allKd] Rd2;
+  // assembled case-level correlations
+  matrix[allKp, allKp] Rp;
   // cholesky decompositions of correlation matrices
   matrix[allKd, allKd] chol_d;  // dyad-level
   matrix[allKp, allKp] chol_p;  // case-level
@@ -79,8 +85,7 @@ transformed parameters {
   matrix[Nd, allKd] augYd;  // all dyad-level variables
   matrix[Np, allKp] augYp;  // all case-level variables
 
-
-  // combine correlations among round-robin variables
+  // assemble correlations among DYAD-level components of round-robin variables
   {
     int idx1;  // arbitrary iterators
     int idx2;
@@ -120,6 +125,25 @@ transformed parameters {
   }
   // cholesky decompositions for model{} block
   chol_d = diag_pre_multiply(S_d, cholesky_decompose(Rd2));
+
+  // assemble correlations among CASE-level components of round-robin variables
+  {
+    int vec_idx = 1;    // index Rp_vec (vector of correlations)
+
+    for (k in 1:allKp) {
+      Rp[k,k] = 1;  // set diagonal = 1
+
+      // column-wise along lower triangle
+      // == row-wise along upper triangle
+      if (k < allKp) { for (kk in (k+1):allKp) {
+        Rp[kk,  k] = -1 + 2*Rp_vec[vec_idx];
+        Rp[ k, kk] = -1 + 2*Rp_vec[vec_idx];
+        vec_idx += 1;
+      }}
+    }
+
+    // end block combining case-level correlation matrix
+  }
 
 #include /covariates/case_tpar_scale.stan
 
@@ -161,16 +185,33 @@ model {
 
 #include /covariates/case_model.stan
 
-  // priors for correlations
-  chol_r_p ~ lkj_corr_cholesky(2);
+  // priors for dyad-level correlations
   for (k in 1:Kd2) {
-    // dyadic correlations (priors on diagonal)
-    r_d2[k,k] ~ beta(rrD_beta_a[k,k], rrD_beta_b[k,k]);
-    // between-variable correlations
+    // within each round-robin variable (dyadic reciprocity)
+    r_d2[k,k] ~ beta(rr_beta_a[k,k], rr_beta_b[k,k]);  // priors on diagonal
+    // between each round-robin variable (intra/inter-personal)
     if (k < Kd2) { for (kk in (k+1):Kd2) {
-      r_d2[kk, k ] ~ beta(rrD_beta_a[kk, k ], rrD_beta_b[kk, k ]); // intra = BELOW
-      r_d2[k , kk] ~ beta(rrD_beta_a[k , kk], rrD_beta_b[k , kk]); // inter = ABOVE
+      // dyad level
+      r_d2[kk, k ] ~ beta(rr_beta_a[kk, k ], rr_beta_b[kk, k ]); // intra = BELOW
+      r_d2[k , kk] ~ beta(rr_beta_a[k , kk], rr_beta_b[k , kk]); // inter = ABOVE
     }}
+  }
+
+  // priors for case-level correlations
+  {
+    int vec_idx = 1;    // index Rp_vec (vector of correlations)
+
+    for (k in 1:allKp) {
+      // column-wise along lower triangle
+      // == row-wise along upper triangle
+      if (k < allKp) { for (kk in (k+1):allKp) {
+        // hyperparameters:       alpha below diag,   beta above diag
+        Rp_vec[vec_idx] ~ beta(   case_beta[kk, k],   case_beta[k, kk] );
+        vec_idx += 1;
+      }}
+    }
+
+    // end block for priors of case-level correlations
   }
 
   // likelihoods for observed data (== priors for imputed data & random effects)
@@ -179,7 +220,6 @@ model {
 }
 generated quantities{
   matrix[Nd, allKd] Yd2e;      // residuals (relationship effects + error)
-  matrix[allKp, allKp] Rp;     // person-level correlation matrix
   matrix[allKp, allKp] pSigma; // person-level covariance matrix
   matrix[allKd, allKd] dSigma; // dyad-level covariance matrix
 
@@ -188,16 +228,9 @@ generated quantities{
   // calculate residuals to return as relationship effects
   Yd2e = augYd - Yd2hat;
 
-  // calculate person-level correlation matrix
-  Rp = multiply_lower_tri_self_transpose(chol_r_p);
-  // calculate group-level covariance matrix
-  {
-    matrix[allKp, allKp] chol_p_all;
-    chol_p_all = diag_pre_multiply(S_p, chol_r_p);
-    pSigma = multiply_lower_tri_self_transpose(chol_p_all);
-  }
-  // calculate dyad-level covariance matrix
-  dSigma = multiply_lower_tri_self_transpose(chol_d);
+  // scale correlation matrices to covariance matrices
+  pSigma = quad_form_diag(Rp , S_p);  // case level
+  dSigma = quad_form_diag(Rd2, S_d);  // dyad level
 }
 
 #include /include/license.stan

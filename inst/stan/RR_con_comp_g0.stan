@@ -1,5 +1,5 @@
 // Terrence D. Jorgensen
-// Last updated: 10 November 2023
+// Last updated: 13 November 2023
 
 // Program to estimate covariance matrices for multivariate SRM components
 // - standard round-robin design (indistinguishable subjects)
@@ -27,7 +27,7 @@ data {
   // observed data
   matrix[Nd, 2*Kd2] Yd2;  // observed round-robin variables
   // ID variables
-  int IDp[Nd, 2];         // person-level IDs (cross-classified)
+  int IDp[Nd, 2];         // person-level IDs (cross-classified) for dyad-level observations
 
   // (hyper)priors for model{}
 
@@ -40,7 +40,7 @@ data {
   matrix<lower=0>[Kd2, Kd2] rr_beta_a;   // (dyadic reciprocity on diagonal,
   matrix<lower=0>[Kd2, Kd2] rr_beta_b;   // intra/inter correlations below/above diagonal)
 
-  // beta hyperparametersfor case-level correlations
+  // beta hyperparameters for case-level correlations
   // alpha below diagonal, beta above diagonal (ignore diagonal)
   matrix<lower=0>[allKp, allKp] case_beta;
 }
@@ -48,10 +48,10 @@ transformed data {}
 parameters {
   // SDs
   vector<lower=0>[Kd2]  s_rr;  // round-robin residuals
-  vector<lower=0>[allKp] S_p;  // person-level covariates + AP effects
+  vector<lower=0>[allKp] S_p;  // person-level AP effects (+ covariates)
 
-  // correlations among person-level random effects
-  vector<lower=0,upper=1>[allKp*(allKp-1)/2] Rp_vec;
+  // correlations among person-level random effects (+ covariates)
+  vector<lower=0,upper=1>[ ( allKp*(allKp-1) ) %/% 2] Rp_vec;
 
   // correlations among round-robin residuals
   //  - dyadic reciprocity (within variable) on diagonal
@@ -139,9 +139,7 @@ transformed parameters {
     // end block combining case-level correlation matrix
   }
 
-
 #include /vanilla/tpar_chol_p.stan
-
 
   // calculate and/or combine expected values
   {
@@ -181,12 +179,9 @@ model {
 
   // priors for dyad-level correlations
   for (k in 1:Kd2) {
-    // correlations within each round-robin variable
-
-    // dyadic correlations (priors on diagonal)
-    r_d2[k,k] ~ beta(rr_beta_a[k,k], rr_beta_b[k,k]);
-
-    // between-variable correlations
+    // within each round-robin variable (dyadic reciprocity)
+    r_d2[k,k] ~ beta(rr_beta_a[k,k], rr_beta_b[k,k]);  // priors on diagonal
+    // between each round-robin variable (intra/inter-personal)
     if (k < Kd2) { for (kk in (k+1):Kd2) {
       // dyad level
       r_d2[kk, k ] ~ beta(rr_beta_a[kk, k ], rr_beta_b[kk, k ]); // intra = BELOW
