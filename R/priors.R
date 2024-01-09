@@ -1,5 +1,5 @@
 ### Terrence D. Jorgensen
-### Last updated: 10 November 2023
+### Last updated: 9 January 2024
 ### function to set default priors for mvsrm()
 
 
@@ -190,7 +190,7 @@ srm_priors <- function(data, group_data, case_data, # cov_d or rr.vars = NULL,
       })
     }
   }
-  #TODO: also for dyadic and group-level covariates, when implemented
+  #TODO: also for dyadic covariates, when implemented
 
 
   priors <- list()
@@ -234,13 +234,14 @@ srm_priors <- function(data, group_data, case_data, # cov_d or rr.vars = NULL,
   ## begin STANDARD DEVIATIONS
 
   ## SDs for each RR component (out, in, rel)
-  priors$rr_rel_t <- priors$rr_out_t <- priors$rr_in_t <- data.frame(df = rep(4, ncol(rr.data)))
+  priors$rr_rel_t <- priors$rr_out_t <- priors$rr_in_t <- data.frame(df = rep(4, ncol(rr.data)),
+                                                                     row.names = names(rr.data))
 
   priors$rr_rel_t$sd <- priors$rr_rel_t$m <- sqrt(rrSD^2 * decomp_rr["dyad",])
   priors$rr_out_t$sd <- priors$rr_out_t$m <- sqrt(rrSD^2 * decomp_rr["out" ,])
   priors$rr_in_t$sd  <- priors$rr_in_t$m  <- sqrt(rrSD^2 * decomp_rr["in"  ,])
   if (modelG) {
-    priors$rr_group_t <- data.frame(df = rep(4, length(rrSD)))
+    priors$rr_group_t <- data.frame(df = rep(4, length(rrSD)), row.names = names(rr.data))
     priors$rr_group_t$sd <- priors$rr_group_t$m <- sqrt(rrSD^2 * decomp_rr["group",])
   }
 
@@ -250,28 +251,35 @@ srm_priors <- function(data, group_data, case_data, # cov_d or rr.vars = NULL,
     ## heuristic decomposition below assumes negligible case/group-level variance
     priors$d1_dyad_t <- data.frame(df = 4,
                                    m  = sqrt(dSD^2 * .8),
-                                   sd = sqrt(dSD^2 * .8))
+                                   sd = sqrt(dSD^2 * .8),
+                                   row.names = names(cov_d))
     priors$d1_case_t <- data.frame(df = 4,
                                    m  = sqrt(dSD^2 * .1),
-                                   sd = sqrt(dSD^2 * .1))
+                                   sd = sqrt(dSD^2 * .1),
+                                   row.names = names(cov_d))
     if (modelG) priors$d1_group_t <- data.frame(df = 4,
                                                 m  = sqrt(dSD^2 * .1),
-                                                sd = sqrt(dSD^2 * .1))
+                                                sd = sqrt(dSD^2 * .1),
+                                                row.names = names(cov_d))
   }
 
   if (!missing(case_data)) {
     if (modelG) {
       priors$case_cov_t <- data.frame(df = 4,
                                       m  = sqrt(cSD^2 * decomp_c["case"]),
-                                      sd = sqrt(cSD^2 * decomp_c["case"]))
+                                      sd = sqrt(cSD^2 * decomp_c["case"]),
+                                      row.names = names(case_data))
       priors$case_group_t <- data.frame(df = 4,
                                         m  = sqrt(cSD^2 * decomp_c["group"]),
-                                        sd = sqrt(cSD^2 * decomp_c["group"]))
-    } else priors$case_cov_t <- data.frame(df = 4, m  = cSD, sd = cSD) #TODO: update /covariates/case_tdata & _model
+                                        sd = sqrt(cSD^2 * decomp_c["group"]),
+                                        row.names = names(case_data))
+    } else priors$case_cov_t <- data.frame(df = 4, m  = cSD, sd = cSD,
+                                           row.names = names(case_data)) #TODO: update /covariates/case_tdata & _model
   }
 
   if (modelG & !missing(group_data)) {
-    priors$group_cov_t <- data.frame(df = 4, m = gSD, sd = gSD)
+    priors$group_cov_t <- data.frame(df = 4, m = gSD, sd = gSD,
+                                     row.names = names(group_data))
   }
 
   ## end priors for STANDARD DEVIATIONS
