@@ -1,5 +1,5 @@
 ### Terrence D. Jorgensen
-### Last updated: 1 September 2023
+### Last updated: 10 April 2024
 ### pass model, lavMoments, and other arguments to lavaan()
 
 
@@ -462,7 +462,7 @@ lavaan.srm <- function(model, data, component, posterior.est = "mean",
   ## fit target model
   fit <- eval(as.call(lavCall))
   ## overwrite lavaan's default @call
-  fit@call <- MC #FIXME: does this cause problems in lavaan?
+  fit@call <- MC #FIXME: does this cause problems in lavaan? (e.g., update method)
 
   ## save srmMoments, to save time when fitting model to same variables
   fit@external$lavMoments <- srmMoments
@@ -471,7 +471,7 @@ lavaan.srm <- function(model, data, component, posterior.est = "mean",
     ## fit saturated model regardless
     lavCall[[1]] <- quote(lavaan::lavaan)
     lavCall$model <- sat.mod
-    fit@external$h1 <- eval(as.call(lavCall))
+    fit@external$h1.model <- eval(as.call(lavCall))
 
     ## also fit custom case/dyad-level baseline model?
     if (dots$baseline) {
@@ -479,9 +479,9 @@ lavaan.srm <- function(model, data, component, posterior.est = "mean",
       lavCall$model <- bas.mod
       fit@external$baseline.model <- eval(as.call(lavCall))
       ## also store h1 model in baseline@external
-      fit@external$baseline.model@external$h1 <- fit@external$h1
+      fit@external$baseline.model@external$h1.model <- fit@external$h1.model
       ## and vice versa (necessary?  takes up space)
-      fit@external$h1@external$baseline.model <- fit@external$baseline.model
+      fit@external$h1.model@external$baseline.model <- fit@external$baseline.model
     }
 
   }
