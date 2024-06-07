@@ -15,8 +15,9 @@
   object,
   component = c("case", "dyad"),
   srm.param = c("sd", "cor"),
+  cor.full = FALSE,
   posterior.est = "mean",
-  interval = "central",
+  interval = NULL,
   credMass = 0.95,
   as.stanfit = FALSE,
   ...
@@ -28,6 +29,7 @@
   srm.param,
   posterior.est = "mean",
   as.stanfit = FALSE,
+  cor.full = FALSE,
   ...
 )
 
@@ -57,6 +59,16 @@ Can be \verb{\%in\% c("sd", "cor", "cov")}, as well as \code{"mean"}
 when \code{fixed.groups=FALSE}. The \code{summary()} method will always return the
 means as a group-level statistic, even for a single round-robin group.}
 
+\item{cor.full}{\code{logical} indicating whether the full dyad-level correlation
+matrix is returned.  Ignored when \code{srm.param} does not include \code{"cor"}.
+The default (FALSE) returns only nonredundant dyad-level correlations, in
+a matrix with 1 row/column per round-robin variables:
+\itemize{
+\item dyadic reciprocity on the diagonal
+\item intra-case (e.g., within-person) correlations below the diagonal
+\item inter-case (e.g., between-person) correlations above the diagonal
+}}
+
 \item{posterior.est}{For \code{as.matrix()}, a length-1 \code{character} or \code{numeric}
 indicating which posterior summary statistic should be used as the point
 estimate.  Can be \verb{\%in\% c("mean", "median", "mode", "min", "max", "hdi")},
@@ -79,7 +91,7 @@ options \verb{\%in\% c("mean", "EAP", "median", "mode", "MAP")}, or can be set t
 
 \item{interval}{\code{character} indicating the type of uncertainty/credible
 interval estimate.  Can be \verb{\%in\% c("central", "hdi")} or set to
-\code{NULL} to avoid returning interval estimates.}
+\code{NULL} (the default) to avoid returning interval estimates.}
 
 \item{credMass}{\code{numeric} passed to \code{\link[HDInterval:hdi]{HDInterval::hdi()}}, or used to request
 \verb{probs=} from \code{\link[stats:quantile]{stats::quantile()}} when \code{interval="central"}.}

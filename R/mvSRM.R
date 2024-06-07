@@ -1,5 +1,5 @@
 ### Terrence D. Jorgensen
-### Last updated: 10 November 2023
+### Last updated: 7 June 2024
 ### function to implement Stage-1 of 2-stage SR-SEM estimator
 
 
@@ -106,14 +106,13 @@
 ##'                 cores = ifelse(parallel::detectCores() < 3L, 1L, 2L))
 ##'
 ##'
-##' ## posterior means (default) and central (default) credible intervals
-##' ## of round-robin variable SDs and correlations (default)
+##' ## default: posterior means of round-robin variable SDs and correlations
 ##' summary(srmOut)
 ##'
 ##' ## round-robin variable means are always a group-level statistic
 ##' summary(srmOut, srm.param = "mean")
 ##'
-##' ## other point estimates from posterior
+##' ## other point (and interval) estimates from posterior
 ##' summary(srmOut, srm.param = "mean", posterior.est = "median",
 ##'         ## choose 99% highest-density uncertainty intervals, overwrite
 ##'         interval = "hdi", credMass = .99)
@@ -123,7 +122,7 @@
 ##'         posterior.est = "mode", method = "shorth")
 ##'
 ##' ## SDs & correlations of group effects
-##' summary(srmOut, component = "group", interval = NULL) # no intervals
+##' summary(srmOut, component = "group")
 ##'
 ##'
 ##' ## group-mean centered results (no group-level effects)

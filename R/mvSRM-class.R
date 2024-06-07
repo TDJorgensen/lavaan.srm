@@ -74,6 +74,14 @@
 ##'   Can be `%in% c("sd", "cor", "cov")`, as well as `"mean"`
 ##'   when `fixed.groups=FALSE`. The `summary()` method will always return the
 ##'   means as a group-level statistic, even for a single round-robin group.
+##' @param cor.full `logical` indicating whether the full dyad-level correlation
+##'   matrix is returned.  Ignored when `srm.param` does not include `"cor"`.
+##'   The default (FALSE) returns only nonredundant dyad-level correlations, in
+##'   a matrix with 1 row/column per round-robin variables:
+##'
+##'   - dyadic reciprocity on the diagonal
+##'   - intra-case (e.g., within-person) correlations below the diagonal
+##'   - inter-case (e.g., between-person) correlations above the diagonal
 ##' @param posterior.est For `as.matrix()`, a length-1 `character` or `numeric`
 ##'   indicating which posterior summary statistic should be used as the point
 ##'   estimate.  Can be `%in% c("mean", "median", "mode", "min", "max", "hdi")`,
@@ -95,7 +103,7 @@
 ##'
 ##' @param interval `character` indicating the type of uncertainty/credible
 ##'   interval estimate.  Can be `%in% c("central", "hdi")` or set to
-##'   `NULL` to avoid returning interval estimates.
+##'   `NULL` (the default) to avoid returning interval estimates.
 ##' @param credMass `numeric` passed to [HDInterval::hdi()], or used to request
 ##'   `probs=` from [stats::quantile()] when `interval="central"`.
 ##' @param as.stanfit `logical` indicating whether to use a method (e.g.,
@@ -180,9 +188,9 @@ setMethod("show", "mvSRM", function(object) {
 #TODO: for cov/cor matrices, return single matrix for interval estimates
 #      (lower / upper limits can go below / above the diagonal)
 summary.mvSRM <- function(object, component = c("case","dyad"),
-                          srm.param = c("sd","cor"),
+                          srm.param = c("sd","cor"), cor.full = FALSE,
                           posterior.est = "mean",
-                          interval = "central", credMass = .95,
+                          interval = NULL, credMass = .95,
                           #TODO? to.data.frame = FALSE,
                           #TODO: rsquare = TRUE,
                           #TODO: from.stanfit = c("n_eff","Rhat"),
@@ -196,6 +204,10 @@ summary.mvSRM <- function(object, component = c("case","dyad"),
 
   srm.param <- intersect(tolower(srm.param), c("mean", "sd", "cor", "cov"))
   if (!length(srm.param)) stop('No valid choice of srm.param= was found')
+  if ("cor" %in% srm.param) {
+    stopifnot(is.logical(cor.full))
+    cor.full <- isTRUE(cor.full[1])
+  }
 
   ## can be NULL
   posterior.est <- intersect(posterior.est,
@@ -278,6 +290,7 @@ summary.mvSRM <- function(object, component = c("case","dyad"),
         if (length(posterior.est))  for (p in posterior.est) {
           output[[COMP]]$cor[[p]] <- as.matrix.mvSRM(x = object,
                                                      srm.param = "cor",
+                                                     cor.full = cor.full,
                                                      component = COMP,
                                                      posterior.est = p)
         }
@@ -287,17 +300,20 @@ summary.mvSRM <- function(object, component = c("case","dyad"),
             probs <- abs(0:1 - (1 - credMass)/2)
             output[[COMP]]$cor$central$lower <- as.matrix.mvSRM(x = object,
                                                                 srm.param = "cor",
+                                                                cor.full = cor.full,
                                                                 component = COMP,
                                                                 posterior.est = probs[1],
                                                                 ...)
             output[[COMP]]$cor$central$upper <- as.matrix.mvSRM(x = object,
                                                                 srm.param = "cor",
+                                                                cor.full = cor.full,
                                                                 component = COMP,
                                                                 posterior.est = probs[2],
                                                                 ...)
           }
           if ("hdi" %in% interval) {
             output$group$cor$hdi <- as.matrix.mvSRM(object, srm.param = "cor",
+                                                    cor.full = cor.full,
                                                     component = COMP,
                                                     posterior.est = "hdi",
                                                     credMass = credMass, ...)
@@ -365,7 +381,7 @@ setMethod("summary", "mvSRM", summary.mvSRM)
 ##' @importFrom stats quantile
 ##' @importFrom utils combn
 as.matrix.mvSRM <- function(x, component, srm.param, posterior.est = "mean",
-                            as.stanfit = FALSE, ...) {
+                            as.stanfit = FALSE, cor.full = FALSE, ...) {
   if (as.stanfit) {
     return(as.matrix(as(object = x, Class = "stanfit", strict = TRUE), ...))
   }
@@ -463,7 +479,7 @@ as.matrix.mvSRM <- function(x, component, srm.param, posterior.est = "mean",
       PARS <- "s_rr"
       NAMES <- c(names(x@varNames$RR), x@varNames$dyad)
     } else if (srm.param == "cor") {
-      PARS <- "r_d2"
+      PARS <- ifelse(cor.full, "Rd2", "r_d2")
       NAMES <- c(names(x@varNames$RR), x@varNames$dyad)
     } else if (srm.param == "cov") {
       PARS <- "dSigma"
