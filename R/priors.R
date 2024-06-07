@@ -1,9 +1,11 @@
 ### Terrence D. Jorgensen
-### Last updated: 9 January 2024
+### Last updated: 7 June 2024
 ### function to set default priors for mvsrm()
 
 
+## ------------------------------------
 ##' Default priors for multivariate SRM
+## ------------------------------------
 ##'
 ##' Priors used during MCMC estimation of a multivariate social relations model
 ##' (mvSRM; Nestler, [2018](https://doi.org/10.3102/1076998617741106)) using the
@@ -421,6 +423,86 @@ srm_priors <- function(data, group_data, case_data, # cov_d or rr.vars = NULL,
 
   priors
 }
+
+
+## ------------------------------------
+## Utility function to visualize priors
+## ------------------------------------
+
+## visualize beta
+visBeta <- function(a, b, var1, var2, central = c(dashed = .95), ...) {
+  ## variable names available?
+  if (!missing(var1) && !missing(var2)) {
+    corName <- paste0("Cor(", var1, ", ", var2, ")")
+  } else corName <- "Correlation"
+
+  ## calculate descriptive summary stats for title
+  betaM  <- a/(a+b)
+  betaSD <- sqrt((a*b)/((a+b)^2*(a+b+1)))
+  corM  <- round(betaM*2 - 1, 2)
+  corSD <- round(betaSD*2, 2)
+
+  TITLE <- paste0("M = ", corM, ", SD = ", corSD)
+  ## add central density?
+  if (!is.null(central) && is.numeric(central)) {
+    alpha <- 1 - central[[1]] # double brackets, to drop the names()
+    if (alpha <= 1 && alpha >= 0) {
+      LIMITS <- qbeta(c(lower = alpha/2, upper = 1 - alpha/2),
+                      shape1 = a, shape2 = b)*2 - 1
+      TITLE <- paste0(TITLE, "\nCentral ", round(100*(1-alpha), 2),
+                      "% density limits: [",
+                      paste(round(LIMITS, 2), collapse = ", "), "]")
+    } else LIMITS <- NULL
+  } else LIMITS <- NULL
+
+  ## configure arguments
+  dots <- list(...)
+  if (is.null(dots$lwd )) dots$lwd  <- 2
+  if (is.null(dots$xlab)) dots$xlab <- corName
+  if (is.null(dots$ylab)) dots$ylab <- "Prior Density"
+  if (is.null(dots$main)) dots$main <- TITLE
+  dots$from <- -1
+  dots$to   <-  1
+  dots$expr <- expression(dbeta((x+1)/2, shape1 = a, shape2 = b))
+
+  ## now plot
+  out <- do.call(curve, dots)
+
+  ## add to output
+  out$mean.correlation <- corM
+  out$sd.correlation   <- corSD
+
+  if (!is.null(LIMITS)) {
+    out$central.limits <- LIMITS
+
+    abArgs <- dots
+    abArgs[names(formals(curve))] <- NULL
+    abArgs$v <- LIMITS
+    ## make central limit lines distinct
+    if (!is.null(names(central))) {
+      ## user-provided name gets priority ("dashed" by default)
+      abArgs$lty <- names(central[1])
+
+    } else if (isTRUE(abArgs$lty == "dashed")) {
+      ## if the density curve() is already "dashed", make the limits "dotted"
+      abArgs$lty <- "dotted"
+
+    } else abArgs$lty <- "dashed"
+
+    do.call(abline, abArgs)
+  }
+
+  invisible(out)
+}
+
+# ## default/diffuse prior
+# visBeta(1.5, 1.5)
+# foo <- visBeta(5, 5, central = .95)
+# ## superimpose normal:
+# curve(dnorm(x, sd = foo$sd.correlation), add = TRUE, from = -1,
+#       lwd = 2, lty = "dotdash", col = "green")
+# abline(v = qnorm(c(.025, .975), sd = foo$sd.correlation),
+#        lwd = 2, lty = "dotted", col = "green")
 
 
 
