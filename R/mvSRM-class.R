@@ -1,5 +1,5 @@
 ### Terrence D. Jorgensen
-### Last updated: 4 September 2023
+### Last updated: 7 June 2024
 ### Class and Methods for mvSRM object
 
 
@@ -512,6 +512,11 @@ as.matrix.mvSRM <- function(x, component, srm.param, posterior.est = "mean",
     UPPER <- eval(as.name(PARS))
     class(UPPER) <- c(ifelse(PARS == "r_d2", "lavaan.matrix",
                              "lavaan.matrix.symmetric"), "matrix")
+    ## transform raw beta parameters to correlation metric?
+    if (PARS == "r_d2") {
+      LOWER <- LOWER*2 - 1
+      UPPER <- UPPER*2 - 1
+    }
     ## nothing else to do for correlation/covariance limits
     out <- list(lower = LOWER, upper = UPPER)
 
@@ -525,6 +530,8 @@ as.matrix.mvSRM <- function(x, component, srm.param, posterior.est = "mean",
     out <- eval(as.name(PARS))
     class(out) <- c(ifelse(PARS == "r_d2", "lavaan.matrix",
                            "lavaan.matrix.symmetric"), "matrix")
+    ## transform raw beta parameters to correlation metric?
+    if (PARS == "r_d2") out <- out*2 - 1
   }
 
   out
