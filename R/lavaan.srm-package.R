@@ -1,3 +1,8 @@
+### Terrence D. Jorgensen
+### Last updated: 7 June 2024
+### documentation page for the lavaan.srm package
+
+
 ##' The 'lavaan.srm' package.
 ##'
 ##' @description
@@ -8,8 +13,10 @@
 ##' SRM results, thus enabling a two-stage estimator of the SR-SEM (Nestler
 ##' et al., 2020, 2022) via the \pkg{lavaan} package (Rosseel, 2012).
 ##'
-##' @docType package
+#TODO: delete this deprecated feature: @docType package
+
 ##' @name lavaan.srm-package
+##' @aliases lavaan.srm-package
 ##' @useDynLib lavaan.srm, .registration = TRUE
 ##' @import methods
 ##' @import Rcpp
