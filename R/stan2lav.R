@@ -1,5 +1,5 @@
 ### Terrence D. Jorgensen
-### Last updated: 1 September 2023
+### Last updated: 18 June 2018
 ### (currently hidden) function to create a lavMoments-class object
 ### from a mvSRM-class object (inherits from stanfit-class)
 
@@ -36,6 +36,7 @@
 
 #TODO (if this becomes public): create a syntax example, verify blocks work
 
+##' @importFrom methods setNames
 srm2lavData <- function(object, component, posterior.est = "mean", keep, drop,
                         meanstructure = FALSE, lavData = NULL, ...) {
   stopifnot(inherits(object, "mvSRM"))

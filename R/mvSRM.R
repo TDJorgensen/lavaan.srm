@@ -1,5 +1,5 @@
 ### Terrence D. Jorgensen
-### Last updated: 7 June 2024
+### Last updated: 18 June 2024
 ### function to implement Stage-1 of 2-stage SR-SEM estimator
 
 
@@ -195,7 +195,7 @@ mvsrm <- function(data, rr.vars = NULL, IDout, IDin, IDgroup = NULL,
 
   #FIXME: Remove this after missing data are allowed?
   #       Or add missing = c("augment","listwise") option?
-  Yd2 <- Yd2[complete.cases(Yd2),]
+  Yd2 <- Yd2[stats::complete.cases(Yd2),]
 
 
   ## check for enough groups
@@ -430,8 +430,8 @@ mvsrm <- function(data, rr.vars = NULL, IDout, IDin, IDgroup = NULL,
 
       } else {
         ## group mean center
-        case_gM <- aggregate(x = case_data[, -1:-2, drop = FALSE],
-                             by = case_data[IDgroup], FUN = mean)
+        case_gM <- stats::aggregate(x = case_data[, -1:-2, drop = FALSE],
+                                    by = case_data[IDgroup], FUN = mean)
         for (g in case_gM[,IDgroup]) {
           case.idx  <- case_data[,IDgroup] == g
           group.idx <- case_gM[ , IDgroup] == g

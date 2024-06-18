@@ -1,5 +1,5 @@
 ### Terrence D. Jorgensen
-### Last updated: 7 June 2024
+### Last updated: 18 June 2024
 ### Class and Methods for mvSRM object
 
 
@@ -560,6 +560,7 @@ setMethod("as.matrix", "mvSRM", as.matrix.mvSRM)
 
 
 ##' @importFrom stats cov
+##' @importFrom methods setNames
 vcov.mvSRM <- function(object, component, meanstructure = FALSE,
                        keep, drop, add.names.attr = FALSE, ...) {
   categorical <- FALSE #TODO: add threshold models to stan scripts

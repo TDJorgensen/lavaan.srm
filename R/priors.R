@@ -1,5 +1,5 @@
 ### Terrence D. Jorgensen
-### Last updated: 7 June 2024
+### Last updated: 18 June 2024
 ### function to set default priors for mvsrm()
 
 
@@ -416,7 +416,7 @@ srm_priors <- function(data, group_data, case_data, # cov_d or rr.vars = NULL,
 
   ## priors for MEANS
   if (modelM) {
-    priors$rr_Mvec_m  <- sapply(rr.data, median, na.rm = TRUE)
+    priors$rr_Mvec_m  <- sapply(rr.data, stats::median, na.rm = TRUE)
     priors$rr_Mvec_sd <- rrSD
     #TODO: separate Mvec (RR) from group-means of each level's covariate(s)?
   }
@@ -439,16 +439,16 @@ visBeta <- function(a, b, var1, var2, central = c(dashed = .95), ...) {
   ## calculate descriptive summary stats for title
   betaM  <- a/(a+b)
   betaSD <- sqrt((a*b)/((a+b)^2*(a+b+1)))
-  corM  <- round(betaM*2 - 1, 2)
-  corSD <- round(betaSD*2, 2)
+  corM  <- betaM*2 - 1
+  corSD <- betaSD*2
 
-  TITLE <- paste0("M = ", corM, ", SD = ", corSD)
+  TITLE <- paste0("M = ", round(corM, 2), ", SD = ", round(corSD, 2))
   ## add central density?
   if (!is.null(central) && is.numeric(central)) {
     alpha <- 1 - central[[1]] # double brackets, to drop the names()
     if (alpha <= 1 && alpha >= 0) {
-      LIMITS <- qbeta(c(lower = alpha/2, upper = 1 - alpha/2),
-                      shape1 = a, shape2 = b)*2 - 1
+      LIMITS <- stats::qbeta(c(lower = alpha/2, upper = 1 - alpha/2),
+                             shape1 = a, shape2 = b)*2 - 1
       TITLE <- paste0(TITLE, "\nCentral ", round(100*(1-alpha), 2),
                       "% density limits: [",
                       paste(round(LIMITS, 2), collapse = ", "), "]")
@@ -466,7 +466,7 @@ visBeta <- function(a, b, var1, var2, central = c(dashed = .95), ...) {
   dots$expr <- expression(dbeta((x+1)/2, shape1 = a, shape2 = b))
 
   ## now plot
-  out <- do.call(curve, dots)
+  out <- do.call(graphics::curve, dots)
 
   ## add to output
   out$mean.correlation <- corM
@@ -476,7 +476,7 @@ visBeta <- function(a, b, var1, var2, central = c(dashed = .95), ...) {
     out$central.limits <- LIMITS
 
     abArgs <- dots
-    abArgs[names(formals(curve))] <- NULL
+    abArgs[names(formals(graphics::curve))] <- NULL
     abArgs$v <- LIMITS
     ## make central limit lines distinct
     if (!is.null(names(central))) {
@@ -489,7 +489,7 @@ visBeta <- function(a, b, var1, var2, central = c(dashed = .95), ...) {
 
     } else abArgs$lty <- "dashed"
 
-    do.call(abline, abArgs)
+    do.call(graphics::abline, abArgs)
   }
 
   invisible(out)
