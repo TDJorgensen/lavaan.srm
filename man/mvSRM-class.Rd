@@ -33,15 +33,7 @@
   ...
 )
 
-\S4method{vcov}{mvSRM}(
-  object,
-  component,
-  meanstructure = FALSE,
-  keep,
-  drop,
-  add.names.attr = FALSE,
-  ...
-)
+\S4method{vcov}{mvSRM}(object, component, meanstructure = FALSE, keep, drop, ...)
 }
 \arguments{
 \item{object, x}{An object of class \code{mvSRM}}

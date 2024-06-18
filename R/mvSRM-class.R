@@ -12,7 +12,11 @@
 ##'
 ##' @name mvSRM-class
 ##' @importClassesFrom rstan stanfit
-##' @aliases mvSRM-class show,mvSRM-method
+##' @aliases mvSRM-class
+##'          show,mvSRM-method
+##'          summary,mvSRM-method
+##'          as.matrix,mvSRM-method
+##'          vcov,mvSRM-method
 #   bayes_R2,mvSRM-method
 #   posterior_interval,mvSRM-method
 ##' @docType class
@@ -560,9 +564,9 @@ setMethod("as.matrix", "mvSRM", as.matrix.mvSRM)
 
 
 ##' @importFrom stats cov
-##' @importFrom methods setNames
+##' @importFrom stats setNames
 vcov.mvSRM <- function(object, component, meanstructure = FALSE,
-                       keep, drop, add.names.attr = FALSE, ...) {
+                       keep, drop, ...) {
   categorical <- FALSE #TODO: add threshold models to stan scripts
   #TODO: robust options?  (e.g., Spearman rank cor, scaled by median abs dev)
   component <- tolower(component[1])
@@ -701,7 +705,9 @@ vcov.mvSRM <- function(object, component, meanstructure = FALSE,
   postSamp <- do.call(rbind, postList)
   NACOV <- object@nobs[[component]] * cov(postSamp)
   class(NACOV) <- c("lavaan.matrix.symmetric", "matrix", "array")
-  if (add.names.attr) attr(NACOV, "subset") <- SUBSET # used in srm2lavData()
+
+  ## add an attribute used by srm2lavData()?
+  if (isTRUE(list(...)$add.names.attr)) attr(NACOV, "subset") <- SUBSET
   NACOV
 }
 ##' @name mvSRM-class

@@ -36,7 +36,7 @@
 
 #TODO (if this becomes public): create a syntax example, verify blocks work
 
-##' @importFrom methods setNames
+##' @importFrom stats setNames
 srm2lavData <- function(object, component, posterior.est = "mean", keep, drop,
                         meanstructure = FALSE, lavData = NULL, ...) {
   stopifnot(inherits(object, "mvSRM"))

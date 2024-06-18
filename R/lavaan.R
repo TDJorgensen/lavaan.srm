@@ -180,7 +180,7 @@
 ##'
 ##'
 ##' @importFrom lavaan lavaan lavParseModelString lavInspect lavOptions
-##' @importFrom methods setNames
+##' @importFrom stats setNames
 ##' @export
 lavaan.srm <- function(model, data, component, posterior.est = "mean",
                        ..., sumArgs = list(method = "shorth")) {
