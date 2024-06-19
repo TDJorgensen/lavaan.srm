@@ -1,5 +1,5 @@
 ### Terrence D. Jorgensen
-### Last updated: 18 June 2024
+### Last updated: 19 June 2024
 ### pass model, lavMoments, and other arguments to lavaan()
 
 
@@ -199,7 +199,9 @@ lavaan.srm <- function(model, data, component, posterior.est = "mean",
   ## don't overwrite user's setting, but ...
   if (is.null(dots$h1))       dots$h1       <- lavOptions("h1")$h1
   if (is.null(dots$baseline)) dots$baseline <- lavOptions("baseline")$baseline
-  fitMore <- any(c("case","dyad") %in% component) && (dots$h1 || dots$baseline)
+  fitMoreBM <- any(c("case","dyad") %in% component) && dots$baseline
+  fitMoreH1 <-              "dyad"  %in% component  && dots$h1
+  fitMore   <- fitMoreBM || fitMoreH1
 
   ## make template parTable to extract variable names
   if (is.character(model)) {
@@ -333,19 +335,29 @@ lavaan.srm <- function(model, data, component, posterior.est = "mean",
       ## fit SATURATED and BASELINE models
       if (length(blocks) > 1L) {
         ## add block structure
+        #TODO: update lavaan's parser, change "group" to "component"
         sat.mod[[length(sat.mod) + 1L]] <- paste("group:", b)
         bas.mod[[length(bas.mod) + 1L]] <- paste("group:", b)
       }
       ## group-level model has no special constraints
       if (fitMore && component[b] == "group") {
         sat.group <- outer(ov.names[[b]], ov.names[[b]], paste, sep = "~~")
-        sat.mod <- c(sat.mod, sat.group[lower.tri(sat.group, diag = TRUE)])
-        bas.mod <- c(bas.mod, diag(sat.group))
-        ## add means?
-        #TODO: Safer way to check?
-        if (any(srmMoments$sample.mean$group != 0)) {
-          sat.mod <- c(sat.mod, paste(ov.names[[b]], "~ 1"))
-          bas.mod <- c(bas.mod, paste(ov.names[[b]], "~ 1"))
+
+        if (fitMoreH1) {
+          sat.mod <- c(sat.mod, sat.group[lower.tri(sat.group, diag = TRUE)])
+          ## add means?
+          #TODO: Safer way to check?
+          if (any(srmMoments$sample.mean$group != 0)) {
+            sat.mod <- c(sat.mod, paste(ov.names[[b]], "~ 1"))
+          }
+        }
+        if (fitMoreBM) {
+          bas.mod <- c(bas.mod, diag(sat.group))
+          ## add means?
+          #TODO: Safer way to check?
+          if (any(srmMoments$sample.mean$group != 0)) {
+            bas.mod <- c(bas.mod, paste(ov.names[[b]], "~ 1"))
+          }
         }
 
 
@@ -353,18 +365,22 @@ lavaan.srm <- function(model, data, component, posterior.est = "mean",
       } else if (fitMore && component[b] == "case") {
         ## start with all variables
         sat.case <- outer(ov.names[[b]], ov.names[[b]], paste, sep = "~~")
-        sat.mod <- c(sat.mod, sat.case[lower.tri(sat.case, diag = TRUE)])
 
-        ## only use diagonal for baseline model ...
-        bas.mod <- c(bas.mod, diag(sat.case))
-        ## ... but add generalized reciprocity per RR variable
-        RRnm <- names(data@varNames$RR)  # loop over all RR variables
-        for (v in seq_along(RRnm)) {
-          ## if both are modeled, correlate them
-          v_ij <- paste(RRnm[v], c("out","in"), sep = "_")
-          if (all(v_ij %in% ov.names[[b]])) {
-            tmp <- paste(v_ij[[1]], "~~", v_ij[[2]])
-            bas.mod <- c(bas.mod, tmp)
+        if (fitMoreH1) {
+          sat.mod <- c(sat.mod, sat.case[lower.tri(sat.case, diag = TRUE)])
+        }
+        if (fitMoreBM) {
+          ## only use diagonal for baseline model ...
+          bas.mod <- c(bas.mod, diag(sat.case))
+          ## ... but add generalized reciprocity per RR variable
+          RRnm <- names(data@varNames$RR)  # loop over all RR variables
+          for (v in seq_along(RRnm)) {
+            ## if both are modeled, correlate them
+            v_ij <- paste(RRnm[v], c("out","in"), sep = "_")
+            if (all(v_ij %in% ov.names[[b]])) {
+              tmp <- paste(v_ij[[1]], "~~", v_ij[[2]])
+              bas.mod <- c(bas.mod, tmp)
+            }
           }
         }
 
@@ -388,23 +404,23 @@ lavaan.srm <- function(model, data, component, posterior.est = "mean",
               ## equate variances
               if (nm1_ij %in% ov.names[[b]]) {
                 tmp <- paste0(nm1_ij, " ~~ var", v1, "*", nm1_ij)
-                bas.mod <- c(bas.mod, tmp)
-                sat.mod <- c(sat.mod, tmp)
+                if (fitMoreBM) bas.mod <- c(bas.mod, tmp)
+                if (fitMoreH1) sat.mod <- c(sat.mod, tmp)
               }
               if (nm1_ji %in% ov.names[[b]]) {
                 tmp <- paste0(nm1_ji, " ~~ var", v1, "*", nm1_ji)
-                bas.mod <- c(bas.mod, tmp)
-                sat.mod <- c(sat.mod, tmp)
+                if (fitMoreBM) bas.mod <- c(bas.mod, tmp)
+                if (fitMoreH1) sat.mod <- c(sat.mod, tmp)
               }
 
               ## dyadic reciprocity
               if (nm1_ij %in% ov.names[[b]] && nm1_ji %in% ov.names[[b]]) {
                 tmp <- paste0(nm1_ij, " ~~ ", nm1_ji)
-                bas.mod <- c(bas.mod, tmp)
-                sat.mod <- c(sat.mod, tmp)
+                if (fitMoreBM) bas.mod <- c(bas.mod, tmp)
+                if (fitMoreH1) sat.mod <- c(sat.mod, tmp)
               }
 
-            } else {
+            } else if (fitMoreH1) {
               #FIXME?  if (!dots$h1) next
 
               ## inter-cor
@@ -446,11 +462,9 @@ lavaan.srm <- function(model, data, component, posterior.est = "mean",
   lavCall <- c(lavCall, dots)
   if (!is.null(srmMoments$sample.mean)) lavCall$meanstructure <- TRUE
   ## need to specify custom h1 / baseline model(s) below?
-  if (fitMore) {
-    ## so they don't get fit to begin with
-    lavCall$h1       <- FALSE
-    lavCall$baseline <- FALSE
-  }
+  if (fitMoreBM) lavCall$baseline <- FALSE # so they don't get
+  if (fitMoreH1) lavCall$h1       <- FALSE # fit to begin with
+
   ## use wrapper function?
   if (is.null(MC$model.type)) {
     ## do nothing: lavCall[[1]] <- lavaan::lavaan # remains the same
@@ -463,28 +477,31 @@ lavaan.srm <- function(model, data, component, posterior.est = "mean",
   ## fit target model
   fit <- eval(as.call(lavCall))
   ## overwrite lavaan's default @call
+  ## (which refers to objects not available in user's workspace)
   fit@call <- MC #FIXME: does this cause problems in lavaan? (e.g., update method)
 
   ## save srmMoments, to save time when fitting model to same variables
   fit@external$lavMoments <- srmMoments
 
   if (fitMore && lavInspect(fit, "converged")) {
-    ## fit saturated model regardless
     lavCall[[1]] <- quote(lavaan::lavaan)
-    lavCall$model <- sat.mod
-    fit@external$h1.model <- eval(as.call(lavCall))
 
-    ## also fit custom case/dyad-level baseline model?
-    if (dots$baseline) {
-      ## fit baseline model
+    ## fit custom saturated model?
+    if (fitMoreH1) {
+      lavCall$model <- sat.mod
+      fit@external$h1.model <- eval(as.call(lavCall))
+    }
+    ## fit custom baseline model?
+    if (fitMoreBM) {
       lavCall$model <- bas.mod
       fit@external$baseline.model <- eval(as.call(lavCall))
-      ## also store h1 model in baseline@external
-      fit@external$baseline.model@external$h1.model <- fit@external$h1.model
-      ## and vice versa (necessary?  takes up space)
-      fit@external$h1.model@external$baseline.model <- fit@external$baseline.model
+      ## also store h1 model in baseline@external?
+      if (fitMoreH1) {
+        fit@external$baseline.model@external$h1.model <- fit@external$h1.model
+        ## and vice versa (necessary?  takes up space)
+        # fit@external$h1.model@external$baseline.model <- fit@external$baseline.model
+      }
     }
-
   }
 
   fit
