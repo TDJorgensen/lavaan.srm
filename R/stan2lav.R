@@ -31,7 +31,7 @@
 ##   specific components, which include `c("out","in")` suffixes for case-level
 ##   components or `c("ij","ji")` suffixes for dyad/relationship-level
 ##   components.
-## @param ... arguments passed to `summary.mvSRM()`, e.g., to avoid warnings
+## @param ... arguments passed to `summary_mvSRM()`, e.g., to avoid warnings
 ##   about default `method=` when `posterior.est = "mode"`
 
 #TODO (if this becomes public): create a syntax example, verify blocks work
@@ -45,18 +45,18 @@ srm2lavData <- function(object, component, posterior.est = "mean", keep, drop,
 
 
 
-  COV <- summary.mvSRM(object, component = component, srm.param = "cov",
+  COV <- summary_mvSRM(object, component = component, srm.param = "cov",
                        posterior.est = posterior.est, ...,
                        interval = NULL)[[component]]$cov[[posterior.est]]
   COV <- setNames(list(COV), nm = component)
 
   if (meanstructure && component == "group") {
-    M <- summary.mvSRM(object, srm.param = "mean", posterior.est = posterior.est,
+    M <- summary_mvSRM(object, srm.param = "mean", posterior.est = posterior.est,
                        interval = NULL, ...)$group$mean[[posterior.est]]
     M <- setNames(list(M), nm = component)
   } else M <- NULL
 
-  NACOV <- vcov.mvSRM(object, component = component, keep = keep, drop = drop,
+  NACOV <- vcov_mvSRM(object, component = component, keep = keep, drop = drop,
                       meanstructure = meanstructure, add.names.attr = TRUE)
   if (categorical) {
     #TODO: thresholds

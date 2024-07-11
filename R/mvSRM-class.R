@@ -194,7 +194,7 @@ setMethod("show", "mvSRM", function(object) {
 #TODO: add EAP and MAP as options
 #TODO: for cov/cor matrices, return single matrix for interval estimates
 #      (lower / upper limits can go below / above the diagonal)
-summary.mvSRM <- function(object, component = c("case","dyad"),
+summary_mvSRM <- function(object, component = c("case","dyad"),
                           srm.param = c("sd","cor"), cor.full = FALSE,
                           posterior.est = "mean",
                           interval = NULL, credMass = .95,
@@ -226,21 +226,21 @@ summary.mvSRM <- function(object, component = c("case","dyad"),
   ## add mean structure to output?  Always in "group" component
   if ("mean" %in% srm.param) {
     if (length(posterior.est))  for (p in posterior.est) {
-      output$group$mean[[p]] <- as.matrix.mvSRM(x = object, srm.param = "mean",
+      output$group$mean[[p]] <- as_matrix_mvSRM(x = object, srm.param = "mean",
                                                 posterior.est = p, ...)
     }
     if (length(interval)) {
       if ("central" %in% interval) {
         probs <- abs(0:1 - (1 - credMass)/2)
-        lower <- as.matrix.mvSRM(object, srm.param = "mean",
+        lower <- as_matrix_mvSRM(object, srm.param = "mean",
                                  posterior.est = probs[1], ...)
-        upper <- as.matrix.mvSRM(object, srm.param = "mean",
+        upper <- as_matrix_mvSRM(object, srm.param = "mean",
                                  posterior.est = probs[2], ...)
         output$group$mean$central <- rbind(lower = lower, upper = upper)
       }
       if ("hdi" %in% interval) {
         probs <- abs(0:1 - (1 - credMass)/2)
-        output$group$mean$hdi <- as.matrix.mvSRM(object, srm.param = "mean",
+        output$group$mean$hdi <- as_matrix_mvSRM(object, srm.param = "mean",
                                                  posterior.est = "hdi",
                                                  credMass = credMass, ...)
       }
@@ -266,7 +266,7 @@ summary.mvSRM <- function(object, component = c("case","dyad"),
       if ("sd" %in% srm.param) {
 
         if (length(posterior.est))  for (p in posterior.est) {
-          output[[COMP]]$sd[[p]] <- as.matrix.mvSRM(x = object,
+          output[[COMP]]$sd[[p]] <- as_matrix_mvSRM(x = object,
                                                     srm.param = "sd",
                                                     component = COMP,
                                                     posterior.est = p, ...)
@@ -275,14 +275,14 @@ summary.mvSRM <- function(object, component = c("case","dyad"),
         if (length(interval)) {
           if ("central" %in% interval) {
             probs <- abs(0:1 - (1 - credMass)/2)
-            lower <- as.matrix.mvSRM(object, srm.param = "sd", component = COMP,
+            lower <- as_matrix_mvSRM(object, srm.param = "sd", component = COMP,
                                      posterior.est = probs[1], ...)
-            upper <- as.matrix.mvSRM(object, srm.param = "sd", component = COMP,
+            upper <- as_matrix_mvSRM(object, srm.param = "sd", component = COMP,
                                      posterior.est = probs[2], ...)
             output[[COMP]]$sd$central <- rbind(lower = lower, upper = upper)
           }
           if ("hdi" %in% interval) {
-            output$group$sd$hdi <- as.matrix.mvSRM(object, srm.param = "sd",
+            output$group$sd$hdi <- as_matrix_mvSRM(object, srm.param = "sd",
                                                    component = COMP,
                                                    posterior.est = "hdi",
                                                    credMass = credMass, ...)
@@ -295,7 +295,7 @@ summary.mvSRM <- function(object, component = c("case","dyad"),
       if ("cor" %in% srm.param) {
 
         if (length(posterior.est))  for (p in posterior.est) {
-          output[[COMP]]$cor[[p]] <- as.matrix.mvSRM(x = object,
+          output[[COMP]]$cor[[p]] <- as_matrix_mvSRM(x = object,
                                                      srm.param = "cor",
                                                      cor.full = cor.full,
                                                      component = COMP,
@@ -305,13 +305,13 @@ summary.mvSRM <- function(object, component = c("case","dyad"),
         if (length(interval)) {
           if ("central" %in% interval) {
             probs <- abs(0:1 - (1 - credMass)/2)
-            output[[COMP]]$cor$central$lower <- as.matrix.mvSRM(x = object,
+            output[[COMP]]$cor$central$lower <- as_matrix_mvSRM(x = object,
                                                                 srm.param = "cor",
                                                                 cor.full = cor.full,
                                                                 component = COMP,
                                                                 posterior.est = probs[1],
                                                                 ...)
-            output[[COMP]]$cor$central$upper <- as.matrix.mvSRM(x = object,
+            output[[COMP]]$cor$central$upper <- as_matrix_mvSRM(x = object,
                                                                 srm.param = "cor",
                                                                 cor.full = cor.full,
                                                                 component = COMP,
@@ -319,7 +319,7 @@ summary.mvSRM <- function(object, component = c("case","dyad"),
                                                                 ...)
           }
           if ("hdi" %in% interval) {
-            output$group$cor$hdi <- as.matrix.mvSRM(object, srm.param = "cor",
+            output$group$cor$hdi <- as_matrix_mvSRM(object, srm.param = "cor",
                                                     cor.full = cor.full,
                                                     component = COMP,
                                                     posterior.est = "hdi",
@@ -336,7 +336,7 @@ summary.mvSRM <- function(object, component = c("case","dyad"),
       if ("cov" %in% srm.param) {
 
         if (length(posterior.est))  for (p in posterior.est) {
-          output[[COMP]]$cov[[p]] <- as.matrix.mvSRM(x = object,
+          output[[COMP]]$cov[[p]] <- as_matrix_mvSRM(x = object,
                                                      srm.param = "cov",
                                                      component = COMP,
                                                      posterior.est = p, ...)
@@ -345,19 +345,19 @@ summary.mvSRM <- function(object, component = c("case","dyad"),
         if (length(interval)) {
           if ("central" %in% interval) {
             probs <- abs(0:1 - (1 - credMass)/2)
-            output[[COMP]]$cov$central$lower <- as.matrix.mvSRM(x = object,
+            output[[COMP]]$cov$central$lower <- as_matrix_mvSRM(x = object,
                                                                 srm.param = "cov",
                                                                 component = COMP,
                                                                 posterior.est = probs[1],
                                                                 ...)
-            output[[COMP]]$cov$central$upper <- as.matrix.mvSRM(x = object,
+            output[[COMP]]$cov$central$upper <- as_matrix_mvSRM(x = object,
                                                                 srm.param = "cov",
                                                                 component = COMP,
                                                                 posterior.est = probs[2],
                                                                 ...)
           }
           if ("hdi" %in% interval) {
-            output$group$cov$hdi <- as.matrix.mvSRM(object, srm.param = "cov",
+            output$group$cov$hdi <- as_matrix_mvSRM(object, srm.param = "cov",
                                                     component = COMP,
                                                     posterior.est = "hdi",
                                                     credMass = credMass, ...)
@@ -379,7 +379,7 @@ summary.mvSRM <- function(object, component = c("case","dyad"),
 ##' @name mvSRM-class
 ##' @aliases summary,mvSRM-method
 ##' @export
-setMethod("summary", "mvSRM", summary.mvSRM)
+setMethod("summary", "mvSRM", summary_mvSRM)
 
 
 #TODO: add srm.param = "dyadic.recip" (vector), "intra.inter.cor" (2-tri matrix)
@@ -387,7 +387,7 @@ setMethod("summary", "mvSRM", summary.mvSRM)
 ##' @importFrom methods as
 ##' @importFrom stats quantile
 ##' @importFrom utils combn
-as.matrix.mvSRM <- function(x, component, srm.param, posterior.est = "mean",
+as_matrix_mvSRM <- function(x, component, srm.param, posterior.est = "mean",
                             as.stanfit = FALSE, cor.full = FALSE, ...) {
   #TODO: Test this EXPERIMENTAL idea, implement with public argument?
   if (is.list(x)) {
@@ -587,24 +587,22 @@ as.matrix.mvSRM <- function(x, component, srm.param, posterior.est = "mean",
 ##' @name mvSRM-class
 ##' @aliases as.matrix,mvSRM-method
 ##' @export
-setMethod("as.matrix", "mvSRM", as.matrix.mvSRM)
+setMethod("as.matrix", "mvSRM", as_matrix_mvSRM)
 
 
 
 ##' @importFrom stats cov
 ##' @importFrom stats setNames
-vcov.mvSRM <- function(object, component, meanstructure = FALSE,
+vcov_mvSRM <- function(object, component, meanstructure = FALSE,
                        keep, drop, ...) {
   #TODO: Test this EXPERIMENTAL idea, implement with public argument?
-  if (!is.null(list(...)$objectList)) {
-    objectList <- list(...)$objectList
+  if (is.list(object)) {
     ## Assume all are valid object= arguments with the same structure.
-    stopifnot(all(sapply(objectList, inherits, what = "mvSRM")))
+    stopifnot(all(sapply(object, inherits, what = "mvSRM")))
     ## Assign the first element to object
-    stopifnot(missing(object))
+    objectList <- object
     object <- objectList[[1]]
   } else objectList <- NULL
-
 
   categorical <- FALSE #TODO: add threshold models to stan scripts
   #TODO: robust options?  (e.g., Spearman rank cor, scaled by median abs dev)
@@ -764,7 +762,7 @@ vcov.mvSRM <- function(object, component, meanstructure = FALSE,
 ##' @aliases vcov,mvSRM-method
 ##' @importFrom stats vcov
 ##' @export
-setMethod("vcov", "mvSRM", vcov.mvSRM)
+setMethod("vcov", "mvSRM", vcov_mvSRM)
 
 
 
