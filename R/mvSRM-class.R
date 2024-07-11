@@ -1,5 +1,5 @@
 ### Terrence D. Jorgensen
-### Last updated: 18 June 2024
+### Last updated: 11 July 2024
 ### Class and Methods for mvSRM object
 
 
@@ -21,6 +21,8 @@
 #   posterior_interval,mvSRM-method
 ##' @docType class
 ##'
+##' @slot version Named `character` vector indicating the `stan`, `rstan`, and
+##'   `lavaan.srm` version numbers.
 ##' @slot call A copy of the `call` to the [mvsrm()] function that generated
 ##'   the object.
 ##' @slot nobs A vector of group-level (when relevant), case-level, and
@@ -166,7 +168,8 @@
 ##' @importFrom methods setClass
 ##' @export
 setClass("mvSRM", contains = "stanfit",
-         slots = c(call     = "call",    # mvsrm() call
+         slots = c(version  = "vector",  # stan, rstan, and lavaan.srm versions
+                   call     = "call",    # mvsrm() call
                    nobs     = "integer", # level-specific sample sizes
                    IDs      = "list",    # ID variables in each level's data set
                    varNames = "list",    # variable names at each level

@@ -1,5 +1,5 @@
 ### Terrence D. Jorgensen
-### Last updated: 18 June 2024
+### Last updated: 11 July 2024
 ### function to implement Stage-1 of 2-stage SR-SEM estimator
 
 
@@ -633,10 +633,13 @@ mvsrm <- function(data, rr.vars = NULL, IDout, IDin, IDgroup = NULL,
   if (return_stanfit) return(fit)
 
   ## add slots to construct mvSRM object
-  fit      <- as(fit, "mvSRM")
-  fit@call <- MC
-  fit@nobs <- c(group = knowns$Ng, case = knowns$Np, dyad = knowns$Nd)
-  fit@IDs  <- ID_slot
+  fit         <- as(fit, "mvSRM")
+  fit@version <- c(stan = rstan::stan_version(),
+                   sapply(c("rstan","lavaan.srm"),
+                          utils::packageDescription, fields = "Version"))
+  fit@call    <- MC
+  fit@nobs    <- c(group = knowns$Ng, case = knowns$Np, dyad = knowns$Nd)
+  fit@IDs     <- ID_slot
 
   fit@varNames <- list(RR    = rr.names,
                        dyad  = dyad_constant_vars,
