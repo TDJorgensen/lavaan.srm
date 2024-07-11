@@ -266,7 +266,7 @@ summary.mvSRM <- function(object, component = c("case","dyad"),
           output[[COMP]]$sd[[p]] <- as.matrix.mvSRM(x = object,
                                                     srm.param = "sd",
                                                     component = COMP,
-                                                    posterior.est = p)
+                                                    posterior.est = p, ...)
         }
         ## add intervals?
         if (length(interval)) {
@@ -296,7 +296,7 @@ summary.mvSRM <- function(object, component = c("case","dyad"),
                                                      srm.param = "cor",
                                                      cor.full = cor.full,
                                                      component = COMP,
-                                                     posterior.est = p)
+                                                     posterior.est = p, ...)
         }
         ## add intervals?
         if (length(interval)) {
@@ -336,7 +336,7 @@ summary.mvSRM <- function(object, component = c("case","dyad"),
           output[[COMP]]$cov[[p]] <- as.matrix.mvSRM(x = object,
                                                      srm.param = "cov",
                                                      component = COMP,
-                                                     posterior.est = p)
+                                                     posterior.est = p, ...)
         }
         ## add intervals?
         if (length(interval)) {
@@ -386,7 +386,21 @@ setMethod("summary", "mvSRM", summary.mvSRM)
 ##' @importFrom utils combn
 as.matrix.mvSRM <- function(x, component, srm.param, posterior.est = "mean",
                             as.stanfit = FALSE, cor.full = FALSE, ...) {
+  #TODO: Test this EXPERIMENTAL idea, implement with public argument?
+  if (is.list(x)) {
+    ## Assume all are valid object= arguments with the same structure.
+    stopifnot(all(sapply(x, inherits, what = "mvSRM")))
+    ## Assign the first element to object
+    objectList <- x
+    x <- objectList[[1]]
+  } else objectList <- NULL
+
+
   if (as.stanfit) {
+    if (!is.null(objectList)) {
+      message("Argument x= not provided. Running as.matrix() method for the ",
+              "first stanfit-class element in objectList=")
+    }
     return(as.matrix(as(object = x, Class = "stanfit", strict = TRUE), ...))
   }
 
@@ -429,7 +443,12 @@ as.matrix.mvSRM <- function(x, component, srm.param, posterior.est = "mean",
       stop('Means were not included in this model (i.e., fixed.groups = TRUE)')
 
     ## extract samples
-    paramMat <- do.call(rbind, rstan::As.mcmc.list(x, pars = "Mvec"))
+    if (is.null(objectList)) {
+      paramMat <- do.call(rbind, rstan::As.mcmc.list(x, pars = "Mvec"))
+    } else {
+      paramMat <- do.call(rbind, sapply(objectList, rstan::As.mcmc.list,
+                                         pars = "Mvec"))
+    }
     ## obtain summary statistic
     if (is.numeric(posterior.est)) {
       out <- apply(paramMat, MARGIN = 2, stats::quantile,
@@ -496,7 +515,13 @@ as.matrix.mvSRM <- function(x, component, srm.param, posterior.est = "mean",
 
 
   ## extract samples
-  paramMat <- do.call(rbind, rstan::As.mcmc.list(x, pars = PARS))
+  if (is.null(objectList)) {
+    paramMat <- do.call(rbind, rstan::As.mcmc.list(x, pars = PARS))
+  } else {
+    paramMat <- do.call(rbind, sapply(objectList, rstan::As.mcmc.list,
+                                      pars = PARS))
+  }
+
 
   ## obtain summary statistic
   if (is.numeric(posterior.est)) {
@@ -567,6 +592,17 @@ setMethod("as.matrix", "mvSRM", as.matrix.mvSRM)
 ##' @importFrom stats setNames
 vcov.mvSRM <- function(object, component, meanstructure = FALSE,
                        keep, drop, ...) {
+  #TODO: Test this EXPERIMENTAL idea, implement with public argument?
+  if (!is.null(list(...)$objectList)) {
+    objectList <- list(...)$objectList
+    ## Assume all are valid object= arguments with the same structure.
+    stopifnot(all(sapply(objectList, inherits, what = "mvSRM")))
+    ## Assign the first element to object
+    stopifnot(missing(object))
+    object <- objectList[[1]]
+  } else objectList <- NULL
+
+
   categorical <- FALSE #TODO: add threshold models to stan scripts
   #TODO: robust options?  (e.g., Spearman rank cor, scaled by median abs dev)
   component <- tolower(component[1])
@@ -593,7 +629,13 @@ vcov.mvSRM <- function(object, component, meanstructure = FALSE,
     } else SUBSET <- NAMES
 
     if (meanstructure) {
-      MuSamples <- do.call(rbind, rstan::As.mcmc.list(object, pars = "Mvec"))
+      if (is.null(objectList)) {
+        MuSamples <- do.call(rbind, rstan::As.mcmc.list(object, pars = "Mvec"))
+      } else {
+        MuSamples <- do.call(rbind, sapply(objectList, rstan::As.mcmc.list,
+                                           pars = "Mvec"))
+      }
+
       MuList <- apply(MuSamples, MARGIN = 1, FUN = function(m) {
         Mvec <- setNames(numeric(length(NAMES)), nm = NAMES)
         for (i in names(m)) eval(parse(text = paste(i, "<-", m[i]) ))
@@ -670,7 +712,12 @@ vcov.mvSRM <- function(object, component, meanstructure = FALSE,
 
 
   ## store covariances in a matrix (per posterior sample)
-  covMats <- do.call(rbind, rstan::As.mcmc.list(object, pars = PARS))
+  if (is.null(objectList)) {
+    covMats <- do.call(rbind, rstan::As.mcmc.list(object, pars = PARS))
+  } else {
+    covMats <- do.call(rbind, sapply(objectList, rstan::As.mcmc.list,
+                                     pars = PARS))
+  }
   SigmaList <- apply(covMats, MARGIN = 1, FUN = function(m) {
     assign(PARS, matrix(0, nrow = length(NAMES), ncol = length(NAMES),
                         dimnames = list(NAMES, NAMES)))
