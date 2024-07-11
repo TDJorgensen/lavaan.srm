@@ -232,6 +232,7 @@ lavaan.srm <- function(model, data, component, posterior.est = "mean",
 
   if (inherits(data, "lavMoments")) {
     srmMoments <- data
+    #FIXME: necessary? objectList <- NULL
 
     #FIXME: Assumes no multi(RR)group models fit to same component.
     #       Users must take care to assemble this object correctly.
@@ -301,8 +302,8 @@ lavaan.srm <- function(model, data, component, posterior.est = "mean",
       # rep(component, times = length(data))
     }
 
-  }
-  # else
+  } else objectList <- NULL
+
   if (inherits(data, "mvSRM")) {
     ## to define for model and reuse for h1 / baseline
     ov.names <- list()
