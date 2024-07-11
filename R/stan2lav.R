@@ -1,5 +1,5 @@
 ### Terrence D. Jorgensen
-### Last updated: 18 June 2018
+### Last updated: 11 July 2024
 ### (currently hidden) function to create a lavMoments-class object
 ### from a mvSRM-class object (inherits from stanfit-class)
 
@@ -39,9 +39,16 @@
 ##' @importFrom stats setNames
 srm2lavData <- function(object, component, posterior.est = "mean", keep, drop,
                         meanstructure = FALSE, lavData = NULL, ...) {
-  stopifnot(inherits(object, "mvSRM"))
   categorical <- FALSE #TODO: specify threshold model in Stan
   component <- tolower(component[1]) # one at a time
+
+  if (is.list(object)) {
+    stopifnot(all(sapply(object, inherits, what = "mvSRM")))
+    N <- object[[1]]@nobs[component]
+  } else {
+    stopifnot(inherits(object, what = "mvSRM"))
+    N <- object@nobs[component]
+  }
 
 
 
@@ -82,7 +89,7 @@ srm2lavData <- function(object, component, posterior.est = "mean", keep, drop,
     ## make a new lavMoments object
     out <- list(sample.cov  = COV,
                 sample.mean = M,
-                sample.nobs = object@nobs[component],
+                sample.nobs = N,
                 NACOV       = NACOV)
     if (categorical) {
       #TODO: thresholds
@@ -96,7 +103,7 @@ srm2lavData <- function(object, component, posterior.est = "mean", keep, drop,
 
     out$sample.cov  <- c(out$sample.cov ,  COV )
     out$sample.mean <- c(out$sample.mean,   M  )
-    out$sample.nobs <- c(out$sample.nobs, object@nobs[component])
+    out$sample.nobs <- c(out$sample.nobs,   N  )
     out$NACOV       <- c(out$NACOV      , NACOV)
 
     if (categorical) {

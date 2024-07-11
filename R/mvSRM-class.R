@@ -136,8 +136,9 @@
 ##' * `summary()` loops over `as.matrix()` to return a `list()` of potentially
 ##'   multiple summaries of potentially multiple SRM parameters and components.
 ##' * `vcov()` provides the posterior covariance matrix of sampled (co)variance
-##'   parameters at the requested level of analysis.  This is only useful for
-##'   the 2-stage estimation provided using [lavaan::lavaan()].
+##'   parameters at the requested level of analysis, multiplied by that level's
+##'   sample size.  This is only useful for second-stage SEM estimation, which
+##'   requires passing this to the `NACOV=` argument in [lavaan::lavaan()].
 ##'
 ##' @section Objects from the Class: See the [mvsrm()] function for details.
 ##'

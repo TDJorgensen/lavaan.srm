@@ -116,8 +116,9 @@ summary for the specified SRM parameter and level of analysis.
 \item \code{summary()} loops over \code{as.matrix()} to return a \code{list()} of potentially
 multiple summaries of potentially multiple SRM parameters and components.
 \item \code{vcov()} provides the posterior covariance matrix of sampled (co)variance
-parameters at the requested level of analysis.  This is only useful for
-the 2-stage estimation provided using \code{\link[lavaan:lavaan]{lavaan::lavaan()}}.
+parameters at the requested level of analysis, multiplied by that level's
+sample size.  This is only useful for second-stage SEM estimation, which
+requires passing this to the \verb{NACOV=} argument in \code{\link[lavaan:lavaan]{lavaan::lavaan()}}.
 }
 }
 \description{
@@ -129,6 +130,9 @@ fitting a multivariate social relations model (mvSRM; Nestler,
 \section{Slots}{
 
 \describe{
+\item{\code{version}}{Named \code{character} vector indicating the \code{stan}, \code{rstan}, and
+\code{lavaan.srm} version numbers.}
+
 \item{\code{call}}{A copy of the \code{call} to the \code{\link[=mvsrm]{mvsrm()}} function that generated
 the object.}
 

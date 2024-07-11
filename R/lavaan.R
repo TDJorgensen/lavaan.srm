@@ -1,5 +1,5 @@
 ### Terrence D. Jorgensen
-### Last updated: 19 June 2024
+### Last updated: 11 July 2024
 ### pass model, lavMoments, and other arguments to lavaan()
 
 
@@ -23,6 +23,8 @@
 ##' @param model `character` specifying an SEM.  See [lavaan::model.syntax()].
 ##' @param data An object of class \code{\linkS4class{mvSRM}}
 ##              (or lavMoments, not documented)
+##   or a list of \code{\linkS4class{mvSRM}} objects whose posterior samples are merged when `bma=TRUE`.
+## @param bma
 ##' @param component `character` specifying which SRM component(s) the `model=`
 ##'   syntax is specified for.  Can be `%in% c("case", "dyad")`, as well as
 ##'   `"group"` when group effects are modeled.  The order of multiple blocks
@@ -183,6 +185,7 @@
 ##' @importFrom stats setNames
 ##' @export
 lavaan.srm <- function(model, data, component, posterior.est = "mean",
+                       # bma = TRUE,
                        ..., sumArgs = list(method = "shorth")) {
   stopifnot(all(component %in% c("group","case","dyad")),
             posterior.est %in% c("mean","median","mode","EAP","MAP"))
@@ -230,7 +233,8 @@ lavaan.srm <- function(model, data, component, posterior.est = "mean",
   if (inherits(data, "lavMoments")) {
     srmMoments <- data
 
-    #FIXME: assumes no multi(RR)group models fit to same component
+    #FIXME: Assumes no multi(RR)group models fit to same component.
+    #       Users must take care to assemble this object correctly.
     lavars <- c(PT$lhs, PT$rhs) # no need to distinguish blocks?
 
     ## check for group-level variables
@@ -271,17 +275,35 @@ lavaan.srm <- function(model, data, component, posterior.est = "mean",
     #       Have to assume "_ij" only appears at the end.
 
   } else if (inherits(data, "list")) {
+    ## There are 2 possible applications:
+    ##  - Analyze multiple mvsrm() outputs for structurally different RR groups
+    ##    (e.g., networks of   boys vs. girls   or   strangers vs. friends)
+    ##  - Different subsets analyzed: concatenate to Bayesian model average
     stopifnot(all(sapply(data, inherits, what = "mvSRM")))
 
-    ## if multiple components, require same components analyzed in each group
-    stopifnot(length(blocks) %% length(data) == 0)
+    bma <- TRUE #FIXME: necessary? (to distinguish from multi(RR)group models)
+    if (bma) {
+      #TODO: This idea is EXPERIMENTAL, update with as.matrix() & vcov() methods
+      if (is.list(data)) {
+        ## Assume all are valid object= arguments with the same structure.
+        stopifnot(all(sapply(data, inherits, what = "mvSRM")))
+        ## Assign the first element to object
+        objectList <- data
+        data <- objectList[[1]]
+      } else objectList <- NULL
 
-    #TODO: Do same shit below per RR-group type
-    #      Require components nested in groups?
-    # rep(component, times = length(data))
+    } else {
+      ## if multiple components, require same components analyzed in each group
+      stopifnot(length(blocks) %% length(data) == 0)
 
+      #TODO: Do same shit below per RR-group type
+      #      Require components nested in groups?
+      # rep(component, times = length(data))
+    }
 
-  } else if (inherits(data, "mvSRM")) {
+  }
+  # else
+  if (inherits(data, "mvSRM")) {
     ## to define for model and reuse for h1 / baseline
     ov.names <- list()
     ## initialize h1 & baseline syntax
@@ -306,8 +328,11 @@ lavaan.srm <- function(model, data, component, posterior.est = "mean",
 
 
       ## prepare arguments to create a lavMoments object
-      srm2lavArgs <- list(srm2lavData, object = data, component = component[b],
+      srm2lavArgs <- list(quote(srm2lavData), component = component[b],
                           posterior.est = posterior.est, keep = ov.names[[b]])
+      if (is.null(objectList)) {
+        srm2lavArgs$object <- data
+      } else srm2lavArgs$object <- objectList
       if (b > 1L) srm2lavArgs$lavData <- srmMoments
       stopifnot(is.list(sumArgs)) #TODO: more informative message?
       srm2lavArgs <- c(srm2lavArgs, sumArgs)
@@ -338,6 +363,7 @@ lavaan.srm <- function(model, data, component, posterior.est = "mean",
         #TODO: update lavaan's parser, change "group" to "component"
         sat.mod[[length(sat.mod) + 1L]] <- paste("group:", b)
         bas.mod[[length(bas.mod) + 1L]] <- paste("group:", b)
+        #TODO: enable multi(RR)group blocks, "component" nested within "group"
       }
       ## group-level model has no special constraints
       if (fitMore && component[b] == "group") {
@@ -482,6 +508,9 @@ lavaan.srm <- function(model, data, component, posterior.est = "mean",
 
   ## save srmMoments, to save time when fitting model to same variables
   fit@external$lavMoments <- srmMoments
+  fit@external$version <- setNames(utils::packageDescription("lavaan.srm",
+                                                             fields = "Version"),
+                                   nm = "lavaan.srm")
 
   if (fitMore && lavInspect(fit, "converged")) {
     lavCall[[1]] <- quote(lavaan::lavaan)
